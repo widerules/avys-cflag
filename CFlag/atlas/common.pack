@@ -1,0 +1,89 @@
+
+common.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+cloud
+  rotate: false
+  xy: 1, 83
+  size: 1024, 427
+  orig: 1024, 427
+  offset: 0, 0
+  index: -1
+midbar
+  rotate: false
+  xy: 1027, 420
+  size: 800, 90
+  orig: 800, 90
+  offset: 0, 0
+  index: -1
+bottombar
+  rotate: false
+  xy: 1, 1
+  size: 800, 80
+  orig: 800, 80
+  offset: 0, 0
+  index: -1
+topbar
+  rotate: false
+  xy: 1, 1
+  size: 800, 80
+  orig: 800, 80
+  offset: 0, 0
+  index: -1
+rectbuttondown
+  rotate: false
+  xy: 1027, 378
+  size: 140, 40
+  orig: 140, 40
+  offset: 0, 0
+  index: -1
+rectbuttonup
+  rotate: false
+  xy: 1829, 470
+  size: 140, 40
+  orig: 140, 40
+  offset: 0, 0
+  index: -1
+lefttributtondown
+  rotate: false
+  xy: 803, 31
+  size: 40, 50
+  orig: 40, 50
+  offset: 0, 0
+  index: -1
+lefttributtonup
+  rotate: false
+  xy: 1027, 326
+  size: 40, 50
+  orig: 40, 50
+  offset: 0, 0
+  index: -1
+righttributtondown
+  rotate: false
+  xy: 845, 31
+  size: 40, 50
+  orig: 40, 50
+  offset: 0, 0
+  index: -1
+righttributtonup
+  rotate: false
+  xy: 1027, 274
+  size: 40, 50
+  orig: 40, 50
+  offset: 0, 0
+  index: -1
+argbblack
+  rotate: false
+  xy: 1169, 408
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+argbwhite
+  rotate: false
+  xy: 1829, 458
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1

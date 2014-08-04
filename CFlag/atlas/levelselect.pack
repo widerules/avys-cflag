@@ -1,0 +1,40 @@
+
+levelselect.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+nolevels
+  rotate: false
+  xy: 1, 13
+  size: 272, 44
+  orig: 272, 44
+  offset: 0, 0
+  index: -1
+title
+  rotate: false
+  xy: 275, 1
+  size: 240, 56
+  orig: 240, 56
+  offset: 0, 0
+  index: -1
+back
+  rotate: false
+  xy: 517, 13
+  size: 132, 44
+  orig: 132, 44
+  offset: 0, 0
+  index: -1
+play
+  rotate: false
+  xy: 651, 13
+  size: 132, 44
+  orig: 132, 44
+  offset: 0, 0
+  index: -1
+playagain
+  rotate: false
+  xy: 785, 13
+  size: 132, 44
+  orig: 132, 44
+  offset: 0, 0
+  index: -1

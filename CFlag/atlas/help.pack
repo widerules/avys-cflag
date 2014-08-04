@@ -1,0 +1,68 @@
+
+help.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+page4
+  rotate: false
+  xy: 1, 683
+  size: 740, 303
+  orig: 740, 303
+  offset: 0, 0
+  index: -1
+page3
+  rotate: false
+  xy: 1, 376
+  size: 737, 305
+  orig: 737, 305
+  offset: 0, 0
+  index: -1
+page2
+  rotate: false
+  xy: 743, 698
+  size: 737, 288
+  orig: 737, 288
+  offset: 0, 0
+  index: -1
+page1
+  rotate: false
+  xy: 1, 153
+  size: 756, 221
+  orig: 756, 221
+  offset: 0, 0
+  index: -1
+page0
+  rotate: false
+  xy: 1, 1
+  size: 756, 150
+  orig: 756, 150
+  offset: 0, 0
+  index: -1
+title
+  rotate: false
+  xy: 1482, 930
+  size: 200, 56
+  orig: 200, 56
+  offset: 0, 0
+  index: -1
+back
+  rotate: false
+  xy: 1482, 884
+  size: 132, 44
+  orig: 132, 44
+  offset: 0, 0
+  index: -1
+play
+  rotate: false
+  xy: 1684, 942
+  size: 132, 44
+  orig: 132, 44
+  offset: 0, 0
+  index: -1
+skip
+  rotate: false
+  xy: 1482, 838
+  size: 132, 44
+  orig: 132, 44
+  offset: 0, 0
+  index: -1
