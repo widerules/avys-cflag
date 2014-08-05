@@ -12,7 +12,9 @@ public class Constants {
 	public static final String LVL_FILE_NAME = DATA_FLDR + "/data.flg";
 	
 	public static final String SCORE_PREF_FILE_NAME = "scores";
+	public static final String SAVE_GAME_FILE_NAME = "savegame";
 	public static final String SCORE_PREF_TAG_NAME = "data";
+	public static final String SAVE_GAME_TAG_NAME = "savegame";
 	
 	public static final String OPTIONS_PREF_FILE_NAME = "options";
 	public static final String OPTIONS_PREF_TAG_NAME = "data";

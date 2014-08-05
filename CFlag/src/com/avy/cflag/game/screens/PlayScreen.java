@@ -18,6 +18,8 @@ import com.avy.cflag.game.elements.LTank;
 import com.avy.cflag.game.elements.Level;
 import com.avy.cflag.game.elements.Platform;
 import com.avy.cflag.game.graphics.ShortMenu;
+import com.avy.cflag.game.utils.GameData;
+import com.avy.cflag.game.utils.GameOpts;
 import com.avy.cflag.game.utils.SaveThumbs;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -307,7 +309,7 @@ public class PlayScreen extends BaseScreen {
 		stage.addListener(new InputListener(){
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
-				if(keycode==Keys.BACK)
+				if(keycode==Keys.BACK||keycode==Keys.ESCAPE)
 					gameState = GameState.Paused;
 				return true;
 			}
@@ -553,7 +555,19 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void savenquit() {
-		// TODO
+		GameData gData = new GameData();
+		gData.setCurrentLevel(currentLevel);
+		gData.setGameState(gameState);
+		gData.setHintUsed(hintUsed);
+		gData.setLtank(ltank);
+		gData.setLvl(lvl);
+		gData.setStateChanged(stateChanged);
+		gData.setUndoCnt(undoCnt);
+		gData.setUndoList(undoList);
+		
+		Utils.saveGameState(gData);
+		MemStore.gameOPTS.setFirstRun(false);
+		Utils.saveGameOptions();
 	}
 
 	@Override
