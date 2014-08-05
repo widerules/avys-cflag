@@ -5,6 +5,8 @@ import static com.avy.cflag.game.Constants.OPTIONS_PREF_FILE_NAME;
 import static com.avy.cflag.game.Constants.OPTIONS_PREF_TAG_NAME;
 import static com.avy.cflag.game.Constants.SCORE_PREF_FILE_NAME;
 import static com.avy.cflag.game.Constants.SCORE_PREF_TAG_NAME;
+import static com.avy.cflag.game.Constants.SAVE_GAME_FILE_NAME;
+import static com.avy.cflag.game.Constants.SAVE_GAME_TAG_NAME;
 import static com.avy.cflag.game.MemStore.gameOPTS;
 import static com.avy.cflag.game.MemStore.lvlDATA;
 import static com.avy.cflag.game.MemStore.lvlFieldLEN;
@@ -20,6 +22,8 @@ import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.MemStore.Difficulty;
 import com.avy.cflag.game.MemStore.Direction;
 import com.avy.cflag.game.MemStore.PlayImages;
+import com.avy.cflag.game.elements.LTank;
+import com.avy.cflag.game.utils.GameData;
 import com.avy.cflag.game.utils.GameOpts;
 import com.avy.cflag.game.utils.LevelScore;
 import com.avy.cflag.game.utils.UserScore;
@@ -65,7 +69,15 @@ public class Utils {
 		pr.putString(SCORE_PREF_TAG_NAME, jsn.toJson(userSCORE));
 		pr.flush();
 	}
-
+	
+	public static void saveGameState(GameData gData){
+		final Json jsn = new Json();
+		final Preferences pr = Gdx.app.getPreferences(SAVE_GAME_FILE_NAME);
+		pr.putString(SAVE_GAME_TAG_NAME, jsn.toJson(gData));
+		pr.flush();
+		
+	}
+	
 	public static void loadGameOptions() {
 		final Preferences pr = Gdx.app.getPreferences(OPTIONS_PREF_FILE_NAME);
 		final String jsonStr = pr.getString(OPTIONS_PREF_TAG_NAME);

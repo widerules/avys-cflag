@@ -66,7 +66,6 @@ public class LTank {
 				newLTank.lvlPlayField[x][y] = lvlPlayField[x][y];
 			}
 		}
-
 		
 		newLTank.storedTankState = storedTankState;
 		newLTank.tankMoves = tankMoves;
