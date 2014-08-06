@@ -3,15 +3,15 @@ package com.avy.cflag.game;
 import static com.avy.cflag.game.Constants.LVL_FILE_NAME;
 import static com.avy.cflag.game.Constants.OPTIONS_PREF_FILE_NAME;
 import static com.avy.cflag.game.Constants.OPTIONS_PREF_TAG_NAME;
-import static com.avy.cflag.game.Constants.SCORE_PREF_FILE_NAME;
-import static com.avy.cflag.game.Constants.SCORE_PREF_TAG_NAME;
 import static com.avy.cflag.game.Constants.SAVE_GAME_FILE_NAME;
 import static com.avy.cflag.game.Constants.SAVE_GAME_TAG_NAME;
+import static com.avy.cflag.game.Constants.SCORE_PREF_FILE_NAME;
+import static com.avy.cflag.game.Constants.SCORE_PREF_TAG_NAME;
 import static com.avy.cflag.game.MemStore.gameOPTS;
 import static com.avy.cflag.game.MemStore.lvlDATA;
 import static com.avy.cflag.game.MemStore.lvlFieldLEN;
-import static com.avy.cflag.game.MemStore.pltfrmStartPOS;
 import static com.avy.cflag.game.MemStore.playImageScaledLEN;
+import static com.avy.cflag.game.MemStore.pltfrmStartPOS;
 import static com.avy.cflag.game.MemStore.userSCORE;
 
 import java.io.InputStream;
@@ -22,7 +22,6 @@ import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.MemStore.Difficulty;
 import com.avy.cflag.game.MemStore.Direction;
 import com.avy.cflag.game.MemStore.PlayImages;
-import com.avy.cflag.game.elements.LTank;
 import com.avy.cflag.game.utils.GameData;
 import com.avy.cflag.game.utils.GameOpts;
 import com.avy.cflag.game.utils.LevelScore;
@@ -70,7 +69,17 @@ public class Utils {
 		pr.flush();
 	}
 	
-	public static void saveGameState(GameData gData){
+	public static GameData loadGame(){
+		final Preferences pr = Gdx.app.getPreferences(SAVE_GAME_FILE_NAME);
+		final String jsonStr = pr.getString(SAVE_GAME_FILE_NAME);
+		final Json jsn = new Json();
+		if (jsonStr != "") {
+			return(jsn.fromJson(GameData.class, jsonStr));
+		}
+		return null;
+	}
+
+	public static void saveGame(GameData gData){
 		final Json jsn = new Json();
 		final Preferences pr = Gdx.app.getPreferences(SAVE_GAME_FILE_NAME);
 		pr.putString(SAVE_GAME_TAG_NAME, jsn.toJson(gData));

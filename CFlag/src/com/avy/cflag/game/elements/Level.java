@@ -103,9 +103,9 @@ public class Level {
 			}
 		}
 
-		lvlName = new String(tmpLvlName);
-		lvlAuthor = new String(tmpLvlAuthor);
-		lvlHint = new String(tmpLvlHint);
+		lvlName = (new String(tmpLvlName)).trim();
+		lvlAuthor = (new String(tmpLvlAuthor)).trim();
+		lvlHint = (new String(tmpLvlHint)).trim();
 		lvlDclty = Utils.getDifficulty(Integer.parseInt(tmpLvlDclty[0] + "" + tmpLvlDclty[1]));
 
 	}

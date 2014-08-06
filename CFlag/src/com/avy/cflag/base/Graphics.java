@@ -106,6 +106,11 @@ public class Graphics {
 		font.drawWrapped(batch, txt, x - 50, y - h / 2, 100, HAlignment.CENTER);
 	}
 
+	public void drawStringWrapped(BitmapFont font, String txt, float x, float y, float width, Color color) {
+		font.setColor(color);
+		font.drawWrapped(batch, txt, x, y, width, HAlignment.CENTER);
+	}
+
 	public void drawMultiLineString(String txt, float x, float y, Color color) {
 		final String lines[] = txt.split("\n");
 		final TextBounds tb = new TextBounds();
