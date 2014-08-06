@@ -118,7 +118,7 @@ public class MemStore {
 	};
 
 	public static enum GameState {
-		FadeIn, FadeOut, Ready, Running, Paused, Dead, Drowned, Won, Menu, Restart, NextLevel
+		FadeIn, FadeOut, Ready, Running, Paused, Dead, Drowned, Won, Menu, Hint, Restart, NextLevel, Quit
 	}
 
 	public static enum BulletState {

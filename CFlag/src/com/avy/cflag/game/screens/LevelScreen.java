@@ -251,7 +251,7 @@ public class LevelScreen extends BackScreen {
 					public void run() {
 						if (totalThumbs > 0) {
 							MemStore.userSCORE.setCurrentLevel(selectedThumb);
-							game.setScreen(new PlayScreen(game));
+							game.setScreen(new PlayScreen(game,false));
 						} else {
 							game.setScreen(new MenuScreen(game));
 						}

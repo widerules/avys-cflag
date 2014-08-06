@@ -1,5 +1,6 @@
 package com.avy.cflag.game.screens;
 
+import static com.avy.cflag.game.MemStore.gameOPTS;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
@@ -17,9 +18,9 @@ import com.avy.cflag.game.Utils;
 import com.avy.cflag.game.elements.LTank;
 import com.avy.cflag.game.elements.Level;
 import com.avy.cflag.game.elements.Platform;
+import com.avy.cflag.game.graphics.HintMenu;
 import com.avy.cflag.game.graphics.ShortMenu;
 import com.avy.cflag.game.utils.GameData;
-import com.avy.cflag.game.utils.GameOpts;
 import com.avy.cflag.game.utils.SaveThumbs;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -90,35 +91,49 @@ public class PlayScreen extends BaseScreen {
 	private Group drownedMenu;
 	private Group deadMenu;
 	private Group wonMenu;
+	private Group hintMenu;
 	
 	private GameButtons pressedButton;
 	
-	public PlayScreen(CFlagGame game) {
+	public PlayScreen(CFlagGame game, boolean isResume) {
 		super(game, true,true,true);
 		
 		playAtlas = g.createImageAtlas("play");
 		g.setImageAtlas(playAtlas);
-		currentLevel = MemStore.userSCORE.getCurrentLevel();
-		gameState = GameState.Ready;
 
-		if(currentLevel==0){
-			currentLevel=1;
-			Utils.saveUserScores(currentLevel, 0, 0, false);
-			SaveThumbs st = new SaveThumbs(g, currentLevel);
-			st.run();
+		if(!isResume){
+			currentLevel = MemStore.userSCORE.getCurrentLevel();
+			gameState = GameState.Ready;
+	
+			if(currentLevel==0){
+				currentLevel=1;
+				Utils.saveUserScores(currentLevel, 0, 0, false);
+				SaveThumbs st = new SaveThumbs(g, currentLevel);
+				st.run();
+			}
+			
+			lvl = new Level();
+			lvl.loadLevel(currentLevel);
+			
+			ltank = new LTank(lvl);
+			
+			undoCnt = 0;
+			undoList = new LTank[undoCnt+1];
+			undoList[undoCnt]=ltank.clone();
+	
+			hintUsed=false;
+			stateChanged=false;
+		} else {
+			GameData savedGame = Utils.loadGame();
+			currentLevel=savedGame.getCurrentLevel();
+			gameState=GameState.Running;
+			lvl=savedGame.getLvl();
+			ltank=savedGame.getLtank();
+			undoCnt=savedGame.getUndoCnt();
+			undoList=savedGame.getUndoList();
+			hintUsed=savedGame.isHintUsed();
+			stateChanged=savedGame.isStateChanged();
 		}
-		
-		lvl = new Level();
-		lvl.loadLevel(currentLevel);
-		
-		ltank = new LTank(lvl);
-		
-		undoCnt = 0;
-		undoList = new LTank[undoCnt+1];
-		undoList[undoCnt]=ltank.clone();
-
-		hintUsed=false;
-		stateChanged=false;
 		
 		PlayImages.load(g);
 		pressedButton=GameButtons.None;
@@ -145,6 +160,9 @@ public class PlayScreen extends BaseScreen {
 		wonMenu = new ShortMenu(g, this, "youwon", "nextlevel", "restart", "mainmenu");
 		wonMenu.setVisible(false);
 		wonMenu.getColor().a=0;
+		hintMenu = new HintMenu(g, this, "gamehint");
+		hintMenu.setVisible(false);
+		hintMenu.getColor().a=0;
 		
 		argbFull = new Image(g.getFlipTexRegion("argbblack"));
 		leftPanel = new Image(g.getFlipTexRegion("leftpanel"));
@@ -234,6 +252,7 @@ public class PlayScreen extends BaseScreen {
 		stage.addActor(drownedMenu);
 		stage.addActor(deadMenu);
 		stage.addActor(wonMenu);
+		stage.addActor(hintMenu);
 		stage.addActor(argbFull);
 		
 		arrowButton_Up.addListener(new InputListener(){
@@ -283,7 +302,7 @@ public class PlayScreen extends BaseScreen {
 			};
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				hintButton_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-//				showHint();
+				gameState = GameState.Hint;
 			};
 		});
 		undoButton.addListener(new InputListener(){
@@ -307,10 +326,20 @@ public class PlayScreen extends BaseScreen {
 			};
 		});
 		stage.addListener(new InputListener(){
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				if(gameState==GameState.Hint) { 
+					resume();
+				}
+				return true;
+			};
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
 				if(keycode==Keys.BACK||keycode==Keys.ESCAPE)
-					gameState = GameState.Paused;
+				if(gameState== GameState.Running)	
+					pause();
+				else if(gameState==GameState.Paused||gameState==GameState.Hint) {
+					resume();
+				}
 				return true;
 			}
 		});
@@ -351,6 +380,9 @@ public class PlayScreen extends BaseScreen {
 				break;
 			case Won:
 				updateWon();
+				break;
+			case Hint:
+				updateHint();
 				break;
 			case Menu:case Restart: case NextLevel:
 				updateFadeOut(delta);
@@ -460,17 +492,22 @@ public class PlayScreen extends BaseScreen {
 		wonMenu.addAction(sequence(visible(true),fadeIn(0.2f)));
 	}
 
+	private void updateHint(){
+		hintMenu.addAction(sequence(visible(true),fadeIn(0.2f)));
+	}
+
 	private void updateFadeOut(float delta) {
 		switch (gameState) {
 			case Menu:
+			case Quit:
 				game.setScreen(new MenuScreen(game));
 				break;
 			case Restart:
-				game.setScreen(new PlayScreen(game));
+				game.setScreen(new PlayScreen(game,false));
 				break;
 			case NextLevel:
 				saveScores();
-				game.setScreen(new PlayScreen(game));
+				game.setScreen(new PlayScreen(game,false));
 				break;
 			default:
 				break;
@@ -484,6 +521,9 @@ public class PlayScreen extends BaseScreen {
 		g.drawString(lvl.getLvlDclty().toString(), 80, 241, Color.BLACK);
 		g.drawString(Integer.toString(ltank.getTankMoves()), 720, 72, Color.BLACK);
 		g.drawString(Integer.toString(ltank.getTankShots()), 720, 158, Color.BLACK);
+		if(gameState==GameState.Hint) {
+			g.drawStringWrapped(lvlNmeFont, lvl.getLvlHint(), 198, 234, 404, Color.BLACK);
+		}
 		batch.end();
 
 		g.setSr(sr);
@@ -543,15 +583,23 @@ public class PlayScreen extends BaseScreen {
 		gameState = GameState.Menu;
 	}
 
+	public void showHint() {
+		gameState = GameState.Hint;
+	}
+
 	public void pause() {
 		if (gameState == GameState.Running)
 			gameState = GameState.Paused;
 	}
 
 	public void resume() {
-		pausedMenu.addAction(sequence(fadeOut(0.2f),visible(false)));
-		if (gameState == GameState.Paused)
+		if (gameState == GameState.Paused) {
+			pausedMenu.addAction(sequence(fadeOut(0.2f),visible(false)));
 			gameState = GameState.Running;
+		} else if (gameState == GameState.Hint){
+			hintMenu.addAction(sequence(fadeOut(0.2f),visible(false)));
+			gameState = GameState.Running;
+		}
 	}
 
 	public void savenquit() {
@@ -565,9 +613,10 @@ public class PlayScreen extends BaseScreen {
 		gData.setUndoCnt(undoCnt);
 		gData.setUndoList(undoList);
 		
-		Utils.saveGameState(gData);
-		MemStore.gameOPTS.setFirstRun(false);
+		Utils.saveGame(gData);
+		gameOPTS.setFirstRun(false);
 		Utils.saveGameOptions();
+		mainmenu();
 	}
 
 	@Override

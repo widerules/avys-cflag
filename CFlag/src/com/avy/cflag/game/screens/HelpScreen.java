@@ -194,7 +194,7 @@ public class HelpScreen extends BackScreen {
 					@Override
 					public void run() {
 						if(context.equalsIgnoreCase("firstplay"))
-							game.setScreen(new PlayScreen(game));
+							game.setScreen(new PlayScreen(game,false));
 						else
 							game.setScreen(new MenuScreen(game));
 					}
