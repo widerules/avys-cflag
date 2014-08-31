@@ -1,14 +1,25 @@
 package com.avy.cflag.game.elements;
 
+import static com.avy.cflag.game.MemStore.lvlDATA;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 import com.avy.cflag.base.Point;
 import com.avy.cflag.game.MemStore;
 import com.avy.cflag.game.MemStore.Difficulty;
 import com.avy.cflag.game.MemStore.PlayImages;
 import com.avy.cflag.game.Utils;
 
-public class Level {
+public class CopyOfLevel {
 
 	private final byte[] lvlData = MemStore.lvlDATA;
+	int totNoviceLevels = 0;
+	int totEasyLevels = 0;
+	int totMediumLevels = 0;
+	int totHardLevels = 0;
+	int totDeadlyLevels = 0;
 
 	private final Point lvlFieldLen = MemStore.lvlFieldLEN;
 	private final int lvlFieldTotalLen = lvlFieldLen.x * lvlFieldLen.y;
@@ -17,6 +28,12 @@ public class Level {
 	private final int lvlAuthorLen = 31;
 	private final int lvlDcltyLen = 2;
 	private final int lvlLen = lvlFieldTotalLen + lvlNameLen + lvlHintLen + lvlAuthorLen + lvlDcltyLen;
+
+	private final byte[] noviceLvlData = new byte[378*lvlLen];
+	private final byte[] easyLvlData = new byte[816*lvlLen];
+	private final byte[] mediumLvlData = new byte[595*lvlLen];
+	private final byte[] hardLvlData = new byte[189*lvlLen];
+	private final byte[] deadlyLvlData = new byte[52*lvlLen];
 
 	private int lvlNum;
 	private PlayImages[][] lvlBaseField;
@@ -28,7 +45,7 @@ public class Level {
 
 	private Point tankOrigPos;
 
-	public Level() {
+	public CopyOfLevel() {
 		lvlNum = 1;
 		lvlBaseField = new PlayImages[lvlFieldLen.x][lvlFieldLen.y];
 		lvlPlayField = new PlayImages[lvlFieldLen.x][lvlFieldLen.y];
@@ -38,7 +55,8 @@ public class Level {
 	public void loadLevel(int inLvlNum) {
 
 		lvlNum = inLvlNum;
-
+		System.out.println(lvlNum);
+		byte tmpLvlData[] = new byte[lvlLen];
 		final char[] tmpLvlName = new char[lvlNameLen];
 		final char[] tmpLvlAuthor = new char[lvlAuthorLen];
 		final char[] tmpLvlHint = new char[lvlHintLen];
@@ -56,42 +74,9 @@ public class Level {
 		int r = 0, c = 0;
 
 		for (int i = lvlStrt; i < lvlEnd; i++) {
+			tmpLvlData[r++]=lvlDATA[i];
 			if (i < lvlPlayFieldEnd) {
-				if (c == 16) {
-					r++;
-					c = 0;
-				}
-
-				final PlayImages po = Utils.getPlayImage(lvlData[i]);
-				switch (po) {
-					case Villain_D:
-					case Villain_L:
-					case Villain_R:
-					case Villain_U:
-					case MBlock:
-					case MMirror_D:
-					case MMirror_L:
-					case MMirror_R:
-					case MMirror_U:
-					case Flag:
-					case RMirror_D:
-					case RMirror_L:
-					case RMirror_R:
-					case RMirror_U:
-						lvlBaseField[r][c] = PlayImages.Grass;
-						lvlPlayField[r][c] = po;
-						break;
-					case Hero_U:
-						lvlBaseField[r][c] = PlayImages.Grass;
-						lvlPlayField[r][c] = po;
-						tankOrigPos = new Point(r, c);
-						break;
-					default:
-						lvlBaseField[r][c] = po;
-						lvlPlayField[r][c] = po;
-						break;
-				}
-				c++;
+//				tmpLvlData[r++]=lvlDATA[i];
 			} else if (i >= lvlNameStrt && i < lvlNameEnd) {
 				tmpLvlName[i - lvlNameStrt] = (char) lvlData[i];
 			} else if (i >= lvlHintStrt && i < lvlHintEnd) {
@@ -108,6 +93,30 @@ public class Level {
 		lvlHint = (new String(tmpLvlHint)).trim();
 		lvlDclty = Utils.getDifficultyByVal(Integer.parseInt(tmpLvlDclty[0] + "" + tmpLvlDclty[1]));
 
+		switch (lvlDclty) {
+			case Novice:
+				System.arraycopy(tmpLvlData, 0, noviceLvlData, totNoviceLevels*lvlLen, lvlLen);
+				totNoviceLevels++;
+				break;
+			case Easy:
+				System.arraycopy(tmpLvlData, 0, easyLvlData, totEasyLevels*lvlLen, lvlLen);
+				totEasyLevels++;
+				break;
+			case Medium:
+				System.arraycopy(tmpLvlData, 0, mediumLvlData, totMediumLevels*lvlLen, lvlLen);
+				totMediumLevels++;
+				break;
+			case Hard:
+				System.arraycopy(tmpLvlData, 0, hardLvlData, totHardLevels*lvlLen, lvlLen);
+				totHardLevels++;
+				break;
+			case Deadly:
+				System.arraycopy(tmpLvlData, 0, deadlyLvlData, totDeadlyLevels*lvlLen, lvlLen);
+				totDeadlyLevels++;
+				break;
+			default:
+				break;
+		}
 	}
 
 	public void increaseLevel() {
@@ -182,5 +191,49 @@ public class Level {
 
 	public void setTankOrigPos(Point tankOrigPos) {
 		this.tankOrigPos = tankOrigPos;
+	}
+
+	public static void main(String[] args) {
+		try {
+			
+			final InputStream fi = new FileInputStream("data\\LaserTank.lvl");
+			lvlDATA = new byte[fi.available()];
+			fi.read(lvlDATA);
+			fi.close();
+			
+			CopyOfLevel col = new CopyOfLevel();
+			int totalLevels=lvlDATA.length/col.lvlLen;
+			
+			for (int i = 1; i <= totalLevels; i++) {
+				col.loadLevel(i);
+			}
+			
+			System.out.println(col.totNoviceLevels);
+			System.out.println(col.totEasyLevels);
+			System.out.println(col.totMediumLevels);
+			System.out.println(col.totHardLevels);
+			System.out.println(col.totDeadlyLevels);
+			
+			byte[] outputLvlData =  new byte[col.lvlLen*400];
+			System.arraycopy(col.noviceLvlData, 0, outputLvlData, 0, col.lvlLen*100);
+			System.arraycopy(col.easyLvlData, 0, outputLvlData, col.lvlLen*100, col.lvlLen*100);
+			System.arraycopy(col.mediumLvlData, 0, outputLvlData, col.lvlLen*200, col.lvlLen*100);
+			System.arraycopy(col.hardLvlData, 0, outputLvlData, col.lvlLen*300, col.lvlLen*50);
+			System.arraycopy(col.deadlyLvlData, 0, outputLvlData, col.lvlLen*350, col.lvlLen*50);
+
+			
+			FileOutputStream fo = new FileOutputStream("data\\output.lvl");
+//			fo.write(col.noviceLvlData);
+//			fo.write(col.easyLvlData);
+//			fo.write(col.mediumLvlData);
+//			fo.write(col.hardLvlData);
+//			fo.write(col.deadlyLvlData);
+			fo.write(outputLvlData);
+			fo.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 }

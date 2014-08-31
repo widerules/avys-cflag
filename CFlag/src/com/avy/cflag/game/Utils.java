@@ -114,7 +114,7 @@ public class Utils {
 		gameOPTS.getMusicTrack().loadAndPlay();
 	}
 
-	public static Difficulty getDifficulty(int inDcltyValue) {
+	public static Difficulty getDifficultyByVal(int inDcltyValue) {
 		Difficulty outDclty = null;
 
 		for (final Difficulty curDclty : Difficulty.values()) {
@@ -123,6 +123,10 @@ public class Utils {
 			}
 		}
 		return outDclty;
+	}
+	
+	public static Difficulty getDifficultyByIdx(int indexValue) {
+		return getDifficultyByVal((int)Math.round(Math.pow(2, indexValue)) * 10);
 	}
 
 	public static PlayImages getPlayImage(int inFieldId) {
