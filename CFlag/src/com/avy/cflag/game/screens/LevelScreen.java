@@ -402,8 +402,9 @@ public class LevelScreen extends BackScreen {
 				}
 				@Override
 				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-					if(printLevelData && !event.getTarget().getName().equalsIgnoreCase("thumbnail")){
-						swingInThumbnail();
+					if(printLevelData){
+						if(!(event.getTarget().getName()!=null && event.getTarget().getName().equalsIgnoreCase("thumbnail")))
+							swingInThumbnail();
 					}
 					return true;
 				}
