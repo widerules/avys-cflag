@@ -1,16 +1,6 @@
 package com.avy.cflag.game.screens;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.forever;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.rotateBy;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import static com.badlogic.gdx.math.Interpolation.*;
 
 import com.avy.cflag.game.CFlagGame;
@@ -29,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.RemoveAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 
@@ -84,9 +75,10 @@ public class LevelScreen extends BackScreen {
 	private float dragEndX;
 	private boolean dragInProgress;
 	
-	private boolean printText;
+	private boolean printLevelData;
 	
 	private Image thumbnail;
+	private Image clickedNumButton;
 	
 	public LevelScreen(CFlagGame game) {
 		super(game, true, true, false);
@@ -107,7 +99,7 @@ public class LevelScreen extends BackScreen {
 		selectDclty = 0;
 		curPage=0;
 		
-		printText = false;
+		printLevelData = false;
 		dragStartX = 0;
 		dragEndX = 0;
 		dragInProgress = false;
@@ -311,31 +303,10 @@ public class LevelScreen extends BackScreen {
 								@Override
 								public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 									Group tmp = (Group)event.getListenerActor();
-									Image buttonDown = (Image)tmp.findActor("buttonDown");
-									buttonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
-									thumbnail = new Image(g.getThumbTexRegion(1));
-									thumbnail.setPosition(buttonDown.getX(),buttonDown.getY());
-									thumbnail.setOrigin(thumbnail.getWidth() / 2, thumbnail.getHeight() / 2);
-									float tempWidth = thumbnail.getWidth();
-									float tempHeight = thumbnail.getHeight();
-									thumbnail.setSize(buttonDown.getWidth(), buttonDown.getHeight());
-									dcltyNumGroup[selectDclty].addAction(alpha(0.1f));
-									leftButtonGroup.addAction(alpha(0.1f));
-									rightButtonGroup.addAction(alpha(0.1f));
-
-									dcltyNumGroup[selectDclty].setTouchable(Touchable.disabled);
-									dcltyButtonGroup.setTouchable(Touchable.disabled);
-									leftButtonGroup.setTouchable(Touchable.disabled);
-									rightButtonGroup.setTouchable(Touchable.disabled);
-									
-									playStr.addAction(visible(true));
-									playAgainStr.addAction(visible(false));
-									midButtonGroup.addAction(sequence(alpha(0), visible(true), fadeIn(1f)));
-									thumbnail.addAction(parallel(forever(rotateBy(1f)),sizeTo(tempWidth,tempHeight,1f),moveTo((topBar.getWidth()-tempWidth)/2, (480-tempHeight)/2,1f,swingOut)));
+									clickedNumButton = (Image)tmp.findActor("buttonDown");
+									clickedNumButton.addAction(sequence(fadeOut(0.2f), visible(false)));
 									selectedLevel = Integer.parseInt(tmp.getName());
-//									printText=true;
-									
-									stage.addActor(thumbnail);
+									swingOutThumbnail();
 								}
 							});
 						}
@@ -429,16 +400,27 @@ public class LevelScreen extends BackScreen {
 						swipeRight();
 					}
 				}
-
+				@Override
+				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+					if(printLevelData && !event.getTarget().getName().equalsIgnoreCase("thumbnail")){
+						swingInThumbnail();
+					}
+					return true;
+				}
+				
 				@Override
 				public boolean keyDown(InputEvent event, int keycode) {
-					if (keycode == Keys.BACK) {
-						argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
-							@Override
-							public void run() {
-								game.setScreen(new MenuScreen(game));
-							}
-						})));
+					if (keycode == Keys.BACK||keycode==Keys.ESCAPE) {
+						if(!printLevelData){
+							argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
+								@Override
+								public void run() {
+									game.setScreen(new MenuScreen(game));
+								}
+							})));
+						} else{
+							swingInThumbnail();
+						}
 					}
 					return true;
 				}
@@ -449,22 +431,22 @@ public class LevelScreen extends BackScreen {
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		if (printText) {
-			final LevelScore gScore = MemStore.userSCORE.getScores(selectedLevel);
-			final Level lvl = new Level();
-			lvl.loadLevel(selectedLevel);
-			batch.begin();
-			final String lvlDetails = "Level No      : " + (selectedLevel) + "\nLevel Name : " + lvl.getLvlName() + "\nDifficulty    : " + lvl.getLvlDclty().name() + "\n";
-			String scoreDetails = "";
-			if (gScore != null) {
-				scoreDetails = "Moves Played : " + gScore.getMoves() + "\nShots Fired    : " + gScore.getShots() + "\nHint Used       : " + (gScore.isHintUsed() ? "Yes" : "No");
-			} else {
-				scoreDetails = "Moves Played : 0\nShots Fired    : 0 \nHint Used       : No";
-			}
-			g.drawMultiLineString(lvlDetails, 200, 433, Color.BLACK);
-			g.drawMultiLineString(scoreDetails, 600, 433, Color.BLACK);
-			batch.end();
-		}
+//		if (printLevelData) {
+//			final LevelScore gScore = MemStore.userSCORE.getScores(selectedLevel);
+//			final Level lvl = new Level();
+//			lvl.loadLevel(selectedLevel);
+//			batch.begin();
+//			final String lvlDetails = "Level No      : " + (selectedLevel) + "\nLevel Name : " + lvl.getLvlName() + "\nDifficulty    : " + lvl.getLvlDclty().name() + "\n";
+//			String scoreDetails = "";
+//			if (gScore != null) {
+//				scoreDetails = "Moves Played : " + gScore.getMoves() + "\nShots Fired    : " + gScore.getShots() + "\nHint Used       : " + (gScore.isHintUsed() ? "Yes" : "No");
+//			} else {
+//				scoreDetails = "Moves Played : 0\nShots Fired    : 0 \nHint Used       : No";
+//			}
+//			g.drawMultiLineString(lvlDetails, 200, 433, Color.BLACK);
+//			g.drawMultiLineString(scoreDetails, 600, 433, Color.BLACK);
+//			batch.end();
+//		}
 	}
 
 	@Override
@@ -546,4 +528,54 @@ public class LevelScreen extends BackScreen {
 		}
 	}
 	
+	public void swingOutThumbnail(){
+		thumbnail = new Image(g.getThumbTexRegion(1));
+		thumbnail.setPosition(clickedNumButton.getX(), clickedNumButton.getY());
+		thumbnail.setOrigin(thumbnail.getWidth() / 2, thumbnail.getHeight() / 2);
+		thumbnail.setName("thumbnail");
+		float tempWidth = thumbnail.getWidth();
+		float tempHeight = thumbnail.getHeight();
+		thumbnail.setSize(clickedNumButton.getWidth(),clickedNumButton.getHeight());
+		stage.addActor(thumbnail);
+		thumbnail.addAction(parallel(forever(rotateBy(1f)),sizeTo(tempWidth,tempHeight,1f),moveTo((topBar.getWidth()-tempWidth)/2, (480-tempHeight)/2,1f,swingOut)));
+		
+		dcltyNumGroup[selectDclty].addAction(alpha(0.1f));
+		leftButtonGroup.addAction(alpha(0f));
+		rightButtonGroup.addAction(alpha(0f));
+
+		dcltyNumGroup[selectDclty].setTouchable(Touchable.disabled);
+		dcltyButtonGroup.setTouchable(Touchable.disabled);
+		leftButtonGroup.setTouchable(Touchable.disabled);
+		rightButtonGroup.setTouchable(Touchable.disabled);
+		
+		playStr.addAction(visible(true));
+		playAgainStr.addAction(visible(false));
+		midButtonGroup.addAction(sequence(alpha(0), visible(true), fadeIn(1f)));
+		
+		printLevelData=true;
+	}
+	
+	public void swingInThumbnail(){
+		thumbnail.setOrigin(clickedNumButton.getWidth() / 2, clickedNumButton.getWidth() / 2);
+		thumbnail.clearActions();
+		thumbnail.addAction(sequence(parallel(repeat(40,rotateBy(-1f)),sizeTo(clickedNumButton.getWidth(),clickedNumButton.getHeight(),1f),moveTo(clickedNumButton.getX(),clickedNumButton.getY(),1f,swingIn)),fadeOut(0.2f),visible(false), run(new Runnable() {
+			@Override
+			public void run() {
+				thumbnail.remove();
+			}
+		})));
+		dcltyNumGroup[selectDclty].addAction(alpha(1f));
+		leftButtonGroup.addAction(alpha(1f));
+		rightButtonGroup.addAction(alpha(1f));
+
+		dcltyNumGroup[selectDclty].setTouchable(Touchable.enabled);
+		dcltyButtonGroup.setTouchable(Touchable.enabled);
+		leftButtonGroup.setTouchable(Touchable.enabled);
+		rightButtonGroup.setTouchable(Touchable.enabled);
+		
+		playStr.addAction(visible(false));
+		playAgainStr.addAction(visible(false));
+		midButtonGroup.addAction(sequence(fadeOut(1f), visible(false), alpha(1f)));
+		printLevelData=false;
+	}
 }
