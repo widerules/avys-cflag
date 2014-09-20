@@ -147,7 +147,7 @@ public class MenuScreen extends BackScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							game.setScreen(new PlayScreen(game,true));
+//							game.setScreen(new PlayScreen(game,true));
 							return false;
 						}
 					}));

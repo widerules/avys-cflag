@@ -2,7 +2,10 @@ package com.avy.cflag.base;
 
 import com.avy.cflag.game.CFlagGame;
 import com.avy.cflag.game.Constants;
+import com.avy.cflag.game.MemStore.Difficulty;
+import com.avy.cflag.game.utils.SaveThumbs;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
@@ -80,8 +84,13 @@ public class Graphics {
 		return imgArr;
 	}
 
-	public TextureRegion getThumbTexRegion(int levelNo) {
-		final TextureRegion textureRegion = new TextureRegion(new Texture(PixmapIO.readCIM(Gdx.files.external("Android/data/" + CFlagGame.packageName + "/thumbs/level" + levelNo + ".png"))), 100, 100);
+	public TextureRegion getThumbTexRegion(Difficulty dclty, int levelNo) {
+		FileHandle fh = Gdx.files.external("Android/data/" + CFlagGame.packageName + "/thumbs/" + dclty.name() + levelNo + ".png");
+		if(!fh.exists()){
+			SaveThumbs st = new SaveThumbs(dclty, levelNo);
+			st.createThumb();
+		}
+		final TextureRegion textureRegion = new TextureRegion(new Texture(PixmapIO.readCIM(fh)), 100, 100);
 		textureRegion.flip(false, true);
 		return textureRegion;
 	}
@@ -143,6 +152,13 @@ public class Graphics {
 		return ss;
 	}
 
+	public TextFieldStyle getTextBoxrStyle() {
+		final TextFieldStyle ts = new TextFieldStyle();
+		ts.font = font;
+		ts.fontColor = Color.WHITE;
+		return ts;
+	}
+	
 	public void drawRectWithBorder(Rect rect, Color color) {
 		sr.setColor(Color.BLACK);
 		sr.rect(rect.left - 1, rect.top - 1, rect.right - rect.left + 1, rect.bottom - rect.top + 1);
