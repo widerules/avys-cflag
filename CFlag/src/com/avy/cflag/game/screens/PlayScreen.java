@@ -10,7 +10,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 import com.avy.cflag.base.BaseScreen;
 import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.CFlagGame;
-import com.avy.cflag.game.MemStore;
+import com.avy.cflag.game.MemStore.Difficulty;
 import com.avy.cflag.game.MemStore.Direction;
 import com.avy.cflag.game.MemStore.GameState;
 import com.avy.cflag.game.MemStore.PlayImages;
@@ -40,6 +40,8 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private int currentLevel;
+	private Difficulty currentDclty;
+	
 	private GameState gameState;
 	private Level lvl;
 	private Platform pltfrm;
@@ -95,25 +97,26 @@ public class PlayScreen extends BaseScreen {
 	
 	private GameButtons pressedButton;
 	
-	public PlayScreen(CFlagGame game, boolean isResume) {
+	public PlayScreen(CFlagGame game, boolean isResume, Difficulty selectedDclty, int selectedLevel) {
 		super(game, true,true,true);
 		
 		playAtlas = g.createImageAtlas("play");
 		g.setImageAtlas(playAtlas);
 
 		if(!isResume){
-			currentLevel = MemStore.userSCORE.getCurrentLevel();
+			currentDclty=selectedDclty;
+			currentLevel = selectedLevel;
 			gameState = GameState.Ready;
 	
 			if(currentLevel==0){
 				currentLevel=1;
-				Utils.saveUserScores(currentLevel, 0, 0, false);
-				SaveThumbs st = new SaveThumbs(g, currentLevel);
+				Utils.saveUserScores(currentDclty,currentLevel, 0, 0, false);
+				SaveThumbs st = new SaveThumbs(g, currentDclty, currentLevel);
 				st.run();
 			}
 			
 			lvl = new Level();
-			lvl.loadLevel(currentLevel);
+			lvl.loadLevel(currentDclty,currentLevel);
 			
 			ltank = new LTank(lvl);
 			
@@ -125,6 +128,7 @@ public class PlayScreen extends BaseScreen {
 			stateChanged=false;
 		} else {
 			GameData savedGame = Utils.loadGame();
+			currentDclty = savedGame.getCurrentDclty();
 			currentLevel=savedGame.getCurrentLevel();
 			gameState=GameState.Running;
 			lvl=savedGame.getLvl();
@@ -503,11 +507,11 @@ public class PlayScreen extends BaseScreen {
 				game.setScreen(new MenuScreen(game));
 				break;
 			case Restart:
-				game.setScreen(new PlayScreen(game,false));
+				game.setScreen(new PlayScreen(game,false,currentDclty,currentLevel));
 				break;
 			case NextLevel:
 				saveScores();
-				game.setScreen(new PlayScreen(game,false));
+				game.setScreen(new PlayScreen(game,false,currentDclty,currentLevel));
 				break;
 			default:
 				break;
@@ -625,12 +629,12 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void saveScores(){
-		Utils.saveUserScores(currentLevel, ltank.getTankMoves(), ltank.getTankShots(), hintUsed);
-		SaveThumbs st1 = new SaveThumbs(g, currentLevel);
+		Utils.saveUserScores(currentDclty, currentLevel, ltank.getTankMoves(), ltank.getTankShots(), hintUsed);
+		SaveThumbs st1 = new SaveThumbs(g, currentDclty, currentLevel);
 		st1.run();
 		currentLevel++;
-		Utils.saveUserScores(currentLevel, 0,0,false);
-		SaveThumbs st2 = new SaveThumbs(g, currentLevel);
+		Utils.saveUserScores(currentDclty, currentLevel, 0,0,false);
+		SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel);
 		st2.run();
 	}
 	

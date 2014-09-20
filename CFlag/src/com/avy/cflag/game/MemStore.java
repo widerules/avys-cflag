@@ -19,32 +19,43 @@ import com.badlogic.gdx.utils.Array;
 
 public class MemStore {
 	
-	public static byte[] lvlDATA=null;
-	
-	public static UserScore userSCORE=null;
-	
-	public static GameOpts gameOPTS=null;
-	
+	public static final Point lvlFieldLEN = new Point(16,16);
+	public static final int lvlFieldDataLEN = lvlFieldLEN.x * lvlFieldLEN.y;
+	public static final int lvlNameLEN = 31;
+	public static final int lvlHintLEN = 256;
+	public static final int lvlAuthorLEN = 31;
+	public static final int lvlDcltyLEN = 2;
+	public static final int lvlLEN = lvlFieldDataLEN + lvlNameLEN + lvlHintLEN + lvlAuthorLEN + lvlDcltyLEN;
+
 	public static enum Difficulty {
-			Novice(10), 
-			Easy(20), 
-			Medium(40), 
-			Hard(80), 
-			Deadly(160);
-		
+		Novice(10), 
+		Easy(20), 
+		Medium(40), 
+		Hard(80), 
+		Deadly(160);
+	
 		public final int dcltyValue;
 		
 		Difficulty(int inDcltyValue){
 			this.dcltyValue = inDcltyValue;
 		}
+		
+		public static int length(){
+			return Difficulty.values().length;
+		}
 	};
 	
-	public static final Point lvlFieldLEN = new Point(16,16);
+	public static byte[][] lvlDataPerDCLTY= new byte[Difficulty.length()][];
+	public static int lvlCntPerDCLTY[] = new int[Difficulty.length()];
+	
+	public static UserScore userSCORE=null;
+	public static GameOpts gameOPTS=null;
+
 	public static Point pltfrmStartPOS = null;
 	public static Point pltfrmLEN = null;
 	public static final Point playImageOrigLEN = new Point(30,30);
 	public static Point playImageScaledLEN = null;
-
+	
 	public static enum PlayImages {
 		Grass(0,1f,NORMAL),
 		Hero_U(1,0.2f,LOOP),

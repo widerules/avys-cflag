@@ -1,22 +1,13 @@
 package com.avy.cflag.game.elements;
 
+import static com.avy.cflag.game.MemStore.*;
+
 import com.avy.cflag.base.Point;
-import com.avy.cflag.game.MemStore;
-import com.avy.cflag.game.MemStore.Difficulty;
-import com.avy.cflag.game.MemStore.PlayImages;
 import com.avy.cflag.game.Utils;
 
 public class Level {
 
-	private final byte[] lvlData = MemStore.lvlDATA;
-
-	private final Point lvlFieldLen = MemStore.lvlFieldLEN;
-	private final int lvlFieldTotalLen = lvlFieldLen.x * lvlFieldLen.y;
-	private final int lvlNameLen = 31;
-	private final int lvlHintLen = 256;
-	private final int lvlAuthorLen = 31;
-	private final int lvlDcltyLen = 2;
-	private final int lvlLen = lvlFieldTotalLen + lvlNameLen + lvlHintLen + lvlAuthorLen + lvlDcltyLen;
+	private byte[] lvlData;
 
 	private int lvlNum;
 	private PlayImages[][] lvlBaseField;
@@ -30,28 +21,31 @@ public class Level {
 
 	public Level() {
 		lvlNum = 1;
-		lvlBaseField = new PlayImages[lvlFieldLen.x][lvlFieldLen.y];
-		lvlPlayField = new PlayImages[lvlFieldLen.x][lvlFieldLen.y];
+		lvlData = new byte[lvlLEN];
+		lvlBaseField = new PlayImages[lvlFieldLEN.x][lvlFieldLEN.y];
+		lvlPlayField = new PlayImages[lvlFieldLEN.x][lvlFieldLEN.y];
 		lvlDclty = Difficulty.Easy;
 	}
 
-	public void loadLevel(int inLvlNum) {
+	public void loadLevel(Difficulty inLvlDclty, int inLvlNum) {
 
 		lvlNum = inLvlNum;
-
-		final char[] tmpLvlName = new char[lvlNameLen];
-		final char[] tmpLvlAuthor = new char[lvlAuthorLen];
-		final char[] tmpLvlHint = new char[lvlHintLen];
-		final int[] tmpLvlDclty = new int[lvlDcltyLen];
+		lvlDclty = inLvlDclty;
+		lvlData = lvlDataPerDCLTY[inLvlDclty.ordinal()];
+		
+		final char[] tmpLvlName = new char[lvlNameLEN];
+		final char[] tmpLvlAuthor = new char[lvlAuthorLEN];
+		final char[] tmpLvlHint = new char[lvlHintLEN];
+		final int[] tmpLvlDclty = new int[lvlDcltyLEN];
 
 		int lvlStrt, lvlPlayFieldStrt, lvlPlayFieldEnd, lvlNameStrt, lvlNameEnd, lvlHintStrt, lvlHintEnd, lvlAuthorStrt, lvlAuthorEnd, lvlDcltyStrt, lvlDcltyEnd, lvlEnd;
 
-		lvlStrt = lvlPlayFieldStrt = (lvlNum - 1) * lvlLen;
-		lvlPlayFieldEnd = lvlNameStrt = lvlPlayFieldStrt + lvlFieldTotalLen;
-		lvlNameEnd = lvlHintStrt = lvlNameStrt + lvlNameLen;
-		lvlHintEnd = lvlAuthorStrt = lvlHintStrt + lvlHintLen;
-		lvlAuthorEnd = lvlDcltyStrt = lvlAuthorStrt + lvlAuthorLen;
-		lvlDcltyEnd = lvlEnd = lvlDcltyStrt + lvlDcltyLen;
+		lvlStrt = lvlPlayFieldStrt = (lvlNum - 1) * lvlLEN;
+		lvlPlayFieldEnd = lvlNameStrt = lvlPlayFieldStrt + lvlFieldDataLEN;
+		lvlNameEnd = lvlHintStrt = lvlNameStrt + lvlNameLEN;
+		lvlHintEnd = lvlAuthorStrt = lvlHintStrt + lvlHintLEN;
+		lvlAuthorEnd = lvlDcltyStrt = lvlAuthorStrt + lvlAuthorLEN;
+		lvlDcltyEnd = lvlEnd = lvlDcltyStrt + lvlDcltyLEN;
 
 		int r = 0, c = 0;
 
@@ -108,24 +102,6 @@ public class Level {
 		lvlHint = (new String(tmpLvlHint)).trim();
 		lvlDclty = Utils.getDifficultyByVal(Integer.parseInt(tmpLvlDclty[0] + "" + tmpLvlDclty[1]));
 
-	}
-
-	public void increaseLevel() {
-		if (lvlNum < 100) {
-			lvlNum++;
-		} else {
-			lvlNum = 1;
-		}
-		loadLevel(lvlNum);
-	}
-
-	public void decreaseLevel() {
-		if (lvlNum > 1) {
-			lvlNum--;
-		} else {
-			lvlNum = 1;
-		}
-		loadLevel(lvlNum);
 	}
 
 	public PlayImages[][] getLvlBaseField() {

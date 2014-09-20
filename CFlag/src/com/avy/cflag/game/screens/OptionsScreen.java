@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public class OptionsScreen extends BackScreen {
@@ -40,27 +41,34 @@ public class OptionsScreen extends BackScreen {
 	private Image discardButtonDown;
 	private Image discardStr;
 	private Group discardButtonGroup;
+
+	private Image enterNameStr;
+	private TextField profileName;
+	
+	private Image profileStr;
+	private Image profileLeft, ProfileRight;
+	private Image newButtonUp, newButtonDown;
+	private Image delButtonUp, delButtonDown;
+	private Group newButtonGroup, delButtonGroup;
 	
 	private Image soundStr;
+	private CheckBox sound;
+	
 	private Image soundVolumeStr;
+	private Slider soundVolume;
+	
 	private Image musicStr;
+	private CheckBox music;
+	
 	private Image musicVolumeStr;
-	private Image musicTrackStr;
-	private Image difficultyStr;
-	private Image swipeToPlayStr;
+	private Slider musicVolume;
 
+	private Image musicTrackStr;
 	private Image trackLeft, trackRight;
 	private Image[] trackStr;
 	private Group trackGroup;
-	
-	private Image noviceStr, easyStr, mediumStr, hardStr, deadlyStr;
-	private CheckBox novice, easy, medium, hard, deadly;
-	private Group dcltyGroup;
 
-	private CheckBox sound;
-	private Slider soundVolume;
-	private CheckBox music;
-	private Slider musicVolume;
+	private Image swipeToPlayStr;
 	private CheckBox swipeEnabled;
 	
 	private GameOpts gOpts;
@@ -69,7 +77,7 @@ public class OptionsScreen extends BackScreen {
 		super(game, true,false,false);
 		
 		optionsAtlas = g.createImageAtlas("options");
-		font = g.createFont("salsa", 13);
+		font = g.createFont("salsa", 22);
 		
 		trackStr = new Image[Musics.values().length];
 		
@@ -98,13 +106,32 @@ public class OptionsScreen extends BackScreen {
 		discardButtonDown.setVisible(false);
 
 		g.setImageAtlas(optionsAtlas);
+		
 		titleStr = new Image(g.getFlipTexRegion("title"));
 		titleStr.setPosition((topBar.getWidth() - titleStr.getWidth()) / 2, (topBar.getHeight() - titleStr.getHeight()) / 2);
+		
 		saveStr = new Image(g.getFlipTexRegion("save"));
 		saveStr.setPosition(saveButtonUp.getX(),saveButtonUp.getY());
+		
 		discardStr = new Image(g.getFlipTexRegion("discard"));
 		discardStr.setPosition(discardButtonUp.getX(),discardButtonUp.getY());
 
+		enterNameStr = new Image(g.getFlipTexRegion("entername"));
+		
+		enterNameStr.setPosition(game.getSrcWidth(), game.getSrcHeight());
+		
+		profileStr = new Image(g.getFlipTexRegion("userprofile"));
+		profileLeft = new Image(g.getFlipTexRegion("strokeleft"));
+		ProfileRight = new Image(g.getFlipTexRegion("strokeright"));
+
+		newButtonUp = new Image(g.getFlipTexRegion("newbuttonup"));
+		newButtonDown = new Image(g.getFlipTexRegion("newbuttonDown"));
+		newButtonGroup = new Group();
+
+		delButtonUp = new Image(g.getFlipTexRegion("delButtonup"));
+		delButtonDown = new Image(g.getFlipTexRegion("delButtonDown"));
+		delButtonGroup = new Group();
+		
 		soundStr = new Image(g.getFlipTexRegion("sound"));
 		soundVolumeStr = new Image(g.getFlipTexRegion("soundvolume"));
 		musicStr = new Image(g.getFlipTexRegion("music"));
@@ -112,14 +139,6 @@ public class OptionsScreen extends BackScreen {
 		musicTrackStr = new Image(g.getFlipTexRegion("musictrack"));
 		trackLeft = new Image(g.getFlipTexRegion("strokeleft"));
 		trackRight = new Image(g.getFlipTexRegion("strokeright"));
-
-		difficultyStr = new Image(g.getFlipTexRegion("difficulty"));
-		noviceStr = new Image(g.getFlipTexRegion("novice"));
-		easyStr = new Image(g.getFlipTexRegion("easy"));
-		mediumStr = new Image(g.getFlipTexRegion("medium"));
-		hardStr = new Image(g.getFlipTexRegion("hard"));
-		deadlyStr = new Image(g.getFlipTexRegion("deadly"));
-		
 		swipeToPlayStr = new Image(g.getFlipTexRegion("swipetoplay"));
 
 		int trackNo = 0;
@@ -145,6 +164,8 @@ public class OptionsScreen extends BackScreen {
 			trackNo++;
 		}
 	
+		
+		
 		sound = new CheckBox("", g.getCheckBoxStyle());
 		sound.setChecked(gOpts.isSoundOn());
 
@@ -157,30 +178,14 @@ public class OptionsScreen extends BackScreen {
 		musicVolume = new Slider(0f, 1f, 0.1f, false, g.getSliderStyle());
 		musicVolume.setValue(gOpts.getMusicVolume());
 		
+		textBox = new TextField("", g.getTextBoxrStyle());
+		
 		swipeEnabled = new CheckBox("", g.getCheckBoxStyle());
 		swipeEnabled.setChecked(gOpts.isSwipeMove());
 
-		novice = new CheckBox("", g.getCheckBoxStyle());
-		novice.setChecked(gOpts.difficultyExists(Difficulty.Novice));
-		novice.setName(Difficulty.Novice.name());
-		
-		easy = new CheckBox("", g.getCheckBoxStyle());
-		easy.setChecked(gOpts.difficultyExists(Difficulty.Easy));
-		easy.setName(Difficulty.Easy.name());
-
-		medium = new CheckBox("", g.getCheckBoxStyle());
-		medium.setChecked(gOpts.difficultyExists(Difficulty.Medium));
-		medium.setName(Difficulty.Medium.name());
-
-		hard = new CheckBox("", g.getCheckBoxStyle());
-		hard.setChecked(gOpts.difficultyExists(Difficulty.Hard));
-		hard.setName(Difficulty.Hard.name());
-		
-		deadly = new CheckBox("", g.getCheckBoxStyle());
-		deadly.setChecked(gOpts.difficultyExists(Difficulty.Deadly));
-		deadly.setName(Difficulty.Deadly.name());
-
 		int x=80, y=75, yw=60;
+		textBox.setPosition(x, y=y+yw);
+		
 		soundStr.setPosition(x, y=y+yw);
 		sound.setPosition(x+160,  y);
 		soundVolumeStr.setPosition(x+340, y);
@@ -200,37 +205,12 @@ public class OptionsScreen extends BackScreen {
 		swipeToPlayStr.setPosition(x+340, y);
 		swipeEnabled.setPosition(x+500,  y);
 
-		x=80;
-		difficultyStr.setPosition(x, y=y+yw);
-		novice.setPosition(x+160, y);
-		noviceStr.setPosition(x+180, y);
-		easy.setPosition(x+260, y);
-		easyStr.setPosition(x+272, y);
-		medium.setPosition(x+342, y);
-		mediumStr.setPosition(x+371, y);
-		hard.setPosition(x+455, y);
-		hardStr.setPosition(x+472, y);
-		deadly.setPosition(x+540, y);
-		deadlyStr.setPosition(x+561, y);
-
 		trackGroup = new Group();
 		trackGroup.addActor(trackLeft);
 		for (Image trkStr : trackStr) {
 			trackGroup.addActor(trkStr);
 		}
 		trackGroup.addActor(trackRight);
-
-		dcltyGroup = new Group();
-		dcltyGroup.addActor(noviceStr);
-		dcltyGroup.addActor(easyStr);
-		dcltyGroup.addActor(mediumStr);
-		dcltyGroup.addActor(hardStr);
-		dcltyGroup.addActor(deadlyStr);
-		dcltyGroup.addActor(novice);
-		dcltyGroup.addActor(easy);
-		dcltyGroup.addActor(medium);
-		dcltyGroup.addActor(hard);
-		dcltyGroup.addActor(deadly);
 
 		saveButtonGroup = new Group();
 		saveButtonGroup.addActor(saveButtonUp);
@@ -242,22 +222,23 @@ public class OptionsScreen extends BackScreen {
 		discardButtonGroup.addActor(discardButtonDown);
 		discardButtonGroup.addActor(discardStr);
 
+		textBox.setVisible(true);
+		
 		stage.addActor(titleStr);
 		stage.addActor(saveButtonGroup);
 		stage.addActor(discardButtonGroup);
+		stage.addActor(textBox);
 		stage.addActor(soundStr);
 		stage.addActor(soundVolumeStr);
 		stage.addActor(musicStr);
 		stage.addActor(musicVolumeStr);
 		stage.addActor(musicTrackStr);
-		stage.addActor(difficultyStr);
 		stage.addActor(swipeToPlayStr);
 		stage.addActor(sound);
 		stage.addActor(soundVolume);
 		stage.addActor(music);
 		stage.addActor(musicVolume);
 		stage.addActor(trackGroup);
-		stage.addActor(dcltyGroup);
 		stage.addActor(swipeEnabled);
 		stage.addActor(argbFull);
 
@@ -293,36 +274,6 @@ public class OptionsScreen extends BackScreen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				gOpts.setSwipeMove(((CheckBox)actor).isChecked());
-			}
-		});
-		novice.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				changeDifficulty(actor);
-			}
-		});
-		easy.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				changeDifficulty(actor);
-			}
-		});
-		medium.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				changeDifficulty(actor);
-			}
-		});
-		hard.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				changeDifficulty(actor);
-			}
-		});
-		deadly.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				changeDifficulty(actor);
 			}
 		});
 

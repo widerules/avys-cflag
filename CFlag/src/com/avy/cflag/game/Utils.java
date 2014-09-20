@@ -8,8 +8,14 @@ import static com.avy.cflag.game.Constants.SAVE_GAME_TAG_NAME;
 import static com.avy.cflag.game.Constants.SCORE_PREF_FILE_NAME;
 import static com.avy.cflag.game.Constants.SCORE_PREF_TAG_NAME;
 import static com.avy.cflag.game.MemStore.gameOPTS;
-import static com.avy.cflag.game.MemStore.lvlDATA;
+import static com.avy.cflag.game.MemStore.lvlAuthorLEN;
+import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
+import static com.avy.cflag.game.MemStore.lvlDataPerDCLTY;
+import static com.avy.cflag.game.MemStore.lvlFieldDataLEN;
 import static com.avy.cflag.game.MemStore.lvlFieldLEN;
+import static com.avy.cflag.game.MemStore.lvlHintLEN;
+import static com.avy.cflag.game.MemStore.lvlLEN;
+import static com.avy.cflag.game.MemStore.lvlNameLEN;
 import static com.avy.cflag.game.MemStore.playImageScaledLEN;
 import static com.avy.cflag.game.MemStore.pltfrmStartPOS;
 import static com.avy.cflag.game.MemStore.userSCORE;
@@ -35,9 +41,29 @@ public class Utils {
 	public static void loadLevelData() {
 		try {
 			final InputStream fi = Gdx.files.internal(LVL_FILE_NAME).read();
-			lvlDATA = new byte[fi.available()];
-			fi.read(lvlDATA);
+			byte inData[] = new byte[fi.available()];
+			fi.read(inData);
 			fi.close();
+			
+			String lvlDataPerDclty[] = new String[Difficulty.length()];
+			
+			int totLvls = inData.length/lvlLEN;
+			int dcltyPos = lvlFieldDataLEN + lvlNameLEN + lvlHintLEN + lvlAuthorLEN;
+			for (int i = 0; i < totLvls; i++) {
+				byte[] curLvlData = new byte[lvlLEN];
+				Difficulty curDclty = Utils.getDifficultyByVal(Integer.parseInt(new Integer(inData[i*lvlLEN+dcltyPos]) + "" + new Integer(inData[i*lvlLEN +dcltyPos+1])));
+				lvlCntPerDCLTY[curDclty.ordinal()]++;
+				System.arraycopy(inData, i*lvlLEN, curLvlData, 0, lvlLEN);
+				if(lvlDataPerDclty[curDclty.ordinal()]==null)
+					lvlDataPerDclty[curDclty.ordinal()]="";
+				lvlDataPerDclty[curDclty.ordinal()]=lvlDataPerDclty[curDclty.ordinal()] + new String(curLvlData);
+			}
+			
+			for (int i = 0; i < Difficulty.length(); i++) {
+				lvlDataPerDCLTY[i] = new byte[lvlDataPerDclty[i].length()];
+				lvlDataPerDCLTY[i] = lvlDataPerDclty[i].getBytes();
+			}
+				
 		} catch (final Exception e) {
 			throw new RuntimeException("Error Reading Level Data File");
 		}
@@ -53,15 +79,13 @@ public class Utils {
 		}
 	}
 
-	public static void saveUserScores(int levelNo, int movesPlayed, int shotsTriggered, boolean hintUsed) {
+	public static void saveUserScores(Difficulty dclty, int levelNo, int movesPlayed, int shotsTriggered, boolean hintUsed) {
 		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintUsed);
-		if (levelNo <= userSCORE.getMaxPlayedLevel()) {
-			userSCORE.setCurrentLevel(levelNo);
-			userSCORE.updateScores(currentScore);
+		if (levelNo <= userSCORE.getMaxPlayedLevel(dclty)) {
+			userSCORE.updateScores(dclty,currentScore);
 		} else {
-			userSCORE.setMaxPlayedLevel(levelNo);
-			userSCORE.setCurrentLevel(levelNo);
-			userSCORE.addScores(currentScore);
+			userSCORE.setMaxPlayedLevel(dclty,levelNo);
+			userSCORE.addScores(dclty,currentScore);
 		}
 		final Json jsn = new Json();
 		final Preferences pr = Gdx.app.getPreferences(SCORE_PREF_FILE_NAME);

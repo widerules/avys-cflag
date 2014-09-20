@@ -1,10 +1,12 @@
 package com.avy.cflag.game.utils;
 
+import com.avy.cflag.game.MemStore.Difficulty;
 import com.avy.cflag.game.MemStore.GameState;
 import com.avy.cflag.game.elements.LTank;
 import com.avy.cflag.game.elements.Level;
 
 public class GameData {
+	private Difficulty currentDclty;
 	private int currentLevel;
 	private GameState gameState;
 	private Level lvl;
@@ -14,6 +16,14 @@ public class GameData {
 	private boolean hintUsed;
 	private boolean stateChanged;
 
+	public Difficulty getCurrentDclty() {
+		return currentDclty;
+	}
+	
+	public void setCurrentDclty(Difficulty currentDclty) {
+		this.currentDclty = currentDclty;
+	}
+	
 	public int getCurrentLevel() {
 		return currentLevel;
 	}

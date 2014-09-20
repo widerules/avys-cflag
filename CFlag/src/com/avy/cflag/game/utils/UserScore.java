@@ -2,54 +2,52 @@ package com.avy.cflag.game.utils;
 
 import java.util.ArrayList;
 
+import static com.avy.cflag.game.MemStore.*;
+
 
 public class UserScore {
-	private int currentLevel;
-	private int maxPlayedLevel;
-	private ArrayList<LevelScore> scores;
+	private int maxPlayedLevel[];
+	private ArrayList<LevelScore> scores[];
 	
+	@SuppressWarnings("unchecked")
 	public UserScore() {
-		currentLevel=0;
-		maxPlayedLevel=0;
-		scores = new ArrayList<LevelScore>();
+		maxPlayedLevel=new int[Difficulty.length()];
+		scores = (ArrayList<LevelScore>[])new ArrayList[Difficulty.length()];
+		for (int i = 0; i < maxPlayedLevel.length; i++) {
+			maxPlayedLevel[i]=1;
+			scores[i] = new ArrayList<LevelScore>();
+		}
 	}
 	
-	public int getCurrentLevel() {
-		return currentLevel;
+	public int getMaxPlayedLevel(Difficulty dclty) {
+		return maxPlayedLevel[dclty.ordinal()];
 	}
 
-	public void setCurrentLevel(int currentLevel) {
-		this.currentLevel = currentLevel;
+	public void setMaxPlayedLevel(Difficulty dclty,int maxPlayedLevel) {
+		this.maxPlayedLevel[dclty.ordinal()] = maxPlayedLevel;
 	}
 
-	public int getMaxPlayedLevel() {
-		return maxPlayedLevel;
-	}
-
-	public void setMaxPlayedLevel(int maxPlayedLevel) {
-		this.maxPlayedLevel = maxPlayedLevel;
-	}
-
-	public ArrayList<LevelScore> getScores() {
-		return scores;
-	}
-	public void setScores(ArrayList<LevelScore> scores) {
-		this.scores = scores;
+	public ArrayList<LevelScore> getScores(Difficulty dclty) {
+		return scores[dclty.ordinal()];
 	}
 	
-	public void addScores(LevelScore score){
-		scores.add(score);
-	}
-
-	public void updateScores(LevelScore score){
-		scores.set(score.getLevelNo()-1, score);
+	public void setScores(Difficulty dclty,ArrayList<LevelScore> scores) {
+		this.scores[dclty.ordinal()] = scores;
 	}
 	
-	public LevelScore getScores(int levelNo){
-		if(levelNo<scores.size())
-			return scores.get(levelNo);
+	public void addScores(Difficulty dclty,LevelScore score){
+		scores[dclty.ordinal()].add(score);
+	}
+
+	public void updateScores(Difficulty dclty,LevelScore score){
+		scores[dclty.ordinal()].set(score.getLevelNo()-1, score);
+	}
+	
+	public LevelScore getScores(Difficulty dclty,int levelNo){
+		if(levelNo<scores[dclty.ordinal()].size())
+			return scores[dclty.ordinal()].get(levelNo);
 		else
-			return null;
+			return new LevelScore();
 	}
 }
 
