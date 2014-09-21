@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -42,9 +43,11 @@ public class Graphics {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public BitmapFont createFont(String fontName, int fontSize){
+	public BitmapFont createFont(String fontName, int fontSize, boolean flipped){
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/"+ fontName + ".ttf"));
-		BitmapFont fnt = generator.generateFont(fontSize, FreeTypeFontGenerator.DEFAULT_CHARS, true);
+		BitmapFont fnt = generator.generateFont(fontSize, FreeTypeFontGenerator.DEFAULT_CHARS, flipped?true:false);
+		if(!flipped)
+			fnt.setScale(1, -1);
 		generator.dispose();
 		return fnt;
 	}
@@ -136,11 +139,11 @@ public class Graphics {
 		font.drawMultiLine(batch, txt, x - tb.width / 2, y - tb.height / 2);
 	}
 
-	public CheckBoxStyle getCheckBoxStyle() {
+	public CheckBoxStyle getCheckBoxStyle(String fontName, int fontSize) {
 		final CheckBoxStyle cs = new CheckBoxStyle();
 		cs.checkboxOff = new TextureRegionDrawable(getFlipTexRegion("checkboxoff"));
 		cs.checkboxOn = new TextureRegionDrawable(getFlipTexRegion("checkboxon"));
-		cs.font = font;
+		cs.font = createFont(fontName, fontSize, false);
 		cs.fontColor = Color.RED;
 		return cs;
 	}
@@ -152,11 +155,23 @@ public class Graphics {
 		return ss;
 	}
 
-	public TextFieldStyle getTextBoxrStyle() {
+	public TextFieldStyle getTextBoxStyle(String fontName, int fontSize) {
 		final TextFieldStyle ts = new TextFieldStyle();
-		ts.font = font;
+		ts.background = new TextureRegionDrawable(getFlipTexRegion("textfieldbase"));
+		ts.background.setLeftWidth(10);
+		ts.background.setRightWidth(10);
+		ts.cursor = new TextureRegionDrawable(getFlipTexRegion("cursor"));
+		ts.selection = new TextureRegionDrawable(getFlipTexRegion("cursor"));
+		ts.font = createFont(fontName, fontSize, false);
 		ts.fontColor = Color.WHITE;
 		return ts;
+	}
+	
+	public LabelStyle getLabelStyle(String fontName, int fontSize){
+		final LabelStyle ls = new LabelStyle();
+		ls.font = createFont(fontName, fontSize, false);
+		ls.fontColor = Color.WHITE;
+		return ls;
 	}
 	
 	public void drawRectWithBorder(Rect rect, Color color) {

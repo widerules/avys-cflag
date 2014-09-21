@@ -1,7 +1,7 @@
 package com.avy.cflag.game.screens;
 
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
-import static com.avy.cflag.game.MemStore.userSCORE;
+import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.badlogic.gdx.math.Interpolation.swingIn;
 import static com.badlogic.gdx.math.Interpolation.swingOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
@@ -98,7 +98,7 @@ public class LevelScreen extends BackScreen {
 		}
 
 		levelAtlas = g.createImageAtlas("levelselect");
-		scoreFont = g.createFont("salsa", 13);
+		scoreFont = g.createFont("salsa", 13, true);
 		
 		selectedDclty = Difficulty.Novice;
 		curPage=0;
@@ -299,7 +299,7 @@ public class LevelScreen extends BackScreen {
 								lockStr.setPosition(numButtonUp.getX(),numButtonUp.getY());
 								numButtonGroup.addActor(lockStr);
 								
-								if(l<=userSCORE.getMaxPlayedLevel(dclty)){
+								if(l<=curUserSCORE.getMaxPlayedLevel(dclty)){
 									numStrGroup.setVisible(true);
 									lockStr.setVisible(false);
 								} else {
@@ -316,7 +316,7 @@ public class LevelScreen extends BackScreen {
 										Image buttonDown = (Image)tmp.findActor("buttonDown");
 										buttonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
 										selectedLevel = Integer.parseInt(tmp.getName());
-										if(selectedLevel>userSCORE.getMaxPlayedLevel(selectedDclty)){
+										if(selectedLevel>curUserSCORE.getMaxPlayedLevel(selectedDclty)){
 											//todo
 										}
 										return true;
@@ -328,7 +328,7 @@ public class LevelScreen extends BackScreen {
 										clickedNumButton = (Image)tmp.findActor("buttonDown");
 										clickedNumButton.addAction(sequence(fadeOut(0.2f), visible(false)));
 										selectedLevel = Integer.parseInt(tmp.getName());
-										if(selectedLevel<=userSCORE.getMaxPlayedLevel(selectedDclty)){
+										if(selectedLevel<=curUserSCORE.getMaxPlayedLevel(selectedDclty)){
 											swingOutThumbnail();
 										}
 									}
@@ -376,7 +376,7 @@ public class LevelScreen extends BackScreen {
 				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 					@Override
 					public void run() {
-						game.setScreen(new PlayScreen(game,false,selectedDclty,selectedLevel));
+						game.setScreen(new PlayScreen(game,selectedDclty,selectedLevel));
 					}
 				})));
 			}
@@ -410,7 +410,7 @@ public class LevelScreen extends BackScreen {
 			}
 		});
 
-		if (MemStore.gameOPTS.isSwipeMove()) {
+		if (MemStore.curUserOPTS.isSwipeMove()) {
 			stage.addListener(new DragListener() {
 				@Override
 				public void dragStart(InputEvent event, float x, float y, int pointer) {
@@ -464,7 +464,7 @@ public class LevelScreen extends BackScreen {
 	public void render(float delta) {
 		super.render(delta);
 		if (printLevelData) {
-			final LevelScore gScore = MemStore.userSCORE.getScores(selectedDclty,selectedLevel);
+			final LevelScore gScore = MemStore.curUserSCORE.getScores(selectedDclty,selectedLevel);
 			final Level lvl = new Level();
 			lvl.loadLevel(selectedDclty,selectedLevel);
 			batch.begin();
@@ -582,7 +582,7 @@ public class LevelScreen extends BackScreen {
 		leftButtonGroup.setTouchable(Touchable.disabled);
 		rightButtonGroup.setTouchable(Touchable.disabled);
 		
-		if(selectedLevel<userSCORE.getMaxPlayedLevel(selectedDclty)){
+		if(selectedLevel<curUserSCORE.getMaxPlayedLevel(selectedDclty)){
 			playStr.addAction(visible(false));
 			playAgainStr.addAction(visible(true));
 		} else {

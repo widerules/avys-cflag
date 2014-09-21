@@ -3,6 +3,7 @@ package com.avy.cflag.game;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +12,8 @@ import com.avy.cflag.base.AnimDrawable;
 import com.avy.cflag.base.Graphics;
 import com.avy.cflag.base.ImageRegion;
 import com.avy.cflag.base.Point;
-import com.avy.cflag.game.utils.GameOpts;
+import com.avy.cflag.game.utils.UserList;
+import com.avy.cflag.game.utils.UserOptions;
 import com.avy.cflag.game.utils.UserScore;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -48,9 +50,10 @@ public class MemStore {
 	public static byte[][] lvlDataPerDCLTY= new byte[Difficulty.length()][];
 	public static int lvlCntPerDCLTY[] = new int[Difficulty.length()];
 	
-	public static UserScore userSCORE=null;
-	public static GameOpts gameOPTS=null;
-
+	public static UserList userLIST = null;
+	public static UserScore curUserSCORE=null;
+	public static UserOptions curUserOPTS = null;
+	
 	public static Point pltfrmStartPOS = null;
 	public static Point pltfrmLEN = null;
 	public static final Point playImageOrigLEN = new Point(30,30);

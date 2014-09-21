@@ -88,7 +88,7 @@ public class MenuScreen extends BackScreen {
 		hero.setPosition(0, 354);
 		hero.setOrigin(hero.getWidth() / 2, hero.getHeight() / 2);
 
-		if (MemStore.gameOPTS.isFirstRun()) {
+		if (MemStore.curUserOPTS.isFirstRun()) {
 			resume.setVisible(false);
 		} else {
 			newGame.setVisible(false);
@@ -114,7 +114,7 @@ public class MenuScreen extends BackScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				if (Utils.inBoundsRect(new Point((int) x, (int) y), 28, 225, 156, 190, 166, 242, 40, 275)) {
-					if (MemStore.gameOPTS.isFirstRun()) {
+					if (MemStore.curUserOPTS.isFirstRun()) {
 						ngamePressed = true;
 					} else {
 						resumePressed = true;
@@ -147,7 +147,7 @@ public class MenuScreen extends BackScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-//							game.setScreen(new PlayScreen(game,true));
+							game.setScreen(new PlayScreen(game));
 							return false;
 						}
 					}));

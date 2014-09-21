@@ -1,47 +1,66 @@
 package com.avy.cflag.game.utils;
 
-import java.util.ArrayList;
-
 import com.avy.cflag.base.Musics;
-import com.avy.cflag.game.MemStore;
-import com.avy.cflag.game.MemStore.Difficulty;
 
-public class GameOpts {
+public class UserOptions {
+	private String userName;
 	private boolean firstRun;
+	private boolean gameSaved;
 	private boolean soundOn;
 	private boolean musicOn;
 	private float musicVolume;
 	private float soundVolume;
 	private Musics musicTrack;
 	private boolean swipeMove;
-	private ArrayList<Difficulty> selectedDclties;
 
-	public GameOpts() {
+	public UserOptions() {
+		userName = "Default";
 		firstRun=true;
+		gameSaved=false;
 		soundOn = true;
 		musicOn = true;
 		soundVolume = 0.3f;
 		musicVolume = 0.3f;
 		musicTrack = Musics.track1;
 		swipeMove = false;
-		selectedDclties = new ArrayList<MemStore.Difficulty>();
-		for (final MemStore.Difficulty curDclty : MemStore.Difficulty.values()) {
-			selectedDclties.add(curDclty);
-		}
+	}
+
+	public UserOptions(String inUserName) {
+		userName = inUserName;
+		firstRun=true;
+		gameSaved=false;
+		soundOn = true;
+		musicOn = true;
+		soundVolume = 0.3f;
+		musicVolume = 0.3f;
+		musicTrack = Musics.track1;
+		swipeMove = false;
 	}
 	
-	public void setGameOpts(GameOpts gOpts){
+	public void setGameOpts(UserOptions gOpts){
+		userName = gOpts.userName;
 		firstRun=gOpts.firstRun;
+		gameSaved=gOpts.gameSaved;
 		soundOn=gOpts.soundOn;
 		musicOn=gOpts.musicOn;
 		musicVolume=gOpts.musicVolume;
 		soundVolume=gOpts.soundVolume;
 		musicTrack=gOpts.musicTrack;
 		swipeMove=gOpts.swipeMove;
-		selectedDclties=new ArrayList<MemStore.Difficulty>();
-		for (Difficulty dclty : gOpts.selectedDclties) {
-			selectedDclties.add(dclty);
-		}
+	}
+
+	public UserOptions clone() {
+		UserOptions uo = new UserOptions();
+		uo.setGameOpts(this);
+		return uo;
+	}
+	
+	public String getUserName() {
+		return userName;
+	}
+	
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 	public boolean isFirstRun() {
@@ -50,6 +69,14 @@ public class GameOpts {
 	
 	public void setFirstRun(boolean firstRun) {
 		this.firstRun = firstRun;
+	}
+
+	public boolean isGameSaved() {
+		return gameSaved;
+	}
+	
+	public void setGameSaved(boolean gameSaved) {
+		this.gameSaved = gameSaved;
 	}
 	
 	public boolean isSoundOn() {
@@ -100,19 +127,4 @@ public class GameOpts {
 		this.swipeMove = swipeMove;
 	}
 
-	public void addDifficulty(Difficulty dclty) {
-		selectedDclties.add(dclty);
-	}
-
-	public void removeDifficulty(Difficulty dclty) {
-		selectedDclties.remove(dclty);
-	}
-
-	public boolean difficultyExists(Difficulty dclty) {
-		return selectedDclties.contains(dclty);
-	}
-
-	public ArrayList<Difficulty> getSelectedDclties() {
-		return selectedDclties;
-	}
 }

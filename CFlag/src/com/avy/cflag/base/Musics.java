@@ -40,7 +40,7 @@ public enum Musics {
 			}
 		} else {
 			if(Musics.enabled){
-				MemStore.gameOPTS.getMusicTrack().loadAndPlay();
+				MemStore.curUserOPTS.getMusicTrack().loadAndPlay();
 			}
 		}
 	}

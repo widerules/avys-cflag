@@ -10,6 +10,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
 import com.avy.cflag.game.CFlagGame;
 import com.avy.cflag.game.MemStore;
+import com.avy.cflag.game.MemStore.Difficulty;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -56,7 +57,7 @@ public class HelpScreen extends BackScreen {
 
 		helpAtlas = g.createImageAtlas("help");
 
-		if (MemStore.gameOPTS.isFirstRun()) {
+		if (MemStore.curUserOPTS.isFirstRun()) {
 			totalHelpPages = 5;
 		} else {
 			totalHelpPages = 4;
@@ -133,7 +134,7 @@ public class HelpScreen extends BackScreen {
 
 		helpPageGroup = new Group();
 		for (int i = 0; i < totalHelpPages; i++) {
-			if (MemStore.gameOPTS.isFirstRun()) {
+			if (MemStore.curUserOPTS.isFirstRun()) {
 				helpPages[i] = new Image(g.getFlipTexRegion("page" + i));
 			} else {
 				helpPages[i] = new Image(g.getFlipTexRegion("page" + (i + 1)));
@@ -194,7 +195,7 @@ public class HelpScreen extends BackScreen {
 					@Override
 					public void run() {
 						if(context.equalsIgnoreCase("firstplay"))
-							game.setScreen(new PlayScreen(game,false));
+							game.setScreen(new PlayScreen(game,Difficulty.Novice,1));
 						else
 							game.setScreen(new MenuScreen(game));
 					}
@@ -202,7 +203,7 @@ public class HelpScreen extends BackScreen {
 			}
 		});
 
-		if (MemStore.gameOPTS.isSwipeMove()) {
+		if (MemStore.curUserOPTS.isSwipeMove()) {
 			stage.addListener(new DragListener() {
 				@Override
 				public void dragStart(InputEvent event, float x, float y, int pointer) {
