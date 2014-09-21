@@ -7,7 +7,7 @@ import static com.avy.cflag.game.Constants.SAVE_GAME_FILE_NAME;
 import static com.avy.cflag.game.Constants.SAVE_GAME_TAG_NAME;
 import static com.avy.cflag.game.Constants.SCORE_PREF_FILE_NAME;
 import static com.avy.cflag.game.Constants.SCORE_PREF_TAG_NAME;
-import static com.avy.cflag.game.MemStore.gameOPTS;
+import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.lvlAuthorLEN;
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
 import static com.avy.cflag.game.MemStore.lvlDataPerDCLTY;
@@ -18,7 +18,8 @@ import static com.avy.cflag.game.MemStore.lvlLEN;
 import static com.avy.cflag.game.MemStore.lvlNameLEN;
 import static com.avy.cflag.game.MemStore.playImageScaledLEN;
 import static com.avy.cflag.game.MemStore.pltfrmStartPOS;
-import static com.avy.cflag.game.MemStore.userSCORE;
+import static com.avy.cflag.game.MemStore.curUserSCORE;
+import static com.avy.cflag.game.MemStore.userLIST;
 
 import java.io.InputStream;
 
@@ -29,7 +30,8 @@ import com.avy.cflag.game.MemStore.Difficulty;
 import com.avy.cflag.game.MemStore.Direction;
 import com.avy.cflag.game.MemStore.PlayImages;
 import com.avy.cflag.game.utils.GameData;
-import com.avy.cflag.game.utils.GameOpts;
+import com.avy.cflag.game.utils.UserList;
+import com.avy.cflag.game.utils.UserOptions;
 import com.avy.cflag.game.utils.LevelScore;
 import com.avy.cflag.game.utils.UserScore;
 import com.badlogic.gdx.Gdx;
@@ -69,33 +71,52 @@ public class Utils {
 		}
 	}
 
+	public static void loadGameOptions() {
+		final Preferences pr = Gdx.app.getPreferences(OPTIONS_PREF_FILE_NAME);
+		final String jsonStr = pr.getString(OPTIONS_PREF_TAG_NAME);
+		final Json jsn = new Json();
+		userLIST = new UserList();
+		curUserOPTS = new UserOptions();
+		if (jsonStr != "") {
+			userLIST = jsn.fromJson(UserList.class, jsonStr);
+			curUserOPTS = userLIST.getCurrentUserOptions();
+		}
+	}
+
+	public static void saveGameOptions() {
+		final Json jsn = new Json();
+		final Preferences pr = Gdx.app.getPreferences(OPTIONS_PREF_FILE_NAME);
+		pr.putString(OPTIONS_PREF_TAG_NAME, jsn.toJson(userLIST));
+		pr.flush();
+	}
+
 	public static void loadUserScores() {
-		final Preferences pr = Gdx.app.getPreferences(SCORE_PREF_FILE_NAME);
+		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SCORE_PREF_FILE_NAME);
 		final String jsonStr = pr.getString(SCORE_PREF_TAG_NAME);
 		final Json jsn = new Json();
-		userSCORE = new UserScore();
+		curUserSCORE = new UserScore();
 		if (jsonStr != "") {
-			userSCORE = jsn.fromJson(UserScore.class, jsonStr);
+			curUserSCORE = jsn.fromJson(UserScore.class, jsonStr);
 		}
 	}
 
 	public static void saveUserScores(Difficulty dclty, int levelNo, int movesPlayed, int shotsTriggered, boolean hintUsed) {
 		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintUsed);
-		if (levelNo <= userSCORE.getMaxPlayedLevel(dclty)) {
-			userSCORE.updateScores(dclty,currentScore);
+		if (levelNo <= curUserSCORE.getMaxPlayedLevel(dclty)) {
+			curUserSCORE.updateScores(dclty,currentScore);
 		} else {
-			userSCORE.setMaxPlayedLevel(dclty,levelNo);
-			userSCORE.addScores(dclty,currentScore);
+			curUserSCORE.setMaxPlayedLevel(dclty,levelNo);
+			curUserSCORE.addScores(dclty,currentScore);
 		}
 		final Json jsn = new Json();
-		final Preferences pr = Gdx.app.getPreferences(SCORE_PREF_FILE_NAME);
-		pr.putString(SCORE_PREF_TAG_NAME, jsn.toJson(userSCORE));
+		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SCORE_PREF_FILE_NAME);
+		pr.putString(SCORE_PREF_TAG_NAME, jsn.toJson(curUserSCORE));
 		pr.flush();
 	}
 	
 	public static GameData loadGame(){
-		final Preferences pr = Gdx.app.getPreferences(SAVE_GAME_FILE_NAME);
-		final String jsonStr = pr.getString(SAVE_GAME_FILE_NAME);
+		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
+		final String jsonStr = pr.getString(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
 		final Json jsn = new Json();
 		if (jsonStr != "") {
 			return(jsn.fromJson(GameData.class, jsonStr));
@@ -105,37 +126,20 @@ public class Utils {
 
 	public static void saveGame(GameData gData){
 		final Json jsn = new Json();
-		final Preferences pr = Gdx.app.getPreferences(SAVE_GAME_FILE_NAME);
+		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
 		pr.putString(SAVE_GAME_TAG_NAME, jsn.toJson(gData));
 		pr.flush();
 		
 	}
 	
-	public static void loadGameOptions() {
-		final Preferences pr = Gdx.app.getPreferences(OPTIONS_PREF_FILE_NAME);
-		final String jsonStr = pr.getString(OPTIONS_PREF_TAG_NAME);
-		final Json jsn = new Json();
-		gameOPTS = new GameOpts();
-		if (jsonStr != "") {
-			gameOPTS = jsn.fromJson(GameOpts.class, jsonStr);
-		}
-	}
-
-	public static void saveGameOptions() {
-		final Json jsn = new Json();
-		final Preferences pr = Gdx.app.getPreferences(OPTIONS_PREF_FILE_NAME);
-		pr.putString(OPTIONS_PREF_TAG_NAME, jsn.toJson(gameOPTS));
-		pr.flush();
-	}
-
 	public static void loadGameAudio() {
-		Sounds.setState(gameOPTS.isSoundOn());
-		Sounds.setVolume(gameOPTS.getSoundVolume());
+		Sounds.setState(curUserOPTS.isSoundOn());
+		Sounds.setVolume(curUserOPTS.getSoundVolume());
 		Sounds.loadAll();
 
-		Musics.setState(gameOPTS.isMusicOn());
-		Musics.setVolume(gameOPTS.getMusicVolume());
-		gameOPTS.getMusicTrack().loadAndPlay();
+		Musics.setState(curUserOPTS.isMusicOn());
+		Musics.setVolume(curUserOPTS.getMusicVolume());
+		curUserOPTS.getMusicTrack().loadAndPlay();
 	}
 
 	public static Difficulty getDifficultyByVal(int inDcltyValue) {

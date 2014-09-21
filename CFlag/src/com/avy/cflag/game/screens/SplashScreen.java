@@ -44,8 +44,8 @@ public class SplashScreen extends BaseScreen {
 			@Override
 			public boolean act(float delta) {
 				Utils.loadLevelData();
-				Utils.loadUserScores();
 				Utils.loadGameOptions();
+				Utils.loadUserScores();
 				Utils.loadGameAudio();
 				return true;
 			}
