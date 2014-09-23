@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-public class ShortMenu extends Group{
+public class ShortMenu extends Group {
 	private Image menuArgb;
 	private Image menuBase;
 	private Image menuHeading;

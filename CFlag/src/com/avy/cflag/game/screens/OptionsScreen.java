@@ -122,10 +122,10 @@ public class OptionsScreen extends BackScreen {
 		okButtonDown = new Image(g.getFlipTexRegion("okbuttondown"));
 		newnameResult = new Label("", g.getLabelStyle("salsa", 12));
 
-		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + okButtonUp.getWidth() + 20)) / 2, (game.getSrcHeight() - enterNameStr.getHeight()) / 2);
+		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + okButtonUp.getWidth() + 20)) / 2, (game.getSrcHeight() - enterNameStr.getHeight()) / 2 - 80);
 		nameField.setMaxLength(10);
-		nameField.setPosition(enterNameStr.getX() + enterNameStr.getWidth(), (game.getSrcHeight() - nameField.getHeight()) / 2);
-		okButtonUp.setPosition(enterNameStr.getX() + enterNameStr.getWidth() + nameField.getWidth() + 20, (game.getSrcHeight() - okButtonUp.getHeight()) / 2);
+		nameField.setPosition(enterNameStr.getX() + enterNameStr.getWidth(), (game.getSrcHeight() - nameField.getHeight()) / 2 - 80);
+		okButtonUp.setPosition(enterNameStr.getX() + enterNameStr.getWidth() + nameField.getWidth() + 20, (game.getSrcHeight() - okButtonUp.getHeight()) / 2 - 80);
 		okButtonDown.setPosition(okButtonUp.getX(), okButtonUp.getY());
 		okButtonDown.setVisible(false);
 		newnameResult.setWidth(200);
@@ -522,32 +522,22 @@ public class OptionsScreen extends BackScreen {
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
-				if (keycode == Keys.BACK) {
-					argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
-						@Override
-						public void run() {
-							game.setScreen(new MenuScreen(game));
-						}
-					})));
+				if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
+					if(enterNameGroup.isVisible()) {
+						optionsGroup.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
+						enterNameGroup.addAction(sequence(fadeOut(0.1f), visible(false)));
+					} else {
+						argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
+							@Override
+							public void run() {
+								game.setScreen(new MenuScreen(game));
+							}
+						})));
+					}
 				}
 				return true;
 			}
 		});
-	}
-
-	@Override
-	public void render(float delta) {
-		super.render(delta);
-	}
-
-	@Override
-	public void pause() {
-		super.pause();
-	}
-
-	@Override
-	public void resume() {
-		super.resume();
 	}
 
 	@Override
@@ -558,12 +548,9 @@ public class OptionsScreen extends BackScreen {
 	}
 
 	public void applyUserOptions() {
-
 		profileName.setText(curUserOPTS.getUserName());
-
 		music.setChecked(curUserOPTS.isMusicOn());
 		Musics.setState(curUserOPTS.isMusicOn());
-
 		for (int i = 0; i < trackStr.length; i++) {
 			if (curUserOPTS.getMusicTrack().name() == trackStr[i].getName()) {
 				trackStr[i].setVisible(true);
@@ -572,16 +559,12 @@ public class OptionsScreen extends BackScreen {
 				trackStr[i].setVisible(false);
 			}
 		}
-
 		musicVolume.setValue(curUserOPTS.getMusicVolume());
 		Musics.setVolume(curUserOPTS.getMusicVolume());
-
 		sound.setChecked(curUserOPTS.isSoundOn());
 		Sounds.setState(curUserOPTS.isSoundOn());
-
 		soundVolume.setValue(curUserOPTS.getSoundVolume());
 		Sounds.setVolume(curUserOPTS.getSoundVolume());
 		swipeEnabled.setChecked(curUserOPTS.isSwipeMove());
 	}
-
 }

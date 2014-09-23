@@ -34,12 +34,12 @@ public class ErrorHandler implements UncaughtExceptionHandler {
 		}
 
 		report = report + "-------------------------------\n\n";
-		
+
 		Gdx.app.error("CFLAG", report);
-		
+
 		FileHandle fh = Gdx.files.external("Android/data/" + CFlagGame.packageName + "/Trace/StackTrace.log");
 		fh.writeString(report, false);
 		Gdx.app.exit();
-		//TODO - Create a screen to display error and send bug report
+		// TODO - Create a screen to display error and send bug report
 	}
 }

@@ -11,14 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
-public class MenuHero  extends Action{
-	
+public class MenuHero extends Action {
+
 	Actor menuHero;
-	
+
 	public MenuHero(Actor menuHero) {
-		this.menuHero =menuHero;
+		this.menuHero = menuHero;
 	}
-	
+
 	@Override
 	public boolean act(float delta) {
 		final SequenceAction sequence = new SequenceAction();

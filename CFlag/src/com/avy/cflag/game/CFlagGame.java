@@ -9,28 +9,28 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-public class CFlagGame extends Game{
-	
+public class CFlagGame extends Game {
+
 	public static String packageName;
-	
-	private final float srcWidth=800;
-	private final float srcHeight=480;
-	
-	private final ErrorHandler eh =new ErrorHandler();
+
+	private final float srcWidth = 800;
+	private final float srcHeight = 480;
+
+	private final ErrorHandler eh = new ErrorHandler();
 	private OrthographicCamera camera;
-	
+
 	public CFlagGame() {
-		packageName=this.getClass().getPackage().getName();
+		packageName = this.getClass().getPackage().getName();
 	}
-			
+
 	@Override
 	public void create() {
 		Thread.setDefaultUncaughtExceptionHandler(eh);
 		Gdx.app.setLogLevel(Application.LOG_INFO);
 
-		camera= new OrthographicCamera(srcWidth, srcHeight);
-		camera.setToOrtho(true);	
-		
+		camera = new OrthographicCamera(srcWidth, srcHeight);
+		camera.setToOrtho(true);
+
 		setScreen(new SplashScreen(this));
 	}
 
@@ -46,7 +46,7 @@ public class CFlagGame extends Game{
 		return camera;
 	}
 
-	public void exitGame(){
+	public void exitGame() {
 		Musics.dispose();
 		Sounds.dispose();
 		Gdx.app.exit();

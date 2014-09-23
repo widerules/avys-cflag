@@ -45,7 +45,7 @@ public class BackScreen extends BaseScreen {
 		argbFull = new Image(g.getFlipTexRegion("argbblack"));
 		argbFull.setPosition(0, 0);
 		argbFull.setSize(game.getSrcWidth(), game.getSrcHeight());
-		
+
 		topBar = new Image(g.getFlipTexRegion("topbar"));
 		midBar = new Image(g.getFlipTexRegion("midbar"));
 		argbMid = new Image(g.getFlipTexRegion("argbblack"));
@@ -68,28 +68,13 @@ public class BackScreen extends BaseScreen {
 
 		cloudImage1.addAction(new Cloud(cloudImage1, cloudAnimDirection));
 		cloudImage2.addAction(new Cloud(cloudImage2, cloudAnimDirection));
-		
+
 		stage.addActor(cloudImage1);
 		stage.addActor(cloudImage2);
 		stage.addActor(topBar);
 		stage.addActor(midBar);
 		stage.addActor(bottomBar);
 		stage.addActor(argbMid);
-	}
-
-	@Override
-	public void render(float delta) {
-		super.render(delta);
-	}
-
-	@Override
-	public void pause() {
-		super.pause();
-	}
-
-	@Override
-	public void resume() {
-		super.resume();
 	}
 
 	@Override

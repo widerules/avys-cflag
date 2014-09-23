@@ -1,5 +1,7 @@
 package com.avy.cflag.game.screens;
 
+import static com.avy.cflag.game.MemStore.curUserOPTS;
+import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
@@ -8,10 +10,8 @@ import com.avy.cflag.base.AnimActor;
 import com.avy.cflag.base.AnimDrawable;
 import com.avy.cflag.base.Point;
 import com.avy.cflag.game.CFlagGame;
-import com.avy.cflag.game.MemStore;
 import com.avy.cflag.game.Utils;
 import com.avy.cflag.game.graphics.MenuHero;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -88,7 +88,7 @@ public class MenuScreen extends BackScreen {
 		hero.setPosition(0, 354);
 		hero.setOrigin(hero.getWidth() / 2, hero.getHeight() / 2);
 
-		if (MemStore.curUserOPTS.isFirstRun()) {
+		if (curUserOPTS.isFirstRun()) {
 			resume.setVisible(false);
 		} else {
 			newGame.setVisible(false);
@@ -114,7 +114,7 @@ public class MenuScreen extends BackScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				if (Utils.inBoundsRect(new Point((int) x, (int) y), 28, 225, 156, 190, 166, 242, 40, 275)) {
-					if (MemStore.curUserOPTS.isFirstRun()) {
+					if (curUserOPTS.isFirstRun()) {
 						ngamePressed = true;
 					} else {
 						resumePressed = true;
@@ -138,7 +138,7 @@ public class MenuScreen extends BackScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							game.setScreen(new HelpScreen(game,"firstplay"));
+							game.setScreen(new HelpScreen(game, "newgame"));
 							return false;
 						}
 					}));
@@ -147,7 +147,10 @@ public class MenuScreen extends BackScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							game.setScreen(new PlayScreen(game));
+							if (curUserOPTS.isGameSaved())
+								game.setScreen(new PlayScreen(game));
+							else
+								game.setScreen(new PlayScreen(game, curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty())));
 							return false;
 						}
 					}));
@@ -156,7 +159,10 @@ public class MenuScreen extends BackScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							game.setScreen(new LevelScreen(game));
+							if(curUserOPTS.isFirstRun())
+								game.setScreen(new HelpScreen(game, "levelselect"));
+							else
+								game.setScreen(new LevelScreen(game,true));
 							return false;
 						}
 					}));
@@ -174,7 +180,7 @@ public class MenuScreen extends BackScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							game.setScreen(new HelpScreen(game,"help"));
+							game.setScreen(new HelpScreen(game, "help"));
 							return false;
 						}
 					}));
@@ -183,21 +189,20 @@ public class MenuScreen extends BackScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							Gdx.app.exit();
+							game.exitGame();
 							return false;
 						}
 					}));
-
 				}
 			}
 
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
-				if (keycode == Keys.BACK) {
+				if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							Gdx.app.exit();
+							game.exitGame();
 							return false;
 						}
 					}));
@@ -205,21 +210,6 @@ public class MenuScreen extends BackScreen {
 				return true;
 			}
 		});
-	}
-
-	@Override
-	public void render(float delta) {
-		super.render(delta);
-	}
-
-	@Override
-	public void pause() {
-		super.pause();
-	}
-
-	@Override
-	public void resume() {
-		super.resume();
 	}
 
 	@Override

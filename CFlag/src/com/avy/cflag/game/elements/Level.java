@@ -1,8 +1,17 @@
 package com.avy.cflag.game.elements;
 
-import static com.avy.cflag.game.MemStore.*;
+import static com.avy.cflag.game.MemStore.lvlAuthorLEN;
+import static com.avy.cflag.game.MemStore.lvlDataPerDCLTY;
+import static com.avy.cflag.game.MemStore.lvlDcltyLEN;
+import static com.avy.cflag.game.MemStore.lvlFieldDataLEN;
+import static com.avy.cflag.game.MemStore.lvlFieldLEN;
+import static com.avy.cflag.game.MemStore.lvlHintLEN;
+import static com.avy.cflag.game.MemStore.lvlLEN;
+import static com.avy.cflag.game.MemStore.lvlNameLEN;
 
 import com.avy.cflag.base.Point;
+import com.avy.cflag.game.MemStore.Difficulty;
+import com.avy.cflag.game.MemStore.PlayImages;
 import com.avy.cflag.game.Utils;
 
 public class Level {
@@ -32,7 +41,7 @@ public class Level {
 		lvlNum = inLvlNum;
 		lvlDclty = inLvlDclty;
 		lvlData = lvlDataPerDCLTY[inLvlDclty.ordinal()];
-		
+
 		final char[] tmpLvlName = new char[lvlNameLEN];
 		final char[] tmpLvlAuthor = new char[lvlAuthorLEN];
 		final char[] tmpLvlHint = new char[lvlHintLEN];

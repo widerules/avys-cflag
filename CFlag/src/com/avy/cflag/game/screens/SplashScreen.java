@@ -23,13 +23,13 @@ public class SplashScreen extends BaseScreen {
 	public SplashScreen(CFlagGame game) {
 		super(game, true, false, false);
 		isRunning = true;
-		imageAtlas=g.createImageAtlas("splash");
+		imageAtlas = g.createImageAtlas("splash");
 	}
 
 	@Override
 	public void show() {
 		super.show();
-		
+
 		g.setImageAtlas(imageAtlas);
 		splashImage = new Image(g.getFlipTexRegion("background"));
 		splashImage.rotateBy(90);
@@ -60,7 +60,7 @@ public class SplashScreen extends BaseScreen {
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
-				if (keycode == Keys.BACK) {
+				if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
 					game.exitGame();
 				}
 				return true;
@@ -89,7 +89,8 @@ public class SplashScreen extends BaseScreen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if(imageAtlas!=null) imageAtlas.dispose();
+		if (imageAtlas != null)
+			imageAtlas.dispose();
 		splashImage = null;
 		titleImage = null;
 	}
