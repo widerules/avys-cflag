@@ -10,7 +10,7 @@ public class CFlagDesktop {
 		cfg.title = "CaptureTheFlag";
 		cfg.width = 800;
 		cfg.height = 480;
-		cfg.resizable=false;
+		cfg.resizable = false;
 		new LwjglApplication(new CFlagGame(), cfg);
 	}
 }

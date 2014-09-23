@@ -5,7 +5,7 @@ import com.avy.cflag.game.screens.PlayScreen;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-public class HintMenu extends Group{
+public class HintMenu extends Group {
 	private Image menuArgb;
 	private Image menuBase;
 	private Image menuHeading;
@@ -20,11 +20,11 @@ public class HintMenu extends Group{
 		menuBase = new Image(g.getFlipTexRegion("hintpanel"));
 		menuBase.setPosition((pScreen.game.getSrcWidth() - menuBase.getWidth()) / 2, (pScreen.game.getSrcHeight() - menuBase.getHeight()) / 2);
 		menuBase.setName("base");
-		
+
 		menuHeading = new Image(g.getFlipTexRegion(menuName + "str"));
 		menuHeading.setPosition(menuBase.getX() + (menuBase.getWidth() - menuHeading.getWidth()) / 2, menuBase.getY() + 20);
 		menuHeading.setName("heading");
-		
+
 		addActor(menuArgb);
 		addActor(menuBase);
 		addActor(menuHeading);

@@ -7,12 +7,12 @@ public class LevelScore {
 	private boolean hintUsed;
 
 	public LevelScore() {
-		levelNo=0;
-		moves=0;
-		shots=0;
-		hintUsed=false;
+		levelNo = 0;
+		moves = 0;
+		shots = 0;
+		hintUsed = false;
 	}
-	
+
 	public LevelScore(int levelNo, int moves, int shots, boolean hintUsed) {
 		this.levelNo = levelNo;
 		this.moves = moves;

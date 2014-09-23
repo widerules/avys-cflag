@@ -5,64 +5,106 @@ filter: Nearest,Nearest
 repeat: none
 page4
   rotate: false
-  xy: 1, 683
+  xy: 1, 715
   size: 740, 303
   orig: 740, 303
   offset: 0, 0
   index: -1
 page3
   rotate: false
-  xy: 1, 376
+  xy: 1, 408
   size: 737, 305
   orig: 737, 305
   offset: 0, 0
   index: -1
 page2
   rotate: false
-  xy: 743, 698
+  xy: 743, 730
   size: 737, 288
   orig: 737, 288
   offset: 0, 0
   index: -1
 page1
   rotate: false
-  xy: 1, 153
+  xy: 1, 185
   size: 756, 221
   orig: 756, 221
   offset: 0, 0
   index: -1
 page0
   rotate: false
-  xy: 1, 1
+  xy: 1, 33
   size: 756, 150
   orig: 756, 150
   offset: 0, 0
   index: -1
+ctf
+  rotate: false
+  xy: 1482, 953
+  size: 400, 65
+  orig: 400, 65
+  offset: 0, 0
+  index: -1
 title
   rotate: false
-  xy: 1482, 930
+  xy: 1482, 895
   size: 200, 56
   orig: 200, 56
   offset: 0, 0
   index: -1
+entername
+  rotate: false
+  xy: 1, 1
+  size: 200, 30
+  orig: 200, 30
+  offset: 0, 0
+  index: -1
+textfieldbase
+  rotate: false
+  xy: 1884, 978
+  size: 160, 40
+  orig: 160, 40
+  offset: 0, 0
+  index: -1
 back
   rotate: false
-  xy: 1482, 884
+  xy: 1482, 849
   size: 132, 44
   orig: 132, 44
   offset: 0, 0
   index: -1
 play
   rotate: false
-  xy: 1684, 942
+  xy: 1684, 907
   size: 132, 44
   orig: 132, 44
   offset: 0, 0
   index: -1
 skip
   rotate: false
-  xy: 1482, 838
+  xy: 1482, 803
   size: 132, 44
   orig: 132, 44
+  offset: 0, 0
+  index: -1
+okbuttondown
+  rotate: false
+  xy: 1482, 761
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+okbuttonup
+  rotate: false
+  xy: 1482, 719
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 1616, 853
+  size: 2, 40
+  orig: 2, 40
   offset: 0, 0
   index: -1

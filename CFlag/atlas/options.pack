@@ -1,201 +1,201 @@
 
-Options.png
+options.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 title
   rotate: false
-  xy: 1, 71
+  xy: 1, 7
   size: 200, 56
   orig: 200, 56
   offset: 0, 0
   index: -1
-discard
-  rotate: false
-  xy: 1, 25
-  size: 132, 44
-  orig: 132, 44
-  offset: 0, 0
-  index: -1
-sliderbase
-  rotate: false
-  xy: 1, 3
-  size: 120, 20
-  orig: 120, 20
-  offset: 0, 0
-  index: -1
-save
-  rotate: false
-  xy: 135, 25
-  size: 132, 44
-  orig: 132, 44
-  offset: 0, 0
-  index: -1
 textfieldbase
   rotate: false
-  xy: 203, 87
+  xy: 203, 23
   size: 160, 40
   orig: 160, 40
   offset: 0, 0
   index: -1
-delbuttondown
+sliderbase
   rotate: false
-  xy: 269, 45
-  size: 100, 40
-  orig: 100, 40
-  offset: 0, 0
-  index: -1
-delbuttonup
-  rotate: false
-  xy: 365, 87
-  size: 100, 40
-  orig: 100, 40
-  offset: 0, 0
-  index: -1
-newbuttondown
-  rotate: false
-  xy: 269, 3
-  size: 100, 40
-  orig: 100, 40
-  offset: 0, 0
-  index: -1
-newbuttonup
-  rotate: false
-  xy: 371, 45
-  size: 100, 40
-  orig: 100, 40
-  offset: 0, 0
-  index: -1
-okbuttondown
-  rotate: false
-  xy: 467, 87
-  size: 100, 40
-  orig: 100, 40
-  offset: 0, 0
-  index: -1
-okbuttonup
-  rotate: false
-  xy: 371, 3
-  size: 100, 40
-  orig: 100, 40
-  offset: 0, 0
-  index: -1
-cursor
-  rotate: false
-  xy: 473, 45
-  size: 2, 40
-  orig: 2, 40
-  offset: 0, 0
-  index: -1
-strokeleft
-  rotate: false
-  xy: 473, 8
-  size: 35, 35
-  orig: 35, 35
-  offset: 0, 0
-  index: -1
-strokeright
-  rotate: false
-  xy: 477, 50
-  size: 35, 35
-  orig: 35, 35
+  xy: 203, 1
+  size: 120, 20
+  orig: 120, 20
   offset: 0, 0
   index: -1
 entername
   rotate: false
-  xy: 510, 18
+  xy: 365, 33
   size: 200, 30
   orig: 200, 30
   offset: 0, 0
   index: -1
 music
   rotate: false
-  xy: 514, 55
+  xy: 365, 1
   size: 160, 30
   orig: 160, 30
   offset: 0, 0
   index: -1
 musictrack
   rotate: false
-  xy: 569, 97
+  xy: 527, 1
   size: 160, 30
   orig: 160, 30
   offset: 0, 0
   index: -1
 musicvolume
   rotate: false
-  xy: 676, 65
+  xy: 567, 33
   size: 160, 30
   orig: 160, 30
   offset: 0, 0
   index: -1
 sound
   rotate: false
-  xy: 731, 97
+  xy: 689, 1
   size: 160, 30
   orig: 160, 30
   offset: 0, 0
   index: -1
 soundvolume
   rotate: false
-  xy: 838, 65
+  xy: 729, 33
   size: 160, 30
   orig: 160, 30
   offset: 0, 0
   index: -1
-track1
-  rotate: false
-  xy: 893, 97
-  size: 80, 30
-  orig: 80, 30
-  offset: 0, 0
-  index: -1
-checkboxoff
-  rotate: false
-  xy: 975, 97
-  size: 30, 30
-  orig: 30, 30
-  offset: 0, 0
-  index: -1
 swipetoplay
   rotate: false
-  xy: 712, 33
+  xy: 851, 1
   size: 160, 30
   orig: 160, 30
   offset: 0, 0
   index: -1
 userprofile
   rotate: false
-  xy: 712, 1
+  xy: 891, 33
   size: 160, 30
   orig: 160, 30
   offset: 0, 0
   index: -1
+track1
+  rotate: false
+  xy: 1013, 1
+  size: 80, 30
+  orig: 80, 30
+  offset: 0, 0
+  index: -1
 track2
   rotate: false
-  xy: 874, 33
+  xy: 1053, 33
   size: 80, 30
   orig: 80, 30
   offset: 0, 0
   index: -1
 track3
   rotate: false
-  xy: 874, 1
+  xy: 1095, 1
   size: 80, 30
   orig: 80, 30
   offset: 0, 0
   index: -1
+checkboxoff
+  rotate: false
+  xy: 1135, 33
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
 checkboxon
   rotate: false
-  xy: 956, 33
+  xy: 1167, 33
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
 sliderknob
   rotate: false
-  xy: 956, 1
+  xy: 1177, 1
   size: 30, 30
   orig: 30, 30
+  offset: 0, 0
+  index: -1
+discard
+  rotate: false
+  xy: 1209, 19
+  size: 132, 44
+  orig: 132, 44
+  offset: 0, 0
+  index: -1
+save
+  rotate: false
+  xy: 1343, 19
+  size: 132, 44
+  orig: 132, 44
+  offset: 0, 0
+  index: -1
+delbuttondown
+  rotate: false
+  xy: 1477, 23
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+delbuttonup
+  rotate: false
+  xy: 1559, 23
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+newbuttondown
+  rotate: false
+  xy: 1641, 23
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+newbuttonup
+  rotate: false
+  xy: 1723, 23
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+okbuttondown
+  rotate: false
+  xy: 1805, 23
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+okbuttonup
+  rotate: false
+  xy: 1887, 23
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+strokeleft
+  rotate: false
+  xy: 1969, 28
+  size: 35, 35
+  orig: 35, 35
+  offset: 0, 0
+  index: -1
+strokeright
+  rotate: false
+  xy: 2006, 28
+  size: 35, 35
+  orig: 35, 35
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 2043, 23
+  size: 2, 40
+  orig: 2, 40
   offset: 0, 0
   index: -1

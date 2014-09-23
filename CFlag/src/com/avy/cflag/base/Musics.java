@@ -10,10 +10,10 @@ public enum Musics {
 
 	private static boolean enabled = true;
 	private static float volume = 0.1f;
-	private static Music curMusic=null;
+	private static Music curMusic = null;
 
 	public void loadAndPlay() {
-		if(curMusic!=null) {
+		if (curMusic != null) {
 			curMusic.stop();
 			curMusic.dispose();
 		}
@@ -24,29 +24,30 @@ public enum Musics {
 			curMusic.play();
 		}
 	}
-	
+
 	public static void setVolume(float volume) {
 		Musics.volume = volume;
-		if(curMusic!=null) curMusic.setVolume(volume);
+		if (curMusic != null)
+			curMusic.setVolume(volume);
 	}
 
 	public static void setState(boolean state) {
 		Musics.enabled = state;
-		if(curMusic!=null) {
-			if(curMusic.isPlaying() && !Musics.enabled){
+		if (curMusic != null) {
+			if (curMusic.isPlaying() && !Musics.enabled) {
 				curMusic.stop();
-			} else if(!curMusic.isPlaying() && Musics.enabled){
+			} else if (!curMusic.isPlaying() && Musics.enabled) {
 				curMusic.play();
 			}
 		} else {
-			if(Musics.enabled){
+			if (Musics.enabled) {
 				MemStore.curUserOPTS.getMusicTrack().loadAndPlay();
 			}
 		}
 	}
 
-	public static void dispose(){
-		if(curMusic!=null){
+	public static void dispose() {
+		if (curMusic != null) {
 			curMusic.dispose();
 		}
 	}

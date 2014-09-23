@@ -36,13 +36,13 @@ public class Platform {
 	private AnimActor[][] topActor;
 
 	private boolean firstRun;
-	
+
 	private int villainCount;
 	private int mmirrorCount;
 	private int rmirrorCount;
 	private int animDelayCount;
 	private int curDelayCount;
-	
+
 	public boolean heroReady;
 
 	public Platform(Group pltfrm) {
@@ -72,8 +72,8 @@ public class Platform {
 		rmirrorCount = 0;
 		animDelayCount = 60;
 		curDelayCount = 0;
-		firstRun=true;
-		heroReady=false;
+		firstRun = true;
+		heroReady = false;
 	}
 
 	public Platform(Point pltfrmStrt, Point pltfrmLen) {
@@ -95,17 +95,17 @@ public class Platform {
 			final Random rand = new Random();
 			if (villainCount > 0) {
 				for (int i = 0; i < 1 + villainCount / 5; i++) {
-					villainNos.add(rand.nextInt(villainCount)+1);
+					villainNos.add(rand.nextInt(villainCount) + 1);
 				}
 			}
 			if (mmirrorCount > 0) {
 				for (int i = 0; i < 1 + mmirrorCount / 5; i++) {
-					mmirrorNos.add(rand.nextInt(mmirrorCount)+1);
+					mmirrorNos.add(rand.nextInt(mmirrorCount) + 1);
 				}
 			}
 			if (rmirrorCount > 0) {
 				for (int i = 0; i < 1 + rmirrorCount / 5; i++) {
-					rmirrorNos.add(rand.nextInt(rmirrorCount)+1);
+					rmirrorNos.add(rand.nextInt(rmirrorCount) + 1);
 				}
 			}
 			for (int i = 0; i < MemStore.lvlFieldLEN.x; i++) {
@@ -147,7 +147,7 @@ public class Platform {
 		rmirrorCount = 0;
 		final PlayImages lvlBaseField[][] = lTank.getLvlBaseField();
 		final PlayImages lvlPlayField[][] = lTank.getLvlPlayField();
-		final Point curPos = new Point(pltfrmStrt.x,pltfrmStrt.y);
+		final Point curPos = new Point(pltfrmStrt.x, pltfrmStrt.y);
 		for (int i = 0; i < MemStore.lvlFieldLEN.x; i++) {
 			for (int j = 0; j < MemStore.lvlFieldLEN.y; j++) {
 				final PlayImages baseImage = PlayImages.valueOf(lvlBaseField[j][i].name());
@@ -163,11 +163,11 @@ public class Platform {
 				if (topImageName.indexOf("RMirror") == 0) {
 					rmirrorCount++;
 				}
-//				if(topImageName.contains("Hero")){
-//					Gdx.app.log("CFLAG", "test");
-//				}
+				// if(topImageName.contains("Hero")){
+				// Gdx.app.log("CFLAG", "test");
+				// }
 				pltfrm.removeActor(baseActor[i][j]);
-				if(baseImage != PlayImages.Grass){
+				if (baseImage != PlayImages.Grass) {
 					baseId[i][j] = baseImage.id;
 					baseActor[i][j] = baseImage.getAnimActor();
 					baseActor[i][j].setPosition(curPos.x, curPos.y);
@@ -177,7 +177,7 @@ public class Platform {
 					pltfrm.addActor(baseActor[i][j]);
 				}
 				pltfrm.removeActor(topActor[i][j]);
-				if(topImage != PlayImages.Grass){
+				if (topImage != PlayImages.Grass) {
 					topId[i][j] = topImage.id;
 					topActor[i][j] = topImage.getAnimActor();
 					topActor[i][j].setPosition(curPos.x, curPos.y);
@@ -191,25 +191,25 @@ public class Platform {
 				} else {
 					curPos.x = curPos.x + playImageOrigLen.x;
 				}
-				if(topImage==PlayImages.Hero_U && firstRun){
+				if (topImage == PlayImages.Hero_U && firstRun) {
 					topActor[i][j].setOrigin(topActor[i][j].getWidth() / 2, topActor[i][j].getHeight() / 2);
 					float x = topActor[i][j].getX();
 					float y = topActor[i][j].getY();
-					
+
 					final SequenceAction sequence = new SequenceAction();
-					sequence.addAction(rotateBy(350-((x+topActor[i][j].getWidth())/5 * 10)%360));
-					for (int k = - (int)topActor[i][j].getWidth(); k <x+5; k = k + 5) {
+					sequence.addAction(rotateBy(350 - ((x + topActor[i][j].getWidth()) / 5 * 10) % 360));
+					for (int k = -(int) topActor[i][j].getWidth(); k < x + 5; k = k + 5) {
 						sequence.addAction(parallel(moveTo(k, y), rotateBy(10)));
 					}
 					sequence.addAction(new Action() {
 						@Override
 						public boolean act(float delta) {
-							heroReady=true;
+							heroReady = true;
 							return false;
 						}
 					});
 					topActor[i][j].addAction(sequence);
-					firstRun=false;
+					firstRun = false;
 				}
 			}
 			if (playImageOrigLen != PlayImageScaledLen) {

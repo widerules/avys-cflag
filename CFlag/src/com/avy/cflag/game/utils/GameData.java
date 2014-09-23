@@ -19,11 +19,11 @@ public class GameData {
 	public Difficulty getCurrentDclty() {
 		return currentDclty;
 	}
-	
+
 	public void setCurrentDclty(Difficulty currentDclty) {
 		this.currentDclty = currentDclty;
 	}
-	
+
 	public int getCurrentLevel() {
 		return currentLevel;
 	}

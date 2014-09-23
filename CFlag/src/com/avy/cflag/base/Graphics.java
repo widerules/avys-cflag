@@ -30,33 +30,33 @@ public class Graphics {
 	private SpriteBatch batch;
 	private ShapeRenderer sr;
 	private BitmapFont font;
-	
+
 	public Graphics() {
-		imageAtlas=null;
-		batch=null;
-		sr=null;
-		font=null;
+		imageAtlas = null;
+		batch = null;
+		sr = null;
+		font = null;
 	}
-	
-	public TextureAtlas createImageAtlas(String texturePackName){
+
+	public TextureAtlas createImageAtlas(String texturePackName) {
 		return new TextureAtlas(Gdx.files.internal(Constants.ATLAS_FLDR + "/" + texturePackName + ".pack"));
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	public BitmapFont createFont(String fontName, int fontSize, boolean flipped){
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/"+ fontName + ".ttf"));
-		BitmapFont fnt = generator.generateFont(fontSize, FreeTypeFontGenerator.DEFAULT_CHARS, flipped?true:false);
-		if(!flipped)
+	public BitmapFont createFont(String fontName, int fontSize, boolean flipped) {
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/" + fontName + ".ttf"));
+		BitmapFont fnt = generator.generateFont(fontSize, FreeTypeFontGenerator.DEFAULT_CHARS, flipped ? true : false);
+		if (!flipped)
 			fnt.setScale(1, -1);
 		generator.dispose();
 		return fnt;
 	}
-	
-	public void setImageAtlas(TextureAtlas textureAtlas){
-		imageAtlas= textureAtlas;
+
+	public void setImageAtlas(TextureAtlas textureAtlas) {
+		imageAtlas = textureAtlas;
 	}
-	
-	public void setFont(BitmapFont fnt){
+
+	public void setFont(BitmapFont fnt) {
 		font = fnt;
 	}
 
@@ -89,7 +89,7 @@ public class Graphics {
 
 	public TextureRegion getThumbTexRegion(Difficulty dclty, int levelNo) {
 		FileHandle fh = Gdx.files.external("Android/data/" + CFlagGame.packageName + "/thumbs/" + dclty.name() + levelNo + ".png");
-		if(!fh.exists()){
+		if (!fh.exists()) {
 			SaveThumbs st = new SaveThumbs(dclty, levelNo);
 			st.createThumb();
 		}
@@ -97,7 +97,7 @@ public class Graphics {
 		textureRegion.flip(false, true);
 		return textureRegion;
 	}
-	
+
 	public void drawString(String txt, int x, int y, Color color) {
 		font.setColor(color);
 		final TextBounds tb = font.getBounds(txt);
@@ -166,14 +166,14 @@ public class Graphics {
 		ts.fontColor = Color.WHITE;
 		return ts;
 	}
-	
-	public LabelStyle getLabelStyle(String fontName, int fontSize){
+
+	public LabelStyle getLabelStyle(String fontName, int fontSize) {
 		final LabelStyle ls = new LabelStyle();
 		ls.font = createFont(fontName, fontSize, false);
 		ls.fontColor = Color.WHITE;
 		return ls;
 	}
-	
+
 	public void drawRectWithBorder(Rect rect, Color color) {
 		sr.setColor(Color.BLACK);
 		sr.rect(rect.left - 1, rect.top - 1, rect.right - rect.left + 1, rect.bottom - rect.top + 1);

@@ -8,6 +8,7 @@ import static com.avy.cflag.game.Constants.SAVE_GAME_TAG_NAME;
 import static com.avy.cflag.game.Constants.SCORE_PREF_FILE_NAME;
 import static com.avy.cflag.game.Constants.SCORE_PREF_TAG_NAME;
 import static com.avy.cflag.game.MemStore.curUserOPTS;
+import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.avy.cflag.game.MemStore.lvlAuthorLEN;
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
 import static com.avy.cflag.game.MemStore.lvlDataPerDCLTY;
@@ -18,7 +19,6 @@ import static com.avy.cflag.game.MemStore.lvlLEN;
 import static com.avy.cflag.game.MemStore.lvlNameLEN;
 import static com.avy.cflag.game.MemStore.playImageScaledLEN;
 import static com.avy.cflag.game.MemStore.pltfrmStartPOS;
-import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.avy.cflag.game.MemStore.userLIST;
 
 import java.io.InputStream;
@@ -30,9 +30,9 @@ import com.avy.cflag.game.MemStore.Difficulty;
 import com.avy.cflag.game.MemStore.Direction;
 import com.avy.cflag.game.MemStore.PlayImages;
 import com.avy.cflag.game.utils.GameData;
+import com.avy.cflag.game.utils.LevelScore;
 import com.avy.cflag.game.utils.UserList;
 import com.avy.cflag.game.utils.UserOptions;
-import com.avy.cflag.game.utils.LevelScore;
 import com.avy.cflag.game.utils.UserScore;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -46,26 +46,26 @@ public class Utils {
 			byte inData[] = new byte[fi.available()];
 			fi.read(inData);
 			fi.close();
-			
+
 			String lvlDataPerDclty[] = new String[Difficulty.length()];
-			
-			int totLvls = inData.length/lvlLEN;
+
+			int totLvls = inData.length / lvlLEN;
 			int dcltyPos = lvlFieldDataLEN + lvlNameLEN + lvlHintLEN + lvlAuthorLEN;
 			for (int i = 0; i < totLvls; i++) {
 				byte[] curLvlData = new byte[lvlLEN];
-				Difficulty curDclty = Utils.getDifficultyByVal(Integer.parseInt(new Integer(inData[i*lvlLEN+dcltyPos]) + "" + new Integer(inData[i*lvlLEN +dcltyPos+1])));
+				Difficulty curDclty = Utils.getDifficultyByVal(Integer.parseInt(new Integer(inData[i * lvlLEN + dcltyPos]) + "" + new Integer(inData[i * lvlLEN + dcltyPos + 1])));
 				lvlCntPerDCLTY[curDclty.ordinal()]++;
-				System.arraycopy(inData, i*lvlLEN, curLvlData, 0, lvlLEN);
-				if(lvlDataPerDclty[curDclty.ordinal()]==null)
-					lvlDataPerDclty[curDclty.ordinal()]="";
-				lvlDataPerDclty[curDclty.ordinal()]=lvlDataPerDclty[curDclty.ordinal()] + new String(curLvlData);
+				System.arraycopy(inData, i * lvlLEN, curLvlData, 0, lvlLEN);
+				if (lvlDataPerDclty[curDclty.ordinal()] == null)
+					lvlDataPerDclty[curDclty.ordinal()] = "";
+				lvlDataPerDclty[curDclty.ordinal()] = lvlDataPerDclty[curDclty.ordinal()] + new String(curLvlData);
 			}
-			
+
 			for (int i = 0; i < Difficulty.length(); i++) {
 				lvlDataPerDCLTY[i] = new byte[lvlDataPerDclty[i].length()];
 				lvlDataPerDCLTY[i] = lvlDataPerDclty[i].getBytes();
 			}
-				
+
 		} catch (final Exception e) {
 			throw new RuntimeException("Error Reading Level Data File");
 		}
@@ -103,35 +103,36 @@ public class Utils {
 	public static void saveUserScores(Difficulty dclty, int levelNo, int movesPlayed, int shotsTriggered, boolean hintUsed) {
 		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintUsed);
 		if (levelNo <= curUserSCORE.getMaxPlayedLevel(dclty)) {
-			curUserSCORE.updateScores(dclty,currentScore);
+			curUserSCORE.updateScores(dclty, currentScore);
 		} else {
-			curUserSCORE.setMaxPlayedLevel(dclty,levelNo);
-			curUserSCORE.addScores(dclty,currentScore);
+			curUserSCORE.setMaxPlayedLevel(dclty, levelNo);
+			curUserSCORE.addScores(dclty, currentScore);
 		}
 		final Json jsn = new Json();
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SCORE_PREF_FILE_NAME);
 		pr.putString(SCORE_PREF_TAG_NAME, jsn.toJson(curUserSCORE));
+		curUserOPTS.setGameSaved(true);
 		pr.flush();
 	}
-	
-	public static GameData loadGame(){
+
+	public static GameData loadGame() {
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
-		final String jsonStr = pr.getString(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
+		final String jsonStr = pr.getString(SAVE_GAME_FILE_NAME);
 		final Json jsn = new Json();
 		if (jsonStr != "") {
-			return(jsn.fromJson(GameData.class, jsonStr));
+			return (jsn.fromJson(GameData.class, jsonStr));
 		}
 		return null;
 	}
 
-	public static void saveGame(GameData gData){
+	public static void saveGame(GameData gData) {
 		final Json jsn = new Json();
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
 		pr.putString(SAVE_GAME_TAG_NAME, jsn.toJson(gData));
 		pr.flush();
-		
+
 	}
-	
+
 	public static void loadGameAudio() {
 		Sounds.setState(curUserOPTS.isSoundOn());
 		Sounds.setVolume(curUserOPTS.getSoundVolume());
@@ -152,9 +153,9 @@ public class Utils {
 		}
 		return outDclty;
 	}
-	
+
 	public static Difficulty getDifficultyByIdx(int indexValue) {
-		return getDifficultyByVal((int)Math.round(Math.pow(2, indexValue)) * 10);
+		return getDifficultyByVal((int) Math.round(Math.pow(2, indexValue)) * 10);
 	}
 
 	public static PlayImages getPlayImage(int inFieldId) {

@@ -111,6 +111,7 @@ public class PlayScreen extends BaseScreen {
 		lvlNmeFont = g.createFont("ceaser", 13, true);
 
 		GameData savedGame = Utils.loadGame();
+
 		currentDclty = savedGame.getCurrentDclty();
 		currentLevel = savedGame.getCurrentLevel();
 		gameState = GameState.Running;
@@ -630,6 +631,7 @@ public class PlayScreen extends BaseScreen {
 
 	public void savenquit() {
 		GameData gData = new GameData();
+		gData.setCurrentDclty(currentDclty);
 		gData.setCurrentLevel(currentLevel);
 		gData.setGameState(gameState);
 		gData.setHintUsed(hintUsed);
