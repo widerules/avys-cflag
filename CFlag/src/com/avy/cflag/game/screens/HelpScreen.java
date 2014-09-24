@@ -325,10 +325,10 @@ public class HelpScreen extends BackScreen {
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		if (helpAtlas != null) {
 			helpAtlas.dispose();
 		}
+		super.dispose();
 	}
 
 	public void swipeLeft() {

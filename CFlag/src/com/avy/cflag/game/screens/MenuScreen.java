@@ -162,7 +162,7 @@ public class MenuScreen extends BackScreen {
 							if(curUserOPTS.isFirstRun())
 								game.setScreen(new HelpScreen(game, "levelselect"));
 							else
-								game.setScreen(new LevelScreen(game,true));
+								game.setScreen(new LevelScreen(game,false));
 							return false;
 						}
 					}));
@@ -214,9 +214,9 @@ public class MenuScreen extends BackScreen {
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		if (menuAtlas != null) {
 			menuAtlas.dispose();
 		}
+		super.dispose();
 	}
 }

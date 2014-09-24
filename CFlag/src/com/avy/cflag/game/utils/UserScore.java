@@ -15,6 +15,7 @@ public class UserScore {
 		for (int i = 0; i < maxPlayedLevel.length; i++) {
 			maxPlayedLevel[i] = 1;
 			scores[i] = new ArrayList<LevelScore>();
+			scores[i].add(new LevelScore(1,0,0,false));
 		}
 	}
 
@@ -39,7 +40,7 @@ public class UserScore {
 	}
 
 	public void updateScores(Difficulty dclty, LevelScore score) {
-		scores[dclty.ordinal()].set(score.getLevelNo(), score);
+		scores[dclty.ordinal()].set(score.getLevelNo()-1, score);
 	}
 
 	public LevelScore getScores(Difficulty dclty, int levelNo) {

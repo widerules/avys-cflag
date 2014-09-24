@@ -107,7 +107,7 @@ public class LevelScreen extends BackScreen {
 		scoreFont = g.createFont("salsa", 13, true);
 
 		selectedDclty = curUserOPTS.getLastDifficulty();
-		curPage = curUserSCORE.getMaxPlayedLevel(selectedDclty) / dcltyGrpCnt[selectedDclty.ordinal()];
+		curPage = curUserSCORE.getMaxPlayedLevel(selectedDclty) / perPageLvlCnt;
 
 		printLevelData = false;
 		dragStartX = 0;
@@ -418,6 +418,8 @@ public class LevelScreen extends BackScreen {
 					},fadeIn(1f), run(new Runnable() {
 						@Override
 						public void run() {
+							thumbnail.clearActions();
+							thumbnail.remove();
 							game.setScreen(new PlayScreen(game, selectedDclty, selectedLevel));
 						}
 					})));
@@ -526,13 +528,13 @@ public class LevelScreen extends BackScreen {
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		if (levelAtlas != null) {
 			levelAtlas.dispose();
 		}
 		if (scoreFont != null) {
 			scoreFont.dispose();
 		}
+		super.dispose();
 	}
 
 	public void swipeLeft() {
@@ -604,6 +606,7 @@ public class LevelScreen extends BackScreen {
 		float tempHeight = thumbnail.getHeight();
 		thumbnail.setSize(clickedNumButton.getWidth(), clickedNumButton.getHeight());
 		stage.addActor(thumbnail);
+		thumbnail.clearActions();
 		thumbnail.addAction(parallel(forever(rotateBy(1f)), sizeTo(tempWidth, tempHeight, 1f), moveTo((topBar.getWidth() - tempWidth) / 2, (480 - tempHeight) / 2, 1f, swingOut)));
 
 		dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(0.1f));
@@ -624,7 +627,6 @@ public class LevelScreen extends BackScreen {
 			playStr.addAction(visible(true));
 			playAgainStr.addAction(visible(false));
 		}
-//		midButtonGroup.addAction(sequence(alpha(0), visible(true), fadeIn(1f)));
 		printLevelData = true;
 	}
 
@@ -635,6 +637,7 @@ public class LevelScreen extends BackScreen {
 				run(new Runnable() {
 					@Override
 					public void run() {
+						thumbnail.clearActions();
 						thumbnail.remove();
 					}
 				})));
@@ -650,7 +653,6 @@ public class LevelScreen extends BackScreen {
 		playStr.addAction(visible(false));
 		playAgainStr.addAction(visible(false));
 		backStr.addAction(visible(true));
-//		midButtonGroup.addAction(sequence(fadeOut(1f), visible(false), alpha(1f)));
 		printLevelData = false;
 	}
 }

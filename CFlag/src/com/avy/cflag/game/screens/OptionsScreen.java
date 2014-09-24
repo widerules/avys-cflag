@@ -338,8 +338,8 @@ public class OptionsScreen extends BackScreen {
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				saveButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				userLIST.updateUser(curUserOPTS);
-				Utils.saveGameOptions();
 				Utils.deleteUserScores(deletedUsers);
+				Utils.saveGameOptions();
 				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 					@Override
 					public void run() {
@@ -548,9 +548,9 @@ public class OptionsScreen extends BackScreen {
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		if (optionsAtlas != null)
 			optionsAtlas.dispose();
+		super.dispose();
 	}
 
 	public void applyUserOptions() {
