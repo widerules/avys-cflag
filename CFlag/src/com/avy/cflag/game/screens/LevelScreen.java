@@ -30,6 +30,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -78,6 +79,7 @@ public class LevelScreen extends BackScreen {
 	private Image titleStr;
 	private Image playAgainStr;
 	private Image playStr;
+	private Image backStr;
 
 	private Difficulty selectedDclty;
 	private int curPage;
@@ -148,14 +150,25 @@ public class LevelScreen extends BackScreen {
 		playStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		playAgainStr = new Image(g.getFlipTexRegion("playagainstr"));
 		playAgainStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
-
+		backStr = new Image(g.getFlipTexRegion("backstr"));
+		backStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
+		playStr.setVisible(false);
+		playAgainStr.setVisible(false);
+		backStr.setVisible(true);
+		
 		midButtonGroup = new Group();
 		midButtonGroup.addActor(midButtonUp);
 		midButtonGroup.addActor(midButtonDown);
 		midButtonGroup.addActor(playStr);
 		midButtonGroup.addActor(playAgainStr);
+		midButtonGroup.addActor(backStr);
+
+		midButtonUp.setName("midbutton");
+		midButtonDown.setName("midbutton");
+		playStr.setName("midbutton");
+		playAgainStr.setName("midbutton");
+		backStr.setName("midbutton");
 		midButtonGroup.setName("midbutton");
-		midButtonGroup.setVisible(false);
 
 		leftButtonGroup = new Group();
 		leftButtonGroup.addActor(leftButtonUp);
@@ -310,8 +323,8 @@ public class LevelScreen extends BackScreen {
 										numStrGroup.setVisible(false);
 										lockStr.setVisible(true);
 										lockStr.setOrigin(lockStr.getWidth()/2, lockStr.getHeight()/2);
-										lockStr.addAction(delay(1f,sequence(scaleBy(0.1f, 0.1f),repeat(5,rotateBy(360f,0.1f)),parallel(repeat(5,rotateBy(360f,0.1f)),fadeOut(1f)),visible(false))));
-										numStrGroup.addAction(delay(3f,sequence(visible(true),fadeIn(1f))));
+										lockStr.addAction(delay(1f,sequence(scaleBy(0.1f, 0.1f),repeat(4,rotateBy(360f,0.1f)),parallel(repeat(4,rotateBy(360f,0.1f)),fadeOut(1f)),visible(false))));
+										numStrGroup.addAction(delay(2f,sequence(visible(true),fadeIn(1f))));
 									} else {
 										numStrGroup.setVisible(true);
 										lockStr.setVisible(false);
@@ -388,12 +401,27 @@ public class LevelScreen extends BackScreen {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				midButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
-				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
-					@Override
-					public void run() {
-						game.setScreen(new PlayScreen(game, selectedDclty, selectedLevel));
-					}
-				})));
+				if(backStr.isVisible()){
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
+						@Override
+						public void run() {
+							game.setScreen(new MenuScreen(game));
+						}
+					})));
+				} else {
+					argbFull.addAction(sequence(visible(true), new Action() {
+						@Override
+						public boolean act(float delta) {
+							thumbnail.addAction(fadeOut(0.1f));
+							return true;
+						}
+					},fadeIn(1f), run(new Runnable() {
+						@Override
+						public void run() {
+							game.setScreen(new PlayScreen(game, selectedDclty, selectedLevel));
+						}
+					})));
+				}
 			}
 		});
 
@@ -450,7 +478,7 @@ public class LevelScreen extends BackScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				if (printLevelData) {
-					if (!(event.getTarget().getName() != null && event.getTarget().getName().equalsIgnoreCase("thumbnail") &&  event.getTarget().getName().equalsIgnoreCase("midbutton")))
+					if (!(event.getTarget().getName() != null && (event.getTarget().getName().equalsIgnoreCase("thumbnail") || event.getTarget().getName().equalsIgnoreCase("midbutton"))))
 						swingInThumbnail();
 				}
 				return true;
@@ -588,14 +616,15 @@ public class LevelScreen extends BackScreen {
 		rightButtonGroup.setTouchable(Touchable.disabled);
 
 		if (selectedLevel < curUserSCORE.getMaxPlayedLevel(selectedDclty)) {
+			backStr.addAction(visible(false));
 			playStr.addAction(visible(false));
 			playAgainStr.addAction(visible(true));
 		} else {
+			backStr.addAction(visible(false));
 			playStr.addAction(visible(true));
 			playAgainStr.addAction(visible(false));
 		}
-		midButtonGroup.addAction(sequence(alpha(0), visible(true), fadeIn(1f)));
-
+//		midButtonGroup.addAction(sequence(alpha(0), visible(true), fadeIn(1f)));
 		printLevelData = true;
 	}
 
@@ -620,7 +649,8 @@ public class LevelScreen extends BackScreen {
 
 		playStr.addAction(visible(false));
 		playAgainStr.addAction(visible(false));
-		midButtonGroup.addAction(sequence(fadeOut(1f), visible(false), alpha(1f)));
+		backStr.addAction(visible(true));
+//		midButtonGroup.addAction(sequence(fadeOut(1f), visible(false), alpha(1f)));
 		printLevelData = false;
 	}
 }

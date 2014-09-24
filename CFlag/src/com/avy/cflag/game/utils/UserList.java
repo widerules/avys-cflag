@@ -2,6 +2,8 @@ package com.avy.cflag.game.utils;
 
 import java.util.ArrayList;
 
+import com.avy.cflag.game.Utils;
+
 public class UserList {
 	private int currentUser;
 	private ArrayList<UserOptions> userOptionsList;
@@ -94,8 +96,9 @@ public class UserList {
 	}
 
 	public void deleteUser(int idx) {
-		if (getUserCount() > 0 && idx >= 0)
+		if (getUserCount() > 0 && idx >= 0) {
 			userOptionsList.remove(idx);
+		}
 		if (getUserCount() <= 0)
 			currentUser = -1;
 		else

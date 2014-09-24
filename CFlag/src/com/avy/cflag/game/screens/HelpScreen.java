@@ -311,17 +311,12 @@ public class HelpScreen extends BackScreen {
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
 				if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
-					if(enterNameGroup.isVisible()) {
-						helpPageGroup.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
-						enterNameGroup.addAction(sequence(fadeOut(0.1f), visible(false)));
-					} else {
-						argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
-							@Override
-							public void run() {
-								game.setScreen(new MenuScreen(game));
-							}
-						})));
-					}
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
+						@Override
+						public void run() {
+							game.setScreen(new MenuScreen(game));
+						}
+					})));
 				}
 				return true;
 			}
