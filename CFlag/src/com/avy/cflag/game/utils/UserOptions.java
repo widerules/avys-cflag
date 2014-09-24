@@ -16,7 +16,7 @@ public class UserOptions {
 	private boolean swipeMove;
 
 	public UserOptions() {
-		userName = "Default";
+		userName = "No Profile";
 		firstRun = true;
 		gameSaved = false;
 		lastDifficulty = Difficulty.Novice;

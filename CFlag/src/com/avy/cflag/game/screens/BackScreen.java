@@ -79,10 +79,10 @@ public class BackScreen extends BaseScreen {
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		if (commonAtlas != null) {
 			commonAtlas.dispose();
 		}
+		super.dispose();
 	}
 
 }

@@ -78,7 +78,7 @@ public class Utils {
 		final Json jsn = new Json();
 		userLIST = new UserList();
 		curUserOPTS = new UserOptions();
-		if (jsonStr != "") {
+		if (jsonStr != "" && !jsonStr.equals("{}")) {
 			userLIST = jsn.fromJson(UserList.class, jsonStr);
 			curUserOPTS = userLIST.getCurrentUserOptions();
 		}
@@ -96,14 +96,14 @@ public class Utils {
 		final String jsonStr = pr.getString(SCORE_PREF_TAG_NAME);
 		final Json jsn = new Json();
 		curUserSCORE = new UserScore();
-		if (jsonStr != "") {
+		if (jsonStr != "" && !jsonStr.equals("{}")) {
 			curUserSCORE = jsn.fromJson(UserScore.class, jsonStr);
 		}
 	}
 
 	public static void saveUserScores(Difficulty dclty, int levelNo, int movesPlayed, int shotsTriggered, boolean hintUsed) {
 		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintUsed);
-		if (levelNo < curUserSCORE.getMaxPlayedLevel(dclty)) {
+		if (levelNo <= curUserSCORE.getMaxPlayedLevel(dclty)) {
 			curUserSCORE.updateScores(dclty, currentScore);
 		} else {
 			curUserSCORE.setMaxPlayedLevel(dclty, levelNo);
@@ -112,13 +112,19 @@ public class Utils {
 		final Json jsn = new Json();
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SCORE_PREF_FILE_NAME);
 		pr.putString(SCORE_PREF_TAG_NAME, jsn.toJson(curUserSCORE));
-		curUserOPTS.setGameSaved(true);
 		pr.flush();
+		curUserOPTS.setGameSaved(true);
 	}
 
 	public static void deleteUserScores(ArrayList<String> deletedUsers){
 		for (String userName : deletedUsers) {
-			Gdx.files.local(userName).deleteDirectory();
+			final Preferences pr1 = Gdx.app.getPreferences(userName + "\\" + SCORE_PREF_FILE_NAME);
+			pr1.putString(SCORE_PREF_TAG_NAME, "");
+			pr1.flush();
+			final Preferences pr2 = Gdx.app.getPreferences(userName + "\\" + SAVE_GAME_FILE_NAME);
+			pr2.putString(SAVE_GAME_TAG_NAME, "");
+			pr2.flush();
+			curUserOPTS.setGameSaved(false);
 		}
 	}
 	

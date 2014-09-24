@@ -77,21 +77,11 @@ public class SplashScreen extends BaseScreen {
 	}
 
 	@Override
-	public void pause() {
-		super.pause();
-	}
-
-	@Override
-	public void resume() {
-		super.resume();
-	}
-
-	@Override
 	public void dispose() {
-		super.dispose();
 		if (imageAtlas != null)
 			imageAtlas.dispose();
 		splashImage = null;
 		titleImage = null;
+		super.dispose();
 	}
 }

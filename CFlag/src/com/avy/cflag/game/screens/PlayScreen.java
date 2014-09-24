@@ -1,6 +1,7 @@
 package com.avy.cflag.game.screens;
 
 import static com.avy.cflag.game.MemStore.curUserOPTS;
+import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
@@ -22,16 +23,19 @@ import com.avy.cflag.game.graphics.HintMenu;
 import com.avy.cflag.game.graphics.ShortMenu;
 import com.avy.cflag.game.utils.GameData;
 import com.avy.cflag.game.utils.SaveThumbs;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class PlayScreen extends BaseScreen {
 
@@ -51,6 +55,7 @@ public class PlayScreen extends BaseScreen {
 
 	boolean hintUsed;
 	boolean stateChanged;
+	boolean fadeOutActive;
 
 	private TextureAtlas playAtlas;
 	private final BitmapFont dfltFont;
@@ -109,19 +114,23 @@ public class PlayScreen extends BaseScreen {
 		g.setFont(dfltFont);
 
 		lvlNmeFont = g.createFont("ceaser", 13, true);
-
+		fadeOutActive=false;
+		
 		GameData savedGame = Utils.loadGame();
 
-		currentDclty = savedGame.getCurrentDclty();
-		currentLevel = savedGame.getCurrentLevel();
-		gameState = GameState.Running;
-		lvl = savedGame.getLvl();
-		ltank = savedGame.getLtank();
-		undoCnt = savedGame.getUndoCnt();
-		undoList = savedGame.getUndoList();
-		hintUsed = savedGame.isHintUsed();
-		stateChanged = savedGame.isStateChanged();
-
+		if(savedGame==null){
+			init(curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty()));
+		} else {
+			currentDclty = savedGame.getCurrentDclty();
+			currentLevel = savedGame.getCurrentLevel();
+			gameState = GameState.Running;
+			lvl = savedGame.getLvl();
+			ltank = savedGame.getLtank();
+			undoCnt = savedGame.getUndoCnt();
+			undoList = savedGame.getUndoList();
+			hintUsed = savedGame.isHintUsed();
+			stateChanged = savedGame.isStateChanged();
+		}
 	}
 
 	public PlayScreen(CFlagGame game, Difficulty selectedDclty, int selectedLevel) {
@@ -136,17 +145,26 @@ public class PlayScreen extends BaseScreen {
 		g.setFont(dfltFont);
 
 		lvlNmeFont = g.createFont("ceaser", 13, true);
+		fadeOutActive=false;
+		
+		init(selectedDclty,selectedLevel);
+	}
 
+	private void init(Difficulty selectedDclty, int selectedLevel){
 		currentDclty = selectedDclty;
 		currentLevel = selectedLevel;
 		gameState = GameState.Ready;
 
 		curUserOPTS.setLastDifficulty(selectedDclty);
-		Utils.saveUserScores(currentDclty, currentLevel, 0, 0, false);
+		curUserOPTS.setFirstRun(false);
 		Utils.saveGameOptions();
-		SaveThumbs st = new SaveThumbs(g, currentDclty, currentLevel);
-		st.run();
-
+		
+		if(currentLevel==1) {
+			Utils.saveUserScores(currentDclty, currentLevel, 0, 0, false);
+			SaveThumbs st = new SaveThumbs(g, currentDclty, currentLevel);
+			st.run();
+		}
+		
 		lvl = new Level();
 		lvl.loadLevel(currentDclty, currentLevel);
 
@@ -348,6 +366,21 @@ public class PlayScreen extends BaseScreen {
 				pressedButton = GameButtons.Fire;
 			};
 		});
+		
+		ClickListener hackListener = new ClickListener(Buttons.LEFT) {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(inTapSquare(750,430) && getTapCount()==3){
+					gameState=GameState.Won;
+				}
+				super.clicked(event, x, y);
+			}
+		};
+		
+		hackListener.setTapSquareSize(50);
+		
+		stage.addListener(hackListener);
+		
 		stage.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				if (gameState == GameState.Hint) {
@@ -503,40 +536,68 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void updatePaused() {
-		pausedMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+		if(!pausedMenu.isVisible())
+			pausedMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 	}
 
 	private void updateDrowned() {
-		drownedMenu.addAction(sequence(visible(true), fadeIn(0.1f)));
+		if(!drownedMenu.isVisible())
+			drownedMenu.addAction(sequence(visible(true), fadeIn(0.1f)));
 	}
 
 	private void updateDead() {
-		deadMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+		if(!deadMenu.isVisible())
+			deadMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 	}
 
 	private void updateWon() {
-		wonMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+		if(!wonMenu.isVisible())
+			wonMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 	}
 
 	private void updateHint() {
-		hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+		if(!hintMenu.isVisible())
+			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 	}
 
 	private void updateFadeOut(float delta) {
-		switch (gameState) {
-			case Menu:
-			case Quit:
-				game.setScreen(new MenuScreen(game));
-				break;
-			case Restart:
-				game.setScreen(new PlayScreen(game, currentDclty, currentLevel));
-				break;
-			case NextLevel:
-				saveScores();
-				game.setScreen(new PlayScreen(game, currentDclty, currentLevel));
-				break;
-			default:
-				break;
+		if(!fadeOutActive){
+			switch (gameState) {
+				case Menu:
+				case Quit:
+					fadeOutActive=true;
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+						@Override
+						public boolean act(float delta) {
+							game.setScreen(new MenuScreen(game));
+							return false;
+						}
+					}));
+					break;
+				case Restart:
+					fadeOutActive=true;
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+						@Override
+						public boolean act(float delta) {
+							game.setScreen(new PlayScreen(game, currentDclty, currentLevel));
+							return false;
+						}
+					}));
+					break;
+				case NextLevel:
+					fadeOutActive=true;
+					saveScores();
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+						@Override
+						public boolean act(float delta) {
+							game.setScreen(new LevelScreen(game,true));
+							return false;
+						}
+					}));
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -620,10 +681,12 @@ public class PlayScreen extends BaseScreen {
 
 	public void resume() {
 		if (gameState == GameState.Paused) {
-			pausedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
+			if(pausedMenu.isVisible())
+				pausedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			gameState = GameState.Running;
 		} else if (gameState == GameState.Hint) {
-			hintMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
+			if(hintMenu.isVisible())
+				hintMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			gameState = GameState.Running;
 		}
 	}
@@ -641,27 +704,11 @@ public class PlayScreen extends BaseScreen {
 		gData.setUndoList(undoList);
 
 		Utils.saveGame(gData);
-		curUserOPTS.setFirstRun(false);
-		Utils.saveGameOptions();
 		mainmenu();
 	}
 
 	@Override
 	public void dispose() {
-		nullify();
-	}
-
-	private void saveScores() {
-		Utils.saveUserScores(currentDclty, currentLevel, ltank.getTankMoves(), ltank.getTankShots(), hintUsed);
-		SaveThumbs st1 = new SaveThumbs(g, currentDclty, currentLevel);
-		st1.run();
-		currentLevel++;
-		Utils.saveUserScores(currentDclty, currentLevel, 0, 0, false);
-		SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel);
-		st2.run();
-	}
-
-	private void nullify() {
 		if (playAtlas != null)
 			playAtlas.dispose();
 		if (dfltFont != null)
@@ -671,6 +718,16 @@ public class PlayScreen extends BaseScreen {
 		ltank = null;
 		undoList = null;
 		System.gc();
+		super.dispose();
+	}
+
+	private void saveScores() {
+		Utils.saveUserScores(currentDclty, currentLevel, ltank.getTankMoves(), ltank.getTankShots(), hintUsed);
+		currentLevel++;
+		Utils.saveUserScores(currentDclty, currentLevel, 0, 0, false);
+		SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel);
+		st2.run();
+		
 	}
 
 	private void setTouchEnabled(boolean isEnabled) {
