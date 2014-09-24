@@ -22,6 +22,7 @@ import static com.avy.cflag.game.MemStore.pltfrmStartPOS;
 import static com.avy.cflag.game.MemStore.userLIST;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import com.avy.cflag.base.Musics;
 import com.avy.cflag.base.Point;
@@ -102,7 +103,7 @@ public class Utils {
 
 	public static void saveUserScores(Difficulty dclty, int levelNo, int movesPlayed, int shotsTriggered, boolean hintUsed) {
 		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintUsed);
-		if (levelNo <= curUserSCORE.getMaxPlayedLevel(dclty)) {
+		if (levelNo < curUserSCORE.getMaxPlayedLevel(dclty)) {
 			curUserSCORE.updateScores(dclty, currentScore);
 		} else {
 			curUserSCORE.setMaxPlayedLevel(dclty, levelNo);
@@ -115,6 +116,12 @@ public class Utils {
 		pr.flush();
 	}
 
+	public static void deleteUserScores(ArrayList<String> deletedUsers){
+		for (String userName : deletedUsers) {
+			Gdx.files.local(userName).deleteDirectory();
+		}
+	}
+	
 	public static GameData loadGame() {
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
 		final String jsonStr = pr.getString(SAVE_GAME_FILE_NAME);

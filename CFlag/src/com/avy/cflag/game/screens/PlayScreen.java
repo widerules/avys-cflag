@@ -141,12 +141,11 @@ public class PlayScreen extends BaseScreen {
 		currentLevel = selectedLevel;
 		gameState = GameState.Ready;
 
-		if (currentLevel == 0) {
-			currentLevel = 1;
-			Utils.saveUserScores(currentDclty, currentLevel, 0, 0, false);
-			SaveThumbs st = new SaveThumbs(g, currentDclty, currentLevel);
-			st.run();
-		}
+		curUserOPTS.setLastDifficulty(selectedDclty);
+		Utils.saveUserScores(currentDclty, currentLevel, 0, 0, false);
+		Utils.saveGameOptions();
+		SaveThumbs st = new SaveThumbs(g, currentDclty, currentLevel);
+		st.run();
 
 		lvl = new Level();
 		lvl.loadLevel(currentDclty, currentLevel);

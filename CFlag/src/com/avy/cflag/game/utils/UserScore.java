@@ -39,7 +39,7 @@ public class UserScore {
 	}
 
 	public void updateScores(Difficulty dclty, LevelScore score) {
-		scores[dclty.ordinal()].set(score.getLevelNo() - 1, score);
+		scores[dclty.ordinal()].set(score.getLevelNo(), score);
 	}
 
 	public LevelScore getScores(Difficulty dclty, int levelNo) {

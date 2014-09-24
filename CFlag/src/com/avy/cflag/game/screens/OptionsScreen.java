@@ -9,6 +9,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
+import java.util.ArrayList;
+
 import com.avy.cflag.base.Musics;
 import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.CFlagGame;
@@ -78,12 +80,14 @@ public class OptionsScreen extends BackScreen {
 	private Image discardStr;
 	private Group discardButtonGroup;
 	private Group optionsGroup;
+	ArrayList<String> deletedUsers;
 
 	public OptionsScreen(CFlagGame game) {
 		super(game, true, false, false);
 
 		optionsAtlas = g.createImageAtlas("options");
 		trackStr = new Image[Musics.values().length];
+		deletedUsers = new ArrayList<String>();
 	}
 
 	@Override
@@ -335,6 +339,7 @@ public class OptionsScreen extends BackScreen {
 				saveButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				userLIST.updateUser(curUserOPTS);
 				Utils.saveGameOptions();
+				Utils.deleteUserScores(deletedUsers);
 				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 					@Override
 					public void run() {
@@ -438,6 +443,7 @@ public class OptionsScreen extends BackScreen {
 				delButtonDown.addAction(sequence(fadeOut(0.1f), visible(false)));
 				int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
 				userLIST.deleteUser(idx);
+				deletedUsers.add(curUserOPTS.getUserName());
 				if (userLIST.getUserCount() > 0) {
 					curUserOPTS.setGameOpts(userLIST.getUserOptionsByIdx((idx + 1 + userLIST.getUserCount()) % userLIST.getUserCount()));
 				} else if (userLIST.getUserCount() == 0) {
