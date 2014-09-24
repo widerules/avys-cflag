@@ -340,6 +340,7 @@ public class OptionsScreen extends BackScreen {
 				userLIST.updateUser(curUserOPTS);
 				Utils.deleteUserScores(deletedUsers);
 				Utils.saveGameOptions();
+				Utils.loadUserScores();
 				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 					@Override
 					public void run() {

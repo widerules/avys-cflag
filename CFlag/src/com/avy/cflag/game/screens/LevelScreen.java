@@ -234,7 +234,7 @@ public class LevelScreen extends BackScreen {
 								if (i == tmpDcltyNo) {
 									dcltyButtonDown[i].addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
 									dcltyPageFrame[i].addAction(sequence(alpha(0), visible(true), alpha(0.5f)));
-									curPage = curUserSCORE.getMaxPlayedLevel(selectedDclty) / dcltyGrpCnt[selectedDclty.ordinal()];;
+									curPage = curUserSCORE.getMaxPlayedLevel(selectedDclty) / perPageLvlCnt;
 									selectedDclty = Utils.getDifficultyByIdx(i);
 									dcltyNumPageGroup[i][curPage].setVisible(true);
 									dcltyNumGroup[i].addAction(sequence(alpha(0), visible(true), alpha(1f)));
@@ -418,6 +418,7 @@ public class LevelScreen extends BackScreen {
 					},fadeIn(1f), run(new Runnable() {
 						@Override
 						public void run() {
+							printLevelData = false;
 							thumbnail.clearActions();
 							thumbnail.remove();
 							game.setScreen(new PlayScreen(game, selectedDclty, selectedLevel));
@@ -608,7 +609,6 @@ public class LevelScreen extends BackScreen {
 		stage.addActor(thumbnail);
 		thumbnail.clearActions();
 		thumbnail.addAction(parallel(forever(rotateBy(1f)), sizeTo(tempWidth, tempHeight, 1f), moveTo((topBar.getWidth() - tempWidth) / 2, (480 - tempHeight) / 2, 1f, swingOut)));
-
 		dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(0.1f));
 		leftButtonGroup.addAction(alpha(0f));
 		rightButtonGroup.addAction(alpha(0f));

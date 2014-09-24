@@ -35,6 +35,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class PlayScreen extends BaseScreen {
@@ -101,6 +102,8 @@ public class PlayScreen extends BaseScreen {
 	private Group hintMenu;
 
 	private GameButtons pressedButton;
+	
+	private boolean upArrowTouched;
 
 	public PlayScreen(CFlagGame game) {
 		super(game, true, true, true);
@@ -115,6 +118,7 @@ public class PlayScreen extends BaseScreen {
 
 		lvlNmeFont = g.createFont("ceaser", 13, true);
 		fadeOutActive=false;
+		upArrowTouched=false;
 		
 		GameData savedGame = Utils.loadGame();
 
@@ -146,6 +150,7 @@ public class PlayScreen extends BaseScreen {
 
 		lvlNmeFont = g.createFont("ceaser", 13, true);
 		fadeOutActive=false;
+		upArrowTouched=false;
 		
 		init(selectedDclty,selectedLevel);
 	}
@@ -292,12 +297,15 @@ public class PlayScreen extends BaseScreen {
 		arrowButton_Up.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Up_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
+				pressedButton = GameButtons.ArrowUp;
+				upArrowTouched = true;
 				return true;
 			};
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Up_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
 				pressedButton = GameButtons.ArrowUp;
+				upArrowTouched = false;
 			};
 		});
 		arrowButton_Right.addListener(new InputListener() {
@@ -367,19 +375,25 @@ public class PlayScreen extends BaseScreen {
 			};
 		});
 		
-		ClickListener hackListener = new ClickListener(Buttons.LEFT) {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if(inTapSquare(750,430) && getTapCount()==3){
-					gameState=GameState.Won;
+		if(curUserOPTS.isSwipeMove()){
+			stage.addListener(new ActorGestureListener(){
+				@Override
+				public void fling(InputEvent event, float velocityX, float velocityY, int button) {
+					if(Math.abs(velocityX)>Math.abs(velocityY))
+						if(velocityX>0)
+							pressedButton = GameButtons.ArrowRight;
+						else
+							pressedButton = GameButtons.ArrowLeft;
+					else 
+						if(velocityY>0)
+							pressedButton = GameButtons.ArrowDown;
+						else
+							pressedButton = GameButtons.ArrowUp;
+					
+					super.fling(event, velocityX, velocityY, button);
 				}
-				super.clicked(event, x, y);
-			}
-		};
-		
-		hackListener.setTapSquareSize(50);
-		
-		stage.addListener(hackListener);
+			});
+		}
 		
 		stage.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -400,6 +414,19 @@ public class PlayScreen extends BaseScreen {
 				return true;
 			}
 		});
+		
+		ClickListener hackListener = new ClickListener(Buttons.LEFT) {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(inTapSquare(750,430) && getTapCount()==3){
+					gameState=GameState.Won;
+				}
+				super.clicked(event, x, y);
+			}
+		};
+		hackListener.setTapSquareSize(50);
+		stage.addListener(hackListener);
+		
 		setTouchEnabled(false);
 	}
 
@@ -416,6 +443,9 @@ public class PlayScreen extends BaseScreen {
 
 		if (ltank != null)
 			drawGameUI();
+		if(upArrowTouched){
+			pressedButton=GameButtons.ArrowUp;
+		}
 	}
 
 	public void update(float delta) {
@@ -713,6 +743,8 @@ public class PlayScreen extends BaseScreen {
 			playAtlas.dispose();
 		if (dfltFont != null)
 			dfltFont.dispose();
+		if(lvlNmeFont != null)
+			lvlNmeFont.dispose();
 		lvl = null;
 		pltfrm = null;
 		ltank = null;
