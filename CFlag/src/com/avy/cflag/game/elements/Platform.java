@@ -191,7 +191,7 @@ public class Platform {
 				} else {
 					curPos.x = curPos.x + playImageOrigLen.x;
 				}
-				if (topImage == PlayImages.Hero_U && firstRun) {
+				if ((topImage == PlayImages.Hero_U || topImage == PlayImages.Hero_R || topImage == PlayImages.Hero_D || topImage == PlayImages.Hero_L)  && firstRun) {
 					topActor[i][j].setOrigin(topActor[i][j].getWidth() / 2, topActor[i][j].getHeight() / 2);
 					float x = topActor[i][j].getX();
 					float y = topActor[i][j].getY();

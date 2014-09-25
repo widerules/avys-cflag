@@ -254,6 +254,8 @@ public class HelpScreen extends BackScreen {
 								game.setScreen(new PlayScreen(game, curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty())));
 						} else if (context.equalsIgnoreCase("levelselect")) {
 							game.setScreen(new LevelScreen(game,false));
+						} else {
+							game.setScreen(new MenuScreen(game));
 						}
 					}
 				})));
