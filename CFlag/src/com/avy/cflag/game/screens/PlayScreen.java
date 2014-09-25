@@ -30,6 +30,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -103,7 +104,9 @@ public class PlayScreen extends BaseScreen {
 
 	private GameButtons pressedButton;
 	
-	private boolean upArrowTouched;
+	private GameButtons longPressButton = GameButtons.None;
+	private int longPressReflexDelay=5;
+	private int longPressTimer=0;
 
 	public PlayScreen(CFlagGame game) {
 		super(game, true, true, true);
@@ -118,7 +121,6 @@ public class PlayScreen extends BaseScreen {
 
 		lvlNmeFont = g.createFont("ceaser", 13, true);
 		fadeOutActive=false;
-		upArrowTouched=false;
 		
 		GameData savedGame = Utils.loadGame();
 
@@ -127,7 +129,7 @@ public class PlayScreen extends BaseScreen {
 		} else {
 			currentDclty = savedGame.getCurrentDclty();
 			currentLevel = savedGame.getCurrentLevel();
-			gameState = GameState.Running;
+			gameState = GameState.Ready;
 			lvl = savedGame.getLvl();
 			ltank = savedGame.getLtank();
 			undoCnt = savedGame.getUndoCnt();
@@ -150,7 +152,6 @@ public class PlayScreen extends BaseScreen {
 
 		lvlNmeFont = g.createFont("ceaser", 13, true);
 		fadeOutActive=false;
-		upArrowTouched=false;
 		
 		init(selectedDclty,selectedLevel);
 	}
@@ -214,20 +215,25 @@ public class PlayScreen extends BaseScreen {
 		arrowButton_Left = new Group();
 		arrowButton_Left.addActor(arrowButton_Left_Up);
 		arrowButton_Left.addActor(arrowButton_Left_Down);
-
+		arrowButton_Left.setName("Left");
+		
 		arrowButton_Up_Up = new Image(g.getFlipTexRegion("arrow_u_up"));
+		arrowButton_Up_Up.setName("UpUp");
 		arrowButton_Up_Down = new Image(g.getFlipTexRegion("arrow_u_down"));
 		arrowButton_Up_Down.setVisible(false);
+		arrowButton_Up_Down.setName("UpDown");
 		arrowButton_Up = new Group();
 		arrowButton_Up.addActor(arrowButton_Up_Up);
 		arrowButton_Up.addActor(arrowButton_Up_Down);
-
+		arrowButton_Up.setName("Up");
+		
 		arrowButton_Right_Up = new Image(g.getFlipTexRegion("arrow_r_up"));
 		arrowButton_Right_Down = new Image(g.getFlipTexRegion("arrow_r_down"));
 		arrowButton_Right_Down.setVisible(false);
 		arrowButton_Right = new Group();
 		arrowButton_Right.addActor(arrowButton_Right_Up);
 		arrowButton_Right.addActor(arrowButton_Right_Down);
+		arrowButton_Right.setName("Right");
 
 		arrowButton_Down_Up = new Image(g.getFlipTexRegion("arrow_d_up"));
 		arrowButton_Down_Down = new Image(g.getFlipTexRegion("arrow_d_down"));
@@ -235,6 +241,7 @@ public class PlayScreen extends BaseScreen {
 		arrowButton_Down = new Group();
 		arrowButton_Down.addActor(arrowButton_Down_Up);
 		arrowButton_Down.addActor(arrowButton_Down_Down);
+		arrowButton_Down.setName("Down");
 
 		hintButton_Up = new Image(g.getFlipTexRegion("hint_up"));
 		hintButton_Down = new Image(g.getFlipTexRegion("hint_down"));
@@ -276,7 +283,7 @@ public class PlayScreen extends BaseScreen {
 		pltfrm.paintPlatform(ltank);
 
 		argbFull.addAction(sequence(fadeOut(1f), visible(false)));
-
+		argbFull.setName("Test");
 		stage.addActor(leftPanel);
 		stage.addActor(midPanel);
 		stage.addActor(rightPanel);
@@ -298,87 +305,139 @@ public class PlayScreen extends BaseScreen {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Up_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
 				pressedButton = GameButtons.ArrowUp;
-				upArrowTouched = true;
 				return true;
 			};
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Up_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				pressedButton = GameButtons.ArrowUp;
-				upArrowTouched = false;
+				longPressButton = GameButtons.None;
 			};
 		});
+		
+		arrowButton_Up.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+			@Override
+			public boolean longPress(Actor actor, float x, float y) {
+				longPressButton=GameButtons.ArrowUp;
+				return super.longPress(actor, x, y);
+			}
+		});
+		
 		arrowButton_Right.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Right_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
+				pressedButton = GameButtons.ArrowRight;
 				return true;
 			};
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Right_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				pressedButton = GameButtons.ArrowRight;
 			};
 		});
+		
+		arrowButton_Right.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+			@Override
+			public boolean longPress(Actor actor, float x, float y) {
+				longPressButton=GameButtons.ArrowRight;
+				return super.longPress(actor, x, y);
+			}
+		});
+		
 		arrowButton_Down.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Down_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
+				pressedButton = GameButtons.ArrowDown;
 				return true;
 			};
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Down_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				pressedButton = GameButtons.ArrowDown;
 			};
 		});
+		
+		arrowButton_Down.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+			@Override
+			public boolean longPress(Actor actor, float x, float y) {
+				longPressButton=GameButtons.ArrowDown;
+				return super.longPress(actor, x, y);
+			}
+		});
+		
 		arrowButton_Left.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Left_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
+				pressedButton = GameButtons.ArrowLeft;
 				return true;
 			};
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Left_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				pressedButton = GameButtons.ArrowLeft;
 			};
 		});
+		
+		arrowButton_Left.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+			@Override
+			public boolean longPress(Actor actor, float x, float y) {
+				longPressButton=GameButtons.ArrowLeft;
+				return super.longPress(actor, x, y);
+			}
+		});
+		
 		hintButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				hintButton_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
+				gameState = GameState.Hint;
 				return true;
 			};
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				hintButton_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				gameState = GameState.Hint;
 			};
 		});
+		
 		undoButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				undoButton_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
+				pressedButton = GameButtons.UnDo;
 				return true;
 			};
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				undoButton_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				pressedButton = GameButtons.UnDo;
 			};
 		});
+		
+		undoButton.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+			@Override
+			public boolean longPress(Actor actor, float x, float y) {
+				longPressButton=GameButtons.UnDo;
+				return super.longPress(actor, x, y);
+			}
+		});
+		
 		fireButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				fireButton_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
+				pressedButton = GameButtons.Fire;
 				return true;
 			};
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				fireButton_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				pressedButton = GameButtons.Fire;
 			};
 		});
 		
-		if(curUserOPTS.isSwipeMove()){
-			stage.addListener(new ActorGestureListener(){
-				@Override
-				public void fling(InputEvent event, float velocityX, float velocityY, int button) {
+		fireButton.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+			@Override
+			public boolean longPress(Actor actor, float x, float y) {
+				longPressButton=GameButtons.Fire;
+				return super.longPress(actor, x, y);
+			}
+		});
+		
+		stage.addListener(new ActorGestureListener(){
+			@Override
+			public void fling(InputEvent event, float velocityX, float velocityY, int button) {
+				if(curUserOPTS.isSwipeMove()){
 					if(Math.abs(velocityX)>Math.abs(velocityY))
 						if(velocityX>0)
 							pressedButton = GameButtons.ArrowRight;
@@ -389,12 +448,11 @@ public class PlayScreen extends BaseScreen {
 							pressedButton = GameButtons.ArrowDown;
 						else
 							pressedButton = GameButtons.ArrowUp;
-					
-					super.fling(event, velocityX, velocityY, button);
-				}
-			});
-		}
-		
+					}
+				super.fling(event, velocityX, velocityY, button);
+			}
+		});
+	
 		stage.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				if (gameState == GameState.Hint) {
@@ -443,9 +501,6 @@ public class PlayScreen extends BaseScreen {
 
 		if (ltank != null)
 			drawGameUI();
-		if(upArrowTouched){
-			pressedButton=GameButtons.ArrowUp;
-		}
 	}
 
 	public void update(float delta) {
@@ -551,8 +606,35 @@ public class PlayScreen extends BaseScreen {
 					default:
 						break;
 				}
+				if(longPressTimer<longPressReflexDelay){
+					longPressTimer++;
+				} else {
+					longPressTimer=0;
+					switch (longPressButton) {
+						case ArrowUp:
+							moveHero(Direction.Up);
+							break;
+						case ArrowRight:
+							moveHero(Direction.Right);
+							break;
+						case ArrowDown:
+							moveHero(Direction.Down);
+							break;
+						case ArrowLeft:
+							moveHero(Direction.Left);
+							break;
+						case UnDo:
+							undoInGame();
+							stateChanged = true;
+							break;
+						case Fire:
+							fireHero();
+							break;
+						default:
+							break;
+					}
+				}
 				pressedButton = GameButtons.None;
-				break;
 			default:
 				break;
 		}
