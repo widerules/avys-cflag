@@ -109,6 +109,7 @@ public class PlayScreen extends BaseScreen {
 	private int longPressReflexDelay=2;
 	private int longPressTimer=0;
 	private float dragStartX=0, dragStartY=0;
+	private boolean updateInProgress = false;
 
 	public PlayScreen(CFlagGame game) {
 		super(game, true, true, true);
@@ -333,6 +334,7 @@ public class PlayScreen extends BaseScreen {
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Right_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
+				longPressButton = GameButtons.None;
 			};
 		});
 		
@@ -353,6 +355,7 @@ public class PlayScreen extends BaseScreen {
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Down_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
+				longPressButton = GameButtons.None;
 			};
 		});
 		
@@ -373,6 +376,7 @@ public class PlayScreen extends BaseScreen {
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Left_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
+				longPressButton = GameButtons.None;
 			};
 		});
 		
@@ -444,7 +448,6 @@ public class PlayScreen extends BaseScreen {
 		stage.addListener(new ActorGestureListener(){
 			@Override
 			public void fling(InputEvent event, float velocityX, float velocityY, int button) {
-//				System.out.println("fling:" + button);
 				if(curUserOPTS.isSwipeMove()){
 					if(Math.abs(velocityX)>Math.abs(velocityY))
 						if(velocityX>0)
@@ -481,59 +484,55 @@ public class PlayScreen extends BaseScreen {
 			}
 		});
 		
-		stage.addListener(new DragListener(){
-			
+		stage.addListener(new DragListener() {
+
 			@Override
 			public void drag(InputEvent event, float x, float y, int pointer) {
-//				System.out.println("Dragging : " + x + ":" +y);
-				if(curUserOPTS.isSwipeMove()){
-				float velocityX = x - dragStartX;
-				float velocityY = y - dragStartY;
-//				System.out.println("Dragging : " + x + " : " +y + "     -    " + "velocity : " + velocityX + " : " + velocityY);
-				if(Math.abs(velocityX)>100||Math.abs(velocityY)>100) {
-				if(Math.abs(velocityX)>Math.abs(velocityY)){
-					if(velocityX>0)
-						longPressButton=GameButtons.ArrowRight;
-					else
-						longPressButton=GameButtons.ArrowLeft;
-				} else if (Math.abs(velocityX)<Math.abs(velocityY)){
-					if(velocityY>0)
-						longPressButton=GameButtons.ArrowDown;
-					else
-						longPressButton=GameButtons.ArrowUp;
-				} }
+				if (curUserOPTS.isSwipeMove()) {
+					float velocityX = x - dragStartX;
+					float velocityY = y - dragStartY;
+					if (Math.abs(velocityX) > 100 || Math.abs(velocityY) > 100) {
+						if (Math.abs(velocityX) > Math.abs(velocityY)) {
+							if (velocityX > 0)
+								longPressButton = GameButtons.ArrowRight;
+							else
+								longPressButton = GameButtons.ArrowLeft;
+						} else if (Math.abs(velocityX) < Math.abs(velocityY)) {
+							if (velocityY > 0)
+								longPressButton = GameButtons.ArrowDown;
+							else
+								longPressButton = GameButtons.ArrowUp;
+						}
+					}
 				}
 				super.drag(event, x, y, pointer);
 			}
-			
+
 			@Override
 			public void dragStart(InputEvent event, float x, float y, int pointer) {
-				dragStartX=x; 
-				dragStartY=y;
-//				System.out.println("Start : " + x + ":" +y);
+				dragStartX = x;
+				dragStartY = y;
 				super.dragStart(event, x, y, pointer);
 			}
-			
+
 			@Override
 			public void dragStop(InputEvent event, float x, float y, int pointer) {
-//				System.out.println("Drag Stopped");
-				dragStartX=0; 
-				dragStartY=0;
+				dragStartX = 0;
+				dragStartY = 0;
 				super.dragStop(event, x, y, pointer);
 			}
-		});
-		
+		});		
 		
 		ClickListener hackListener = new ClickListener(Buttons.LEFT) {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(inTapSquare(750,430) && getTapCount()==3){
+				if(inTapSquare(780,460) && getTapCount()==3){
 					gameState=GameState.Won;
 				}
 				super.clicked(event, x, y);
 			}
 		};
-		hackListener.setTapSquareSize(50);
+		hackListener.setTapSquareSize(20);
 		stage.addListener(hackListener);
 		
 		setTouchEnabled(false);
@@ -542,7 +541,8 @@ public class PlayScreen extends BaseScreen {
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		update(delta);
+		if(!updateInProgress)
+			update(delta);	
 		if (stateChanged) {
 			pltfrm.paintPlatform(ltank);
 			stateChanged = false;
@@ -555,6 +555,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void update(float delta) {
+		updateInProgress=true;
 		switch (gameState) {
 			case Ready:
 				updateReady();
@@ -585,6 +586,7 @@ public class PlayScreen extends BaseScreen {
 			default:
 				break;
 		}
+		updateInProgress=false;
 	}
 
 	private void updateReady() {
@@ -656,36 +658,36 @@ public class PlayScreen extends BaseScreen {
 						fireHero();
 						break;
 					default:
+						if(longPressTimer<longPressReflexDelay){
+							longPressTimer++;
+						} else {
+							longPressTimer=0;
+							switch (longPressButton) {
+								case ArrowUp:
+									moveHero(Direction.Up);
+									break;
+								case ArrowRight:
+									moveHero(Direction.Right);
+									break;
+								case ArrowDown:
+									moveHero(Direction.Down);
+									break;
+								case ArrowLeft:
+									moveHero(Direction.Left);
+									break;
+								case UnDo:
+//									System.out.println("undol");
+									undoInGame();
+									stateChanged = true;
+									break;
+								case Fire:
+									fireHero();
+									break;
+								default:
+									break;
+							}
+						}
 						break;
-				}
-				if(longPressTimer<longPressReflexDelay){
-					longPressTimer++;
-				} else {
-					longPressTimer=0;
-					switch (longPressButton) {
-						case ArrowUp:
-							moveHero(Direction.Up);
-							break;
-						case ArrowRight:
-							moveHero(Direction.Right);
-							break;
-						case ArrowDown:
-							moveHero(Direction.Down);
-							break;
-						case ArrowLeft:
-							moveHero(Direction.Left);
-							break;
-						case UnDo:
-//							System.out.println("undol");
-							undoInGame();
-							stateChanged = true;
-							break;
-						case Fire:
-							fireHero();
-							break;
-						default:
-							break;
-					}
 				}
 				pressedButton = GameButtons.None;
 			default:
@@ -755,7 +757,11 @@ public class PlayScreen extends BaseScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							game.setScreen(new LevelScreen(game,true));
+							if(currentLevel==curUserSCORE.getMaxPlayedLevel(currentDclty)) {
+								game.setScreen(new LevelScreen(game,true));
+							} else {
+								game.setScreen(new LevelScreen(game,false));
+							}
 							return false;
 						}
 					}));
@@ -893,11 +899,11 @@ public class PlayScreen extends BaseScreen {
 
 	private void saveScores() {
 		Utils.saveUserScores(currentDclty, currentLevel, ltank.getTankMoves(), ltank.getTankShots(), hintUsed);
-		currentLevel++;
-		Utils.saveUserScores(currentDclty, currentLevel, 0, 0, false);
-		SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel);
-		st2.run();
-		
+		if(currentLevel==curUserSCORE.getMaxPlayedLevel(currentDclty)) {
+			Utils.saveUserScores(currentDclty, currentLevel+1, 0, 0, false);
+			SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel);
+			st2.run();
+		}
 	}
 
 	private void setTouchEnabled(boolean isEnabled) {
