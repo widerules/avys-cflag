@@ -353,6 +353,13 @@ public class LTank {
 					case ExitRMirror:
 					case PassCrystal:
 						switch (nxtPosObj) {
+							case Hero_U:
+							case Hero_D:
+							case Hero_L:
+							case Hero_R:
+								curTankBullet.setCurBulletState(BulletState.Exploded);
+								curTankState = TankState.ShotDead;
+								break;
 							case DVillain_D:
 							case DVillain_L:
 							case DVillain_R:

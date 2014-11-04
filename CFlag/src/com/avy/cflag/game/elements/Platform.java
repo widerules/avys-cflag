@@ -1,8 +1,6 @@
 package com.avy.cflag.game.elements;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.rotateBy;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -14,6 +12,7 @@ import com.avy.cflag.base.Point;
 import com.avy.cflag.game.MemStore;
 import com.avy.cflag.game.MemStore.PlayImages;
 import com.avy.cflag.game.Utils;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -85,6 +84,7 @@ public class Platform {
 
 	public void randomizeAnims() {
 		if (curDelayCount > animDelayCount && (villainCount > 0 || mmirrorCount > 0 || rmirrorCount > 0)) {
+			
 			curDelayCount = 0;
 			int tempVillainCnt = 0;
 			int tempMmirrorCnt = 0;
@@ -111,6 +111,9 @@ public class Platform {
 			for (int i = 0; i < MemStore.lvlFieldLEN.x; i++) {
 				for (int j = 0; j < MemStore.lvlFieldLEN.y; j++) {
 					final PlayImages topImage = Utils.getPlayImage(topId[i][j]);
+//					if(topImage.name().indexOf("Hero")==0){
+//						topActor[i][j].addAction();
+//					}
 					if (topImage.name().indexOf("Villain") == 0) {
 						tempVillainCnt++;
 						if (villainNos.contains(tempVillainCnt)) {

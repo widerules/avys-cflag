@@ -3,6 +3,7 @@ package com.avy.cflag.game.screens;
 import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
@@ -38,6 +39,8 @@ public class MenuScreen extends BackScreen {
 
 	private Image versionStr;
 	private Image avyStudiosStr;
+	private Image rateUs;
+	private Image likeUs;
 
 	private Image hero;
 
@@ -73,7 +76,9 @@ public class MenuScreen extends BackScreen {
 		versionStr = new Image(g.getFlipTexRegion("version"));
 		avyStudiosStr = new Image(g.getFlipTexRegion("avystudios"));
 		hero = new Image(g.getFlipTexRegion("hero"));
-
+		rateUs = new Image(g.getFlipTexRegion("rateus"));
+		likeUs = new Image(g.getFlipTexRegion("likeus"));
+		
 		menuTopBar.setPosition(0, 0);
 		newGame.setPosition(20, 63);
 		resume.setPosition(20, 63);
@@ -85,6 +90,9 @@ public class MenuScreen extends BackScreen {
 		flag.setPosition(171, 226);
 		versionStr.setPosition((bottomBar.getWidth() - versionStr.getWidth()) / 2, bottomBar.getY() + 20);
 		avyStudiosStr.setPosition((bottomBar.getWidth() - avyStudiosStr.getWidth()) / 2, bottomBar.getY() + 40);
+		rateUs.setPosition(25, bottomBar.getY()+(bottomBar.getHeight()-rateUs.getHeight())/2);
+		likeUs.setPosition(775-likeUs.getWidth(), rateUs.getY());
+
 		hero.setPosition(0, 354);
 		hero.setOrigin(hero.getWidth() / 2, hero.getHeight() / 2);
 
@@ -107,9 +115,24 @@ public class MenuScreen extends BackScreen {
 		stage.addActor(flagPole);
 		stage.addActor(versionStr);
 		stage.addActor(avyStudiosStr);
+		stage.addActor(rateUs);
+		stage.addActor(likeUs);
 		stage.addActor(hero);
 		stage.addActor(argbFull);
 
+		avyStudiosStr.addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
+					@Override
+					public void run() {
+						game.setScreen(new AboutScreen(game));
+					}
+				})));
+				return true;
+			}
+		});
+		
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -128,6 +151,7 @@ public class MenuScreen extends BackScreen {
 				} else if (Utils.inBoundsRect(new Point((int) x, (int) y), 655, 239, 779, 262, 770, 310, 646, 286)) {
 					quitPressed = true;
 				}
+				
 				return true;
 			}
 

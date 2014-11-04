@@ -1,7 +1,7 @@
 
 menu.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 topbar
   rotate: false
@@ -227,9 +227,23 @@ avystudios
   orig: 160, 20
   offset: 0, 0
   index: -1
+likeus
+  rotate: false
+  xy: 1399, 715
+  size: 100, 70
+  orig: 100, 70
+  offset: 0, 0
+  index: -1
+rateus
+  rotate: false
+  xy: 1867, 802
+  size: 100, 70
+  orig: 100, 70
+  offset: 0, 0
+  index: -1
 flagpole
   rotate: false
-  xy: 1399, 697
+  xy: 609, 405
   size: 30, 88
   orig: 30, 88
   offset: 0, 0
@@ -243,14 +257,14 @@ hero
   index: -1
 flag
   rotate: false
-  xy: 1867, 839
+  xy: 1399, 680
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 1
 flag
   rotate: false
-  xy: 1431, 752
+  xy: 1501, 752
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
@@ -264,63 +278,63 @@ flag
   index: 11
 flag
   rotate: false
-  xy: 1918, 839
+  xy: 1450, 680
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 12
 flag
   rotate: false
-  xy: 1431, 717
+  xy: 1501, 717
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 2
 flag
   rotate: false
-  xy: 1482, 752
+  xy: 251, 16
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 3
 flag
   rotate: false
-  xy: 251, 16
+  xy: 1501, 682
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 4
 flag
   rotate: false
-  xy: 1482, 717
+  xy: 1969, 839
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 5
 flag
   rotate: false
-  xy: 1969, 839
+  xy: 1969, 804
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 6
 flag
   rotate: false
-  xy: 1867, 804
+  xy: 641, 470
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 7
 flag
   rotate: false
-  xy: 1918, 804
+  xy: 641, 435
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
   index: 8
 flag
   rotate: false
-  xy: 1969, 804
+  xy: 692, 470
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
