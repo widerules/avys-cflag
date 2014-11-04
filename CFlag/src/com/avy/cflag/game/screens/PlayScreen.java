@@ -103,13 +103,14 @@ public class PlayScreen extends BaseScreen {
 	private Group wonMenu;
 	private Group hintMenu;
 
-	private GameButtons pressedButton;
-	
-	private GameButtons longPressButton = GameButtons.None;
-	private int longPressReflexDelay=2;
-	private int longPressTimer=0;
-	private float dragStartX=0, dragStartY=0;
 	private boolean updateInProgress = false;
+	private GameButtons pressedButton = GameButtons.None;
+	private GameButtons longPressButton = GameButtons.None;
+	private int longPressReflexDelay = 2;
+	private int longPressTimer = 0;
+	private float dragStartX = 0, dragStartY = 0;
+	DragListener dragListener = null;
+	private boolean undoInProgress = false;
 
 	public PlayScreen(CFlagGame game) {
 		super(game, true, true, true);
@@ -123,11 +124,11 @@ public class PlayScreen extends BaseScreen {
 		g.setFont(dfltFont);
 
 		lvlNmeFont = g.createFont("ceaser", 13, true);
-		fadeOutActive=false;
-		
+		fadeOutActive = false;
+
 		GameData savedGame = Utils.loadGame();
 
-		if(savedGame==null){
+		if (savedGame == null) {
 			init(curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty()));
 		} else {
 			currentDclty = savedGame.getCurrentDclty();
@@ -154,12 +155,12 @@ public class PlayScreen extends BaseScreen {
 		g.setFont(dfltFont);
 
 		lvlNmeFont = g.createFont("ceaser", 13, true);
-		fadeOutActive=false;
-		
-		init(selectedDclty,selectedLevel);
+		fadeOutActive = false;
+
+		init(selectedDclty, selectedLevel);
 	}
 
-	private void init(Difficulty selectedDclty, int selectedLevel){
+	private void init(Difficulty selectedDclty, int selectedLevel) {
 		currentDclty = selectedDclty;
 		currentLevel = selectedLevel;
 		gameState = GameState.Ready;
@@ -167,13 +168,13 @@ public class PlayScreen extends BaseScreen {
 		curUserOPTS.setLastDifficulty(selectedDclty);
 		curUserOPTS.setFirstRun(false);
 		Utils.saveGameOptions();
-		
-		if(currentLevel==1) {
+
+		if (currentLevel == 1) {
 			Utils.saveUserScores(currentDclty, currentLevel, 0, 0, false);
 			SaveThumbs st = new SaveThumbs(g, currentDclty, currentLevel);
 			st.run();
 		}
-		
+
 		lvl = new Level();
 		lvl.loadLevel(currentDclty, currentLevel);
 
@@ -219,7 +220,7 @@ public class PlayScreen extends BaseScreen {
 		arrowButton_Left.addActor(arrowButton_Left_Up);
 		arrowButton_Left.addActor(arrowButton_Left_Down);
 		arrowButton_Left.setName("Left");
-		
+
 		arrowButton_Up_Up = new Image(g.getFlipTexRegion("arrow_u_up"));
 		arrowButton_Up_Up.setName("UpUp");
 		arrowButton_Up_Down = new Image(g.getFlipTexRegion("arrow_u_down"));
@@ -229,7 +230,7 @@ public class PlayScreen extends BaseScreen {
 		arrowButton_Up.addActor(arrowButton_Up_Up);
 		arrowButton_Up.addActor(arrowButton_Up_Down);
 		arrowButton_Up.setName("Up");
-		
+
 		arrowButton_Right_Up = new Image(g.getFlipTexRegion("arrow_r_up"));
 		arrowButton_Right_Down = new Image(g.getFlipTexRegion("arrow_r_down"));
 		arrowButton_Right_Down.setVisible(false);
@@ -316,15 +317,15 @@ public class PlayScreen extends BaseScreen {
 				longPressButton = GameButtons.None;
 			};
 		});
-		
-		arrowButton_Up.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+
+		arrowButton_Up.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f) {
 			@Override
 			public boolean longPress(Actor actor, float x, float y) {
-				longPressButton=GameButtons.ArrowUp;
+				longPressButton = GameButtons.ArrowUp;
 				return super.longPress(actor, x, y);
 			}
 		});
-		
+
 		arrowButton_Right.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Right_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
@@ -337,15 +338,15 @@ public class PlayScreen extends BaseScreen {
 				longPressButton = GameButtons.None;
 			};
 		});
-		
-		arrowButton_Right.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+
+		arrowButton_Right.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f) {
 			@Override
 			public boolean longPress(Actor actor, float x, float y) {
-				longPressButton=GameButtons.ArrowRight;
+				longPressButton = GameButtons.ArrowRight;
 				return super.longPress(actor, x, y);
 			}
 		});
-		
+
 		arrowButton_Down.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Down_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
@@ -358,15 +359,15 @@ public class PlayScreen extends BaseScreen {
 				longPressButton = GameButtons.None;
 			};
 		});
-		
-		arrowButton_Down.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+
+		arrowButton_Down.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f) {
 			@Override
 			public boolean longPress(Actor actor, float x, float y) {
-				longPressButton=GameButtons.ArrowDown;
+				longPressButton = GameButtons.ArrowDown;
 				return super.longPress(actor, x, y);
 			}
 		});
-		
+
 		arrowButton_Left.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				arrowButton_Left_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
@@ -379,15 +380,15 @@ public class PlayScreen extends BaseScreen {
 				longPressButton = GameButtons.None;
 			};
 		});
-		
-		arrowButton_Left.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+
+		arrowButton_Left.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f) {
 			@Override
 			public boolean longPress(Actor actor, float x, float y) {
-				longPressButton=GameButtons.ArrowLeft;
+				longPressButton = GameButtons.ArrowLeft;
 				return super.longPress(actor, x, y);
 			}
 		});
-		
+
 		hintButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				hintButton_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
@@ -399,7 +400,7 @@ public class PlayScreen extends BaseScreen {
 				hintButton_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
 			};
 		});
-		
+
 		undoButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				undoButton_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
@@ -409,21 +410,21 @@ public class PlayScreen extends BaseScreen {
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				undoButton_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				longPressButton=GameButtons.None;
+				longPressButton = GameButtons.None;
 			};
 		});
-		
-		undoButton.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+
+		undoButton.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f) {
 			@Override
 			public boolean longPress(Actor actor, float x, float y) {
-				if(undoCnt>0)
-					longPressButton=GameButtons.UnDo;
+				if (undoCnt > 0)
+					longPressButton = GameButtons.UnDo;
 				else
-					longPressButton=GameButtons.None;
+					longPressButton = GameButtons.None;
 				return super.longPress(actor, x, y);
 			}
 		});
-		
+
 		fireButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				fireButton_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
@@ -433,37 +434,37 @@ public class PlayScreen extends BaseScreen {
 
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				fireButton_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
-				longPressButton=GameButtons.None;
+				longPressButton = GameButtons.None;
 			};
 		});
-		
-		fireButton.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f){
+
+		fireButton.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f) {
 			@Override
 			public boolean longPress(Actor actor, float x, float y) {
-				longPressButton=GameButtons.Fire;
+				longPressButton = GameButtons.Fire;
 				return super.longPress(actor, x, y);
 			}
 		});
-		
-		stage.addListener(new ActorGestureListener(){
+
+		stage.addListener(new ActorGestureListener() {
 			@Override
 			public void fling(InputEvent event, float velocityX, float velocityY, int button) {
-				if(curUserOPTS.isSwipeMove()){
-					if(Math.abs(velocityX)>Math.abs(velocityY))
-						if(velocityX>0)
+				if (curUserOPTS.isSwipeMove()) {
+					if (Math.abs(velocityX) > Math.abs(velocityY) + 10)
+						if (velocityX > 0)
 							pressedButton = GameButtons.ArrowRight;
 						else
 							pressedButton = GameButtons.ArrowLeft;
-					else 
-						if(velocityY>0)
+					else if (Math.abs(velocityY) > Math.abs(velocityX) + 10)
+						if (velocityY > 0)
 							pressedButton = GameButtons.ArrowDown;
 						else
 							pressedButton = GameButtons.ArrowUp;
-					}
+				}
 				super.fling(event, velocityX, velocityY, button);
 			}
 		});
-	
+
 		stage.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				if (gameState == GameState.Hint) {
@@ -483,26 +484,25 @@ public class PlayScreen extends BaseScreen {
 				return true;
 			}
 		});
-		
-		stage.addListener(new DragListener() {
+
+		dragListener = new DragListener() {
 
 			@Override
 			public void drag(InputEvent event, float x, float y, int pointer) {
 				if (curUserOPTS.isSwipeMove()) {
 					float velocityX = x - dragStartX;
 					float velocityY = y - dragStartY;
-					if (Math.abs(velocityX) > 100 || Math.abs(velocityY) > 100) {
-						if (Math.abs(velocityX) > Math.abs(velocityY)) {
+					if (Math.abs(velocityX) > 20 || Math.abs(velocityY) > 20) {
+						if (Math.abs(velocityX) > Math.abs(velocityY) + 10)
 							if (velocityX > 0)
 								longPressButton = GameButtons.ArrowRight;
 							else
 								longPressButton = GameButtons.ArrowLeft;
-						} else if (Math.abs(velocityX) < Math.abs(velocityY)) {
+						else if (Math.abs(velocityY) > Math.abs(velocityX) + 10)
 							if (velocityY > 0)
 								longPressButton = GameButtons.ArrowDown;
 							else
 								longPressButton = GameButtons.ArrowUp;
-						}
 					}
 				}
 				super.drag(event, x, y, pointer);
@@ -519,30 +519,31 @@ public class PlayScreen extends BaseScreen {
 			public void dragStop(InputEvent event, float x, float y, int pointer) {
 				dragStartX = 0;
 				dragStartY = 0;
+				longPressButton = GameButtons.None;
 				super.dragStop(event, x, y, pointer);
 			}
-		});		
-		
+		};
+
 		ClickListener hackListener = new ClickListener(Buttons.LEFT) {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(inTapSquare(780,460) && getTapCount()==3){
-					gameState=GameState.Won;
+				if (inTapSquare(780, 460) && getTapCount() == 3) {
+					gameState = GameState.Won;
 				}
 				super.clicked(event, x, y);
 			}
 		};
 		hackListener.setTapSquareSize(20);
 		stage.addListener(hackListener);
-		
+		stage.addListener(dragListener);
 		setTouchEnabled(false);
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
-		if(!updateInProgress)
-			update(delta);	
+		if (!updateInProgress && !undoInProgress)
+			update(delta);
 		if (stateChanged) {
 			pltfrm.paintPlatform(ltank);
 			stateChanged = false;
@@ -552,10 +553,11 @@ public class PlayScreen extends BaseScreen {
 
 		if (ltank != null)
 			drawGameUI();
+
 	}
 
 	public void update(float delta) {
-		updateInProgress=true;
+		updateInProgress = true;
 		switch (gameState) {
 			case Ready:
 				updateReady();
@@ -586,7 +588,7 @@ public class PlayScreen extends BaseScreen {
 			default:
 				break;
 		}
-		updateInProgress=false;
+		updateInProgress = false;
 	}
 
 	private void updateReady() {
@@ -650,7 +652,7 @@ public class PlayScreen extends BaseScreen {
 						moveHero(Direction.Left);
 						break;
 					case UnDo:
-//						System.out.println("undop");
+						// System.out.println("undop");
 						undoInGame();
 						stateChanged = true;
 						break;
@@ -658,10 +660,10 @@ public class PlayScreen extends BaseScreen {
 						fireHero();
 						break;
 					default:
-						if(longPressTimer<longPressReflexDelay){
+						if (longPressTimer < longPressReflexDelay) {
 							longPressTimer++;
 						} else {
-							longPressTimer=0;
+							longPressTimer = 0;
 							switch (longPressButton) {
 								case ArrowUp:
 									moveHero(Direction.Up);
@@ -676,7 +678,7 @@ public class PlayScreen extends BaseScreen {
 									moveHero(Direction.Left);
 									break;
 								case UnDo:
-//									System.out.println("undol");
+									// System.out.println("undol");
 									undoInGame();
 									stateChanged = true;
 									break;
@@ -703,36 +705,42 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void updatePaused() {
-		if(!pausedMenu.isVisible())
+		if (!pausedMenu.isVisible())
 			pausedMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 	}
 
 	private void updateDrowned() {
-		if(!drownedMenu.isVisible())
+		if (!drownedMenu.isVisible()) {
 			drownedMenu.addAction(sequence(visible(true), fadeIn(0.1f)));
+			undoInProgress = true;
+			longPressButton = GameButtons.None;
+		}
 	}
 
 	private void updateDead() {
-		if(!deadMenu.isVisible())
+		if (!deadMenu.isVisible()) {
 			deadMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+			undoInProgress = true;
+			longPressButton = GameButtons.None;
+		}
 	}
 
 	private void updateWon() {
-		if(!wonMenu.isVisible())
+		if (!wonMenu.isVisible())
 			wonMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 	}
 
 	private void updateHint() {
-		if(!hintMenu.isVisible())
+		if (!hintMenu.isVisible())
 			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 	}
 
 	private void updateFadeOut(float delta) {
-		if(!fadeOutActive){
+		if (!fadeOutActive) {
 			switch (gameState) {
 				case Menu:
 				case Quit:
-					fadeOutActive=true;
+					fadeOutActive = true;
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
@@ -742,7 +750,7 @@ public class PlayScreen extends BaseScreen {
 					}));
 					break;
 				case Restart:
-					fadeOutActive=true;
+					fadeOutActive = true;
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
@@ -752,15 +760,15 @@ public class PlayScreen extends BaseScreen {
 					}));
 					break;
 				case NextLevel:
-					fadeOutActive=true;
+					fadeOutActive = true;
 					saveScores();
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							if(currentLevel==curUserSCORE.getMaxPlayedLevel(currentDclty)) {
-								game.setScreen(new LevelScreen(game,true));
+							if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
+								game.setScreen(new LevelScreen(game, true));
 							} else {
-								game.setScreen(new LevelScreen(game,false));
+								game.setScreen(new LevelScreen(game, false));
 							}
 							return false;
 						}
@@ -808,6 +816,7 @@ public class PlayScreen extends BaseScreen {
 		gameState = GameState.Running;
 		longPressButton = GameButtons.None;
 		stateChanged = true;
+		undoInProgress = false;
 	}
 
 	public void undoInGame() {
@@ -816,7 +825,7 @@ public class PlayScreen extends BaseScreen {
 			ltank = null;
 			ltank = undoList[undoCnt].clone();
 		} else {
-			longPressButton=GameButtons.None;
+			longPressButton = GameButtons.None;
 		}
 	}
 
@@ -855,11 +864,11 @@ public class PlayScreen extends BaseScreen {
 
 	public void resume() {
 		if (gameState == GameState.Paused) {
-			if(pausedMenu.isVisible())
+			if (pausedMenu.isVisible())
 				pausedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			gameState = GameState.Running;
 		} else if (gameState == GameState.Hint) {
-			if(hintMenu.isVisible())
+			if (hintMenu.isVisible())
 				hintMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			gameState = GameState.Running;
 		}
@@ -887,7 +896,7 @@ public class PlayScreen extends BaseScreen {
 			playAtlas.dispose();
 		if (dfltFont != null)
 			dfltFont.dispose();
-		if(lvlNmeFont != null)
+		if (lvlNmeFont != null)
 			lvlNmeFont.dispose();
 		lvl = null;
 		pltfrm = null;
@@ -899,8 +908,8 @@ public class PlayScreen extends BaseScreen {
 
 	private void saveScores() {
 		Utils.saveUserScores(currentDclty, currentLevel, ltank.getTankMoves(), ltank.getTankShots(), hintUsed);
-		if(currentLevel==curUserSCORE.getMaxPlayedLevel(currentDclty)) {
-			Utils.saveUserScores(currentDclty, currentLevel+1, 0, 0, false);
+		if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
+			Utils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, false);
 			SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel);
 			st2.run();
 		}
@@ -916,6 +925,7 @@ public class PlayScreen extends BaseScreen {
 			undoButton.setTouchable(Touchable.enabled);
 			fireButton.setTouchable(Touchable.enabled);
 		} else {
+			dragListener.cancel();
 			arrowButton_Up.setTouchable(Touchable.disabled);
 			arrowButton_Right.setTouchable(Touchable.disabled);
 			arrowButton_Down.setTouchable(Touchable.disabled);

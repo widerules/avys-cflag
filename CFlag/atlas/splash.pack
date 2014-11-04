@@ -1,7 +1,7 @@
 
 splash.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 background
   rotate: false

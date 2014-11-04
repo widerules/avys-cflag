@@ -1,7 +1,7 @@
 
 help.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 page4
   rotate: false
