@@ -70,7 +70,7 @@ public class AboutScreen implements Screen {
 		stageForBars  = new Stage(new StretchViewport(game.getSrcWidth(), game.getSrcHeight(), game.getCamera()));
 		
 		scrollBatch = new SpriteBatch();
-		scrollSpeed = 0.2f;
+		scrollSpeed = 0.5f;
 		render = true;
 	}
 
@@ -150,6 +150,28 @@ public class AboutScreen implements Screen {
 		stageForBars.addActor(writeUs);
 		stageForBars.addActor(twitUs);
 		stageForBars.addActor(argbFull);
+
+		twitUs.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				return true;
+			}
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				Gdx.net.openURI("https://twitter.com/intent/tweet?screen_name=rssindian");
+			}
+		});
+
+		writeUs.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				return true;
+			}
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				Gdx.net.openURI("mailto:rssindian@gmail.com");
+			}
+		});
 
 		backButtonGroup.addListener(new InputListener() {
 			@Override

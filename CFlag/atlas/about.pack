@@ -6,8 +6,8 @@ repeat: none
 aboutstr
   rotate: false
   xy: 1, 186
-  size: 400, 1150
-  orig: 400, 1150
+  size: 400, 1070
+  orig: 400, 1070
   offset: 0, 0
   index: -1
 ctf
@@ -26,7 +26,7 @@ back
   index: -1
 twitus
   rotate: false
-  xy: 403, 1266
+  xy: 403, 1186
   size: 100, 70
   orig: 100, 70
   offset: 0, 0

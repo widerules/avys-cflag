@@ -392,7 +392,7 @@ public class PlayScreen extends BaseScreen {
 		hintButton.addListener(new InputListener() {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				hintButton_Down.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				gameState = GameState.Hint;
+				pressedButton = GameButtons.Hint;
 				return true;
 			};
 
@@ -659,6 +659,9 @@ public class PlayScreen extends BaseScreen {
 					case Fire:
 						fireHero();
 						break;
+					case Hint:
+						gameState = GameState.Hint;
+						break;
 					default:
 						if (longPressTimer < longPressReflexDelay) {
 							longPressTimer++;
@@ -765,7 +768,7 @@ public class PlayScreen extends BaseScreen {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
 						@Override
 						public boolean act(float delta) {
-							if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
+							if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)-1) {
 								game.setScreen(new LevelScreen(game, true));
 							} else {
 								game.setScreen(new LevelScreen(game, false));
@@ -787,7 +790,7 @@ public class PlayScreen extends BaseScreen {
 		g.drawString(lvl.getLvlDclty().toString(), 80, 241, Color.BLACK);
 		g.drawString(Integer.toString(ltank.getTankMoves()), 720, 72, Color.BLACK);
 		g.drawString(Integer.toString(ltank.getTankShots()), 720, 158, Color.BLACK);
-		if (gameState == GameState.Hint) {
+		if (gameState == GameState.Hint && hintMenu.getColor().a>=0.7f) {
 			g.drawStringWrapped(lvlNmeFont, lvl.getLvlHint(), 198, 234, 404, Color.BLACK);
 		}
 		batch.end();

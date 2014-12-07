@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 
 public enum Musics {
-	track1, track2, track3;
+	track1, track2, track3, track4;
 
 	private static boolean enabled = true;
 	private static float volume = 0.1f;
