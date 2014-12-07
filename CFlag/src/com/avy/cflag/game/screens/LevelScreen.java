@@ -81,6 +81,8 @@ public class LevelScreen extends BackScreen {
 	private Image playStr;
 	private Image backStr;
 
+	private Image unlockMsg;
+
 	private Difficulty selectedDclty;
 	private int curPage;
 	private int selectedLevel;
@@ -156,6 +158,11 @@ public class LevelScreen extends BackScreen {
 		playAgainStr.setVisible(false);
 		backStr.setVisible(true);
 		
+		unlockMsg = new Image(g.getFlipTexRegion("unlockmsg"));
+		unlockMsg.setPosition((game.getSrcWidth()-unlockMsg.getWidth())/2, (game.getSrcHeight()-unlockMsg.getHeight())/2);
+		unlockMsg.setVisible(false);
+		unlockMsg.getColor().a=0f;
+		
 		midButtonGroup = new Group();
 		midButtonGroup.addActor(midButtonUp);
 		midButtonGroup.addActor(midButtonDown);
@@ -185,7 +192,6 @@ public class LevelScreen extends BackScreen {
 			rightButtonGroup.setVisible(true);
 		else
 			rightButtonGroup.setVisible(false);
-
 		stage.addActor(titleStr);
 		stage.addActor(midButtonGroup);
 		stage.addActor(leftButtonGroup);
@@ -336,17 +342,12 @@ public class LevelScreen extends BackScreen {
 								}
 
 								dcltyNumPageGroup[idx][i].addActor(numButtonGroup);
-
 								numButtonGroup.addListener(new InputListener() {
 									@Override
 									public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 										Group tmp = (Group) event.getListenerActor();
 										Image buttonDown = (Image) tmp.findActor("buttonDown");
 										buttonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-										selectedLevel = Integer.parseInt(tmp.getName());
-										if (selectedLevel > curUserSCORE.getMaxPlayedLevel(selectedDclty)) {
-											//TODO
-										}
 										return true;
 									}
 
@@ -358,6 +359,11 @@ public class LevelScreen extends BackScreen {
 										selectedLevel = Integer.parseInt(tmp.getName());
 										if (selectedLevel <= curUserSCORE.getMaxPlayedLevel(selectedDclty)) {
 											swingOutThumbnail();
+										} else {
+											if(!unlockMsg.isVisible()){
+												dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(0.4f));
+												unlockMsg.addAction(sequence(visible(true),fadeIn(0.5f)));
+											}
 										}
 									}
 								});
@@ -389,6 +395,7 @@ public class LevelScreen extends BackScreen {
 			}
 		}
 		stage.addActor(dcltyButtonGroup);
+		stage.addActor(unlockMsg);
 		stage.addActor(argbFull);
 
 		midButtonGroup.addListener(new InputListener() {
@@ -480,6 +487,10 @@ public class LevelScreen extends BackScreen {
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				if(unlockMsg.isVisible()){
+					unlockMsg.addAction(sequence(fadeOut(0.5f),visible(false)));
+					dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(1f));
+				}
 				if (printLevelData) {
 					if (!(event.getTarget().getName() != null && (event.getTarget().getName().equalsIgnoreCase("thumbnail") || event.getTarget().getName().equalsIgnoreCase("midbutton"))))
 						swingInThumbnail();

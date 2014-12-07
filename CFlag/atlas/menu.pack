@@ -254,95 +254,123 @@ hero
   size: 45, 45
   orig: 45, 45
   offset: 0, 0
-  index: -1
-flag
+  index: 0
+hero
   rotate: false
-  xy: 1399, 680
-  size: 49, 33
-  orig: 49, 33
+  xy: 1399, 668
+  size: 45, 45
+  orig: 45, 45
   offset: 0, 0
   index: 1
-flag
+hero
   rotate: false
-  xy: 1501, 752
-  size: 49, 33
-  orig: 49, 33
+  xy: 1501, 740
+  size: 45, 45
+  orig: 45, 45
   offset: 0, 0
-  index: 10
+  index: 2
 flag
   rotate: false
   xy: 200, 16
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
-  index: 11
+  index: 1
 flag
   rotate: false
-  xy: 1450, 680
+  xy: 1446, 680
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
-  index: 12
-flag
-  rotate: false
-  xy: 1501, 717
-  size: 49, 33
-  orig: 49, 33
-  offset: 0, 0
-  index: 2
+  index: 10
 flag
   rotate: false
   xy: 251, 16
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
-  index: 3
-flag
-  rotate: false
-  xy: 1501, 682
-  size: 49, 33
-  orig: 49, 33
-  offset: 0, 0
-  index: 4
+  index: 11
 flag
   rotate: false
   xy: 1969, 839
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
-  index: 5
+  index: 12
 flag
   rotate: false
   xy: 1969, 804
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
-  index: 6
+  index: 2
 flag
   rotate: false
   xy: 641, 470
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
-  index: 7
+  index: 3
 flag
   rotate: false
   xy: 641, 435
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
-  index: 8
+  index: 4
 flag
   rotate: false
   xy: 692, 470
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
-  index: 9
+  index: 5
+flag
+  rotate: false
+  xy: 692, 435
+  size: 49, 33
+  orig: 49, 33
+  offset: 0, 0
+  index: 6
+flag
+  rotate: false
+  xy: 641, 400
+  size: 49, 33
+  orig: 49, 33
+  offset: 0, 0
+  index: 7
+flag
+  rotate: false
+  xy: 692, 400
+  size: 49, 33
+  orig: 49, 33
+  offset: 0, 0
+  index: 8
 version
   rotate: false
   xy: 1561, 787
   size: 50, 20
   orig: 50, 20
+  offset: 0, 0
+  index: -1
+flag
+  rotate: false
+  xy: 1548, 752
+  size: 49, 33
+  orig: 49, 33
+  offset: 0, 0
+  index: 9
+particle
+  rotate: false
+  xy: 743, 471
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 305, 54
+  size: 6, 15
+  orig: 6, 15
   offset: 0, 0
   index: -1
