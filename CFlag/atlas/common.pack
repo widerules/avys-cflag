@@ -26,63 +26,63 @@ bottombar
   index: -1
 topbar
   rotate: false
-  xy: 1, 1
+  xy: 1027, 338
   size: 800, 80
   orig: 800, 80
   offset: 0, 0
   index: -1
 rectbuttondown
   rotate: false
-  xy: 1027, 378
-  size: 140, 40
-  orig: 140, 40
+  xy: 1829, 460
+  size: 150, 50
+  orig: 150, 50
   offset: 0, 0
   index: -1
 rectbuttonup
   rotate: false
-  xy: 1829, 470
-  size: 140, 40
-  orig: 140, 40
+  xy: 803, 31
+  size: 150, 50
+  orig: 150, 50
   offset: 0, 0
   index: -1
 lefttributtondown
   rotate: false
-  xy: 803, 31
-  size: 40, 50
-  orig: 40, 50
+  xy: 1027, 306
+  size: 50, 30
+  orig: 50, 30
   offset: 0, 0
   index: -1
 lefttributtonup
   rotate: false
-  xy: 1027, 326
-  size: 40, 50
-  orig: 40, 50
+  xy: 1829, 428
+  size: 50, 30
+  orig: 50, 30
   offset: 0, 0
   index: -1
 righttributtondown
   rotate: false
-  xy: 845, 31
-  size: 40, 50
-  orig: 40, 50
+  xy: 1981, 480
+  size: 50, 30
+  orig: 50, 30
   offset: 0, 0
   index: -1
 righttributtonup
   rotate: false
-  xy: 1027, 274
-  size: 40, 50
-  orig: 40, 50
+  xy: 955, 51
+  size: 50, 30
+  orig: 50, 30
   offset: 0, 0
   index: -1
 argbblack
   rotate: false
-  xy: 1169, 408
+  xy: 803, 19
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 argbwhite
   rotate: false
-  xy: 1829, 458
+  xy: 1027, 294
   size: 10, 10
   orig: 10, 10
   offset: 0, 0

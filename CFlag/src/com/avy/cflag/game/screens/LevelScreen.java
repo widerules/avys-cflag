@@ -532,8 +532,8 @@ public class LevelScreen extends BackScreen {
 			} else {
 				scoreDetails = "Moves Played : 0\nShots Fired    : 0 \nHint Used       : No";
 			}
-			g.drawMultiLineString(lvlDetails, 200, 433, Color.BLACK);
-			g.drawMultiLineString(scoreDetails, 600, 433, Color.BLACK);
+			g.drawMultiLineString(lvlDetails, 200, 433, Color.YELLOW);
+			g.drawMultiLineString(scoreDetails, 600, 433, Color.YELLOW);
 			batch.end();
 		}
 	}

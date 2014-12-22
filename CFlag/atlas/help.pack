@@ -48,8 +48,8 @@ ctf
 title
   rotate: false
   xy: 1482, 895
-  size: 200, 56
-  orig: 200, 56
+  size: 250, 56
+  orig: 250, 56
   offset: 0, 0
   index: -1
 entername
@@ -59,51 +59,51 @@ entername
   orig: 200, 30
   offset: 0, 0
   index: -1
-textfieldbase
-  rotate: false
-  xy: 1884, 978
-  size: 160, 40
-  orig: 160, 40
-  offset: 0, 0
-  index: -1
 back
   rotate: false
-  xy: 1482, 849
-  size: 132, 44
-  orig: 132, 44
+  xy: 1884, 968
+  size: 150, 50
+  orig: 150, 50
   offset: 0, 0
   index: -1
 play
   rotate: false
-  xy: 1684, 907
-  size: 132, 44
-  orig: 132, 44
+  xy: 1482, 843
+  size: 150, 50
+  orig: 150, 50
   offset: 0, 0
   index: -1
 skip
   rotate: false
-  xy: 1482, 803
-  size: 132, 44
-  orig: 132, 44
+  xy: 1482, 791
+  size: 150, 50
+  orig: 150, 50
+  offset: 0, 0
+  index: -1
+textfieldbase
+  rotate: false
+  xy: 1482, 749
+  size: 160, 40
+  orig: 160, 40
   offset: 0, 0
   index: -1
 okbuttondown
   rotate: false
-  xy: 1482, 761
+  xy: 1734, 911
   size: 80, 40
   orig: 80, 40
   offset: 0, 0
   index: -1
 okbuttonup
   rotate: false
-  xy: 1482, 719
+  xy: 1634, 853
   size: 80, 40
   orig: 80, 40
   offset: 0, 0
   index: -1
 cursor
   rotate: false
-  xy: 1616, 853
+  xy: 2036, 978
   size: 2, 40
   orig: 2, 40
   offset: 0, 0

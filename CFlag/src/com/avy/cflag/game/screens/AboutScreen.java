@@ -120,7 +120,7 @@ public class AboutScreen implements Screen {
 		backButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
 		
 		g.setImageAtlas(aboutAtlas);
-		titleStr = new Image(g.getFlipTexRegion("ctf"));
+		titleStr = new Image(g.getFlipTexRegion("title"));
 		titleStr.setPosition((topBar.getWidth() - titleStr.getWidth()) / 2, (topBar.getHeight() - titleStr.getHeight()) / 2);
 		backStr = new Image(g.getFlipTexRegion("back"));
 		

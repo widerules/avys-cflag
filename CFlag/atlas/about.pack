@@ -5,28 +5,28 @@ filter: Linear,Linear
 repeat: none
 aboutstr
   rotate: false
-  xy: 1, 186
+  xy: 1, 183
   size: 400, 1070
   orig: 400, 1070
   offset: 0, 0
   index: -1
-ctf
+title
   rotate: false
-  xy: 1, 119
-  size: 400, 65
-  orig: 400, 65
+  xy: 1, 125
+  size: 250, 56
+  orig: 250, 56
   offset: 0, 0
   index: -1
 back
   rotate: false
   xy: 1, 73
-  size: 132, 44
-  orig: 132, 44
+  size: 150, 50
+  orig: 150, 50
   offset: 0, 0
   index: -1
 twitus
   rotate: false
-  xy: 403, 1186
+  xy: 403, 1183
   size: 100, 70
   orig: 100, 70
   offset: 0, 0
