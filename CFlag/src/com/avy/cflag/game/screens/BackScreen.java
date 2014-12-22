@@ -37,7 +37,7 @@ public class BackScreen extends BaseScreen {
 		super.show();
 
 		final Random rand = new Random();
-		final float cloudPosY = rand.nextInt(167) - 87;
+		final float cloudPosY = rand.nextInt(167) - 67;
 		final int cloudAnimDirection = rand.nextInt(2);
 
 		g.setImageAtlas(commonAtlas);

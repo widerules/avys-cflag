@@ -46,7 +46,7 @@ public class MenuScreen extends BackScreen {
 	private Image flagPole;
 	private AnimActor flag;
 
-	private Image versionStr;
+//	private Image versionStr;
 	private Image avyStudiosStr;
 	private Image rateUs;
 	private Image likeUs;
@@ -87,7 +87,7 @@ public class MenuScreen extends BackScreen {
 		quit = new AnimActor(new AnimDrawable(new Animation(0.23f, g.getFlipTexRegions("quit"), PlayMode.LOOP_PINGPONG)));
 		flagPole = new Image(g.getFlipTexRegion("flagpole"));
 		flag = new AnimActor(new AnimDrawable(new Animation(0.1f, g.getFlipTexRegions("flag"), PlayMode.LOOP)));
-		versionStr = new Image(g.getFlipTexRegion("version"));
+//		versionStr = new Image(g.getFlipTexRegion("version"));
 		avyStudiosStr = new Image(g.getFlipTexRegion("avystudios"));
 		hero = new AnimActor(new AnimDrawable(new Animation(0.24f, g.getFlipTexRegions("hero"), PlayMode.LOOP)));
 		bullet = new Image(g.getFlipTexRegion("bullet"));
@@ -103,8 +103,8 @@ public class MenuScreen extends BackScreen {
 		quit.setPosition(639, 57);
 		flagPole.setPosition(162, 227);
 		flag.setPosition(171, 226);
-		versionStr.setPosition((bottomBar.getWidth() - versionStr.getWidth()) / 2, bottomBar.getY() + 20);
-		avyStudiosStr.setPosition((bottomBar.getWidth() - avyStudiosStr.getWidth()) / 2, bottomBar.getY() + 40);
+//		versionStr.setPosition((bottomBar.getWidth() - versionStr.getWidth()) / 2, bottomBar.getY() + 20);
+		avyStudiosStr.setPosition((bottomBar.getWidth() - avyStudiosStr.getWidth()) / 2, bottomBar.getY() + (bottomBar.getHeight()-avyStudiosStr.getHeight())/2);
 		rateUs.setPosition(25, bottomBar.getY() + (bottomBar.getHeight() - rateUs.getHeight()) / 2);
 		likeUs.setPosition(775 - likeUs.getWidth(), rateUs.getY());
 
@@ -134,7 +134,7 @@ public class MenuScreen extends BackScreen {
 		stage.addActor(quit);
 		stage.addActor(flag);
 		stage.addActor(flagPole);
-		stage.addActor(versionStr);
+//		stage.addActor(versionStr);
 		stage.addActor(avyStudiosStr);
 		stage.addActor(rateUs);
 		stage.addActor(likeUs);

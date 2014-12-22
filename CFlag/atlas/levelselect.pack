@@ -13,230 +13,230 @@ unlockmsg
 titlestr
   rotate: false
   xy: 433, 71
-  size: 240, 56
-  orig: 240, 56
+  size: 250, 56
+  orig: 250, 56
   offset: 0, 0
   index: -1
 backstr
   rotate: false
-  xy: 1, 8
-  size: 132, 44
-  orig: 132, 44
+  xy: 1, 2
+  size: 150, 50
+  orig: 150, 50
   offset: 0, 0
   index: -1
 playagainstr
   rotate: false
-  xy: 675, 83
-  size: 132, 44
-  orig: 132, 44
+  xy: 685, 77
+  size: 150, 50
+  orig: 150, 50
   offset: 0, 0
   index: -1
 playstr
   rotate: false
-  xy: 135, 8
-  size: 132, 44
-  orig: 132, 44
+  xy: 153, 2
+  size: 150, 50
+  orig: 150, 50
   offset: 0, 0
   index: -1
 deadlystr
   rotate: false
-  xy: 809, 91
+  xy: 837, 91
   size: 90, 36
   orig: 90, 36
   offset: 0, 0
   index: -1
 easystr
   rotate: false
-  xy: 269, 16
+  xy: 305, 16
   size: 90, 36
   orig: 90, 36
   offset: 0, 0
   index: -1
 hardstr
   rotate: false
-  xy: 901, 91
-  size: 90, 36
-  orig: 90, 36
-  offset: 0, 0
-  index: -1
-mediumstr
-  rotate: false
-  xy: 361, 16
-  size: 90, 36
-  orig: 90, 36
-  offset: 0, 0
-  index: -1
-novicestr
-  rotate: false
-  xy: 453, 33
+  xy: 929, 91
   size: 90, 36
   orig: 90, 36
   offset: 0, 0
   index: -1
 buttonup
   rotate: false
-  xy: 545, 34
+  xy: 433, 34
   size: 90, 35
   orig: 90, 35
   offset: 0, 0
   index: -1
 deadlybuttondown
   rotate: false
-  xy: 675, 46
+  xy: 525, 34
   size: 90, 35
   orig: 90, 35
   offset: 0, 0
   index: -1
 easybuttondown
   rotate: false
-  xy: 809, 54
+  xy: 837, 54
   size: 90, 35
   orig: 90, 35
   offset: 0, 0
   index: -1
 hardbuttondown
   rotate: false
-  xy: 901, 54
+  xy: 929, 54
+  size: 90, 35
+  orig: 90, 35
+  offset: 0, 0
+  index: -1
+mediumbuttondown
+  rotate: false
+  xy: 617, 34
+  size: 90, 35
+  orig: 90, 35
+  offset: 0, 0
+  index: -1
+mediumstr
+  rotate: false
+  xy: 709, 39
+  size: 90, 36
+  orig: 90, 36
+  offset: 0, 0
+  index: -1
+novicestr
+  rotate: false
+  xy: 709, 1
+  size: 90, 36
+  orig: 90, 36
+  offset: 0, 0
+  index: -1
+novicebuttondown
+  rotate: false
+  xy: 801, 17
   size: 90, 35
   orig: 90, 35
   offset: 0, 0
   index: -1
 lock
   rotate: false
-  xy: 767, 41
+  xy: 893, 12
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
-mediumbuttondown
-  rotate: false
-  xy: 809, 17
-  size: 90, 35
-  orig: 90, 35
-  offset: 0, 0
-  index: -1
-novicebuttondown
-  rotate: false
-  xy: 901, 17
-  size: 90, 35
-  orig: 90, 35
-  offset: 0, 0
-  index: -1
-0
-  rotate: false
-  xy: 993, 115
-  size: 12, 12
-  orig: 12, 12
-  offset: 0, 0
-  index: -1
-2
-  rotate: false
-  xy: 433, 57
-  size: 12, 12
-  orig: 12, 12
-  offset: 0, 0
-  index: -1
-3
-  rotate: false
-  xy: 637, 57
-  size: 12, 12
-  orig: 12, 12
-  offset: 0, 0
-  index: -1
-4
-  rotate: false
-  xy: 453, 19
-  size: 12, 12
-  orig: 12, 12
-  offset: 0, 0
-  index: -1
-5
-  rotate: false
-  xy: 993, 101
-  size: 12, 12
-  orig: 12, 12
-  offset: 0, 0
-  index: -1
-6
-  rotate: false
-  xy: 1007, 115
-  size: 12, 12
-  orig: 12, 12
-  offset: 0, 0
-  index: -1
-7
-  rotate: false
-  xy: 637, 43
-  size: 12, 12
-  orig: 12, 12
-  offset: 0, 0
-  index: -1
 numbuttondown
   rotate: false
-  xy: 637, 1
+  xy: 935, 12
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 numbuttonup
   rotate: false
-  xy: 679, 4
+  xy: 977, 12
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
+0
+  rotate: false
+  xy: 397, 40
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+2
+  rotate: false
+  xy: 305, 2
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+3
+  rotate: false
+  xy: 801, 63
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+4
+  rotate: false
+  xy: 801, 3
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+5
+  rotate: false
+  xy: 397, 26
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+6
+  rotate: false
+  xy: 411, 40
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
+7
+  rotate: false
+  xy: 319, 2
+  size: 12, 12
+  orig: 12, 12
+  offset: 0, 0
+  index: -1
 8
   rotate: false
-  xy: 993, 87
+  xy: 815, 63
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 9
   rotate: false
-  xy: 1007, 101
+  xy: 815, 3
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 deadlyframe
   rotate: false
-  xy: 651, 59
+  xy: 411, 28
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 easyframe
   rotate: false
-  xy: 663, 59
+  xy: 333, 4
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 hardframe
   rotate: false
-  xy: 467, 21
+  xy: 829, 5
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 mediumframe
   rotate: false
-  xy: 721, 34
+  xy: 345, 4
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 noviceframe
   rotate: false
-  xy: 993, 75
+  xy: 841, 5
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 1
   rotate: false
-  xy: 1007, 87
+  xy: 357, 2
   size: 7, 12
   orig: 7, 12
   offset: 0, 0

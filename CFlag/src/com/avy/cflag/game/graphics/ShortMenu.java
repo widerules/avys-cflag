@@ -53,8 +53,8 @@ public class ShortMenu extends Group {
 		buttonStr = new Image[buttonList.length];
 
 		for (int i = 0; i < buttonList.length; i++) {
-			buttonUp[i] = new Image(g.getFlipTexRegion("rectbuttonup"));
-			buttonDown[i] = new Image(g.getFlipTexRegion("rectbuttondown"));
+			buttonUp[i] = new Image(g.getFlipTexRegion(Integer.toString(i) + "_rectbuttonup"));
+			buttonDown[i] = new Image(g.getFlipTexRegion(Integer.toString(i) + "_rectbuttondown"));
 			buttonDown[i].setVisible(false);
 			buttonStr[i] = new Image(g.getFlipTexRegion(buttonList[i] + "str"));
 			buttonStr[i].setName(buttonList[i]);
