@@ -1,5 +1,9 @@
 <resources>
 
     <string name="app_name">CaptureTheFlag</string>
-
+	<string name="crash_toast_text">Sorry!! I crashed, but please wait while the logs are gathered</string>
+	<string name="crash_dialog_title">Capture The Flag Game has crashed</string>
+	<string name="crash_dialog_text">An unexpected error occurred forcing the game to stop. Please do help us fix this by sending us error data, all you have to do is click OK.</string>
+	<string name="crash_dialog_comment_prompt">If you want, you can add your comments about the problem below</string>
+	<string name="crash_dialog_ok_toast">Thank you for helping the Developer!</string>
 </resources>
