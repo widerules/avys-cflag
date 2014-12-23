@@ -7,6 +7,7 @@ import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
 import java.util.Arrays;
 import java.util.List;
 
+import com.avy.cflag.base.AcraMap;
 import com.avy.cflag.base.AnimActor;
 import com.avy.cflag.base.AnimDrawable;
 import com.avy.cflag.base.Graphics;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class MemStore {
 
+	public static AcraMap acraMap;
 	public static final Point lvlFieldLEN = new Point(16, 16);
 	public static final int lvlFieldDataLEN = lvlFieldLEN.x * lvlFieldLEN.y;
 	public static final int lvlNameLEN = 31;

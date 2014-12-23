@@ -1,6 +1,6 @@
 package com.avy.cflag.game;
 
-import com.avy.cflag.base.ErrorHandler;
+import com.avy.cflag.base.AcraMap;
 import com.avy.cflag.base.Musics;
 import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.screens.SplashScreen;
@@ -15,22 +15,24 @@ public class CFlagGame extends Game {
 
 	private final float srcWidth = 800;
 	private final float srcHeight = 480;
-
-	private final ErrorHandler eh = new ErrorHandler();
+	
 	private OrthographicCamera camera;
 
 	public CFlagGame() {
 		packageName = this.getClass().getPackage().getName();
 	}
+	
+	public CFlagGame(AcraMap inAcraMap) {
+		packageName = this.getClass().getPackage().getName();
+		MemStore.acraMap = inAcraMap;
+	}
 
 	@Override
 	public void create() {
-		Thread.setDefaultUncaughtExceptionHandler(eh);
-		Gdx.app.setLogLevel(Application.LOG_INFO);
+		Gdx.app.setLogLevel(Application.LOG_NONE);
 
 		camera = new OrthographicCamera(srcWidth, srcHeight);
 		camera.setToOrtho(true);
-
 		setScreen(new SplashScreen(this));
 	}
 

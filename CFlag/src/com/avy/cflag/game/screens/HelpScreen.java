@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.badlogic.gdx.utils.Json;
 
 public class HelpScreen extends BackScreen {
 
@@ -90,6 +91,9 @@ public class HelpScreen extends BackScreen {
 	public void show() {
 		super.show();
 
+		MemStore.acraMap.putCustomData("HelpScreen", "Before Crash");
+		MemStore.acraMap.putCustomData("Setting", (new Json()).toJson(curUserOPTS));
+		int rr = 100/0;
 		g.setImageAtlas(commonAtlas);
 
 		midButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
