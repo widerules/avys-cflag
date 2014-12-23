@@ -6,6 +6,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.avy.cflag.base.BaseScreen;
 import com.avy.cflag.game.CFlagGame;
+import com.avy.cflag.game.MemStore;
 import com.avy.cflag.game.Utils;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -29,7 +30,7 @@ public class SplashScreen extends BaseScreen {
 	@Override
 	public void show() {
 		super.show();
-
+		MemStore.acraMap.putCustomData("SplashScreen", "Entering");
 		g.setImageAtlas(imageAtlas);
 		splashImage = new Image(g.getFlipTexRegion("background"));
 		splashImage.rotateBy(90);
