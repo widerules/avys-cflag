@@ -1,0 +1,208 @@
+
+options.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+title
+  rotate: false
+  xy: 1, 70
+  size: 250, 56
+  orig: 250, 56
+  offset: 0, 0
+  index: -1
+entername
+  rotate: false
+  xy: 1, 38
+  size: 200, 30
+  orig: 200, 30
+  offset: 0, 0
+  index: -1
+discard
+  rotate: false
+  xy: 253, 76
+  size: 150, 50
+  orig: 150, 50
+  offset: 0, 0
+  index: -1
+save
+  rotate: false
+  xy: 405, 76
+  size: 150, 50
+  orig: 150, 50
+  offset: 0, 0
+  index: -1
+textfieldbase
+  rotate: false
+  xy: 557, 86
+  size: 160, 40
+  orig: 160, 40
+  offset: 0, 0
+  index: -1
+music
+  rotate: false
+  xy: 1, 6
+  size: 160, 30
+  orig: 160, 30
+  offset: 0, 0
+  index: -1
+musictrack
+  rotate: false
+  xy: 719, 96
+  size: 160, 30
+  orig: 160, 30
+  offset: 0, 0
+  index: -1
+musicvolume
+  rotate: false
+  xy: 881, 96
+  size: 160, 30
+  orig: 160, 30
+  offset: 0, 0
+  index: -1
+sound
+  rotate: false
+  xy: 1043, 96
+  size: 160, 30
+  orig: 160, 30
+  offset: 0, 0
+  index: -1
+soundvolume
+  rotate: false
+  xy: 1205, 96
+  size: 160, 30
+  orig: 160, 30
+  offset: 0, 0
+  index: -1
+swipetoplay
+  rotate: false
+  xy: 1367, 96
+  size: 160, 30
+  orig: 160, 30
+  offset: 0, 0
+  index: -1
+userprofile
+  rotate: false
+  xy: 1529, 96
+  size: 160, 30
+  orig: 160, 30
+  offset: 0, 0
+  index: -1
+sliderbase
+  rotate: false
+  xy: 1691, 106
+  size: 120, 20
+  orig: 120, 20
+  offset: 0, 0
+  index: -1
+delbuttondown
+  rotate: false
+  xy: 1813, 86
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+delbuttonup
+  rotate: false
+  xy: 1895, 86
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+newbuttondown
+  rotate: false
+  xy: 557, 44
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+newbuttonup
+  rotate: false
+  xy: 639, 44
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+okbuttondown
+  rotate: false
+  xy: 721, 54
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+okbuttonup
+  rotate: false
+  xy: 803, 54
+  size: 80, 40
+  orig: 80, 40
+  offset: 0, 0
+  index: -1
+track1
+  rotate: false
+  xy: 885, 64
+  size: 80, 30
+  orig: 80, 30
+  offset: 0, 0
+  index: -1
+track2
+  rotate: false
+  xy: 967, 64
+  size: 80, 30
+  orig: 80, 30
+  offset: 0, 0
+  index: -1
+track3
+  rotate: false
+  xy: 1049, 64
+  size: 80, 30
+  orig: 80, 30
+  offset: 0, 0
+  index: -1
+track4
+  rotate: false
+  xy: 1131, 64
+  size: 80, 30
+  orig: 80, 30
+  offset: 0, 0
+  index: -1
+strokeleft
+  rotate: false
+  xy: 1977, 91
+  size: 35, 35
+  orig: 35, 35
+  offset: 0, 0
+  index: -1
+strokeright
+  rotate: false
+  xy: 163, 1
+  size: 35, 35
+  orig: 35, 35
+  offset: 0, 0
+  index: -1
+checkboxoff
+  rotate: false
+  xy: 203, 38
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
+checkboxon
+  rotate: false
+  xy: 1213, 64
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
+sliderknob
+  rotate: false
+  xy: 2014, 96
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 235, 28
+  size: 2, 40
+  orig: 2, 40
+  offset: 0, 0
+  index: -1
