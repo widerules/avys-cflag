@@ -7,13 +7,13 @@ public class Rect {
 	public int bottom;
 
 	public Rect() {
-		this.left = 0;
-		this.top = 0;
-		this.right = 0;
-		this.bottom = 0;
+		left = 0;
+		top = 0;
+		right = 0;
+		bottom = 0;
 	}
 
-	public Rect(int left, int top, int right, int bottom) {
+	public Rect(final int left, final int top, final int right, final int bottom) {
 		this.left = left;
 		this.top = top;
 		this.right = right;

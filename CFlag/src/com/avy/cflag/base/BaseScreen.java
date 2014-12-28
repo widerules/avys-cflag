@@ -17,7 +17,7 @@ public abstract class BaseScreen implements Screen {
 	protected SpriteBatch batch;
 	protected ShapeRenderer sr;
 
-	public BaseScreen(CFlagGame game) {
+	public BaseScreen(final CFlagGame game) {
 		this.game = game;
 		stage = new Stage(new StretchViewport(game.getSrcWidth(), game.getSrcHeight(), game.getCamera()));
 		batch = null;
@@ -25,7 +25,7 @@ public abstract class BaseScreen implements Screen {
 		g = null;
 	}
 
-	public BaseScreen(CFlagGame game, boolean graphicsOn, boolean spritesOn, boolean shapesOn) {
+	public BaseScreen(final CFlagGame game, final boolean graphicsOn, final boolean spritesOn, final boolean shapesOn) {
 		this(game);
 		if (graphicsOn) {
 			g = new Graphics();
@@ -49,12 +49,12 @@ public abstract class BaseScreen implements Screen {
 	}
 
 	@Override
-	public void resize(int width, int height) {
+	public void resize(final int width, final int height) {
 		stage.getViewport().update(width, height, true);
 	}
 
 	@Override
-	public void render(float delta) {
+	public void render(final float delta) {
 		stage.act(delta);
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -68,13 +68,12 @@ public abstract class BaseScreen implements Screen {
 
 	@Override
 	public void pause() {
-		// TODO - Store the state of the game if in play screen
+		// Do Nothing
 	}
 
 	@Override
 	public void resume() {
-		// TODO - Restore the state of the game - hope its enough to restore the
-		// play screen when requested
+		// Do Nothing
 	}
 
 	@Override

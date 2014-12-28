@@ -13,8 +13,9 @@ import java.util.ArrayList;
 
 import com.avy.cflag.base.Musics;
 import com.avy.cflag.base.Sounds;
+import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
-import com.avy.cflag.game.Utils;
+import com.avy.cflag.game.GameUtils;
 import com.avy.cflag.game.utils.UserOptions;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -33,7 +34,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public class OptionsScreen extends BackScreen {
-	private TextureAtlas optionsAtlas;
+	private final TextureAtlas optionsAtlas;
 	private Image titleStr;
 
 	private Image enterNameStr;
@@ -64,7 +65,7 @@ public class OptionsScreen extends BackScreen {
 
 	private Image musicTrackStr;
 	private Image trackLeft, trackRight;
-	private Image[] trackStr;
+	private final Image[] trackStr;
 	private Group trackGroup;
 
 	private Image swipeToPlayStr;
@@ -82,7 +83,7 @@ public class OptionsScreen extends BackScreen {
 	private Group optionsGroup;
 	ArrayList<String> deletedUsers;
 
-	public OptionsScreen(CFlagGame game) {
+	public OptionsScreen(final CFlagGame game) {
 		super(game, true, false, false);
 
 		optionsAtlas = g.createImageAtlas("options");
@@ -96,15 +97,15 @@ public class OptionsScreen extends BackScreen {
 
 		g.setImageAtlas(commonAtlas);
 
-		int spaceFromMid = 20;
+		final int spaceFromMid = 20;
 		saveButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
 		discardButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
 		saveButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
 		discardButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
 
-		saveButtonUp.setPosition(bottomBar.getWidth() / 2 - saveButtonUp.getWidth() - spaceFromMid, bottomBar.getY() + (bottomBar.getHeight() - saveButtonUp.getHeight()) / 2);
+		saveButtonUp.setPosition((bottomBar.getWidth() / 2) - saveButtonUp.getWidth() - spaceFromMid, bottomBar.getY() + ((bottomBar.getHeight() - saveButtonUp.getHeight()) / 2));
 		saveButtonDown.setPosition(saveButtonUp.getX(), saveButtonUp.getY());
-		discardButtonUp.setPosition(bottomBar.getWidth() / 2 + spaceFromMid, bottomBar.getY() + (bottomBar.getHeight() - discardButtonUp.getHeight()) / 2);
+		discardButtonUp.setPosition((bottomBar.getWidth() / 2) + spaceFromMid, bottomBar.getY() + ((bottomBar.getHeight() - discardButtonUp.getHeight()) / 2));
 		discardButtonDown.setPosition(discardButtonUp.getX(), discardButtonUp.getY());
 
 		saveButtonDown.setVisible(false);
@@ -126,10 +127,10 @@ public class OptionsScreen extends BackScreen {
 		okButtonDown = new Image(g.getFlipTexRegion("okbuttondown"));
 		newnameResult = new Label("", g.getLabelStyle("salsa", 12));
 
-		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + okButtonUp.getWidth() + 20)) / 2, (game.getSrcHeight() - enterNameStr.getHeight()) / 2 - 80);
+		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + okButtonUp.getWidth() + 20)) / 2, ((game.getSrcHeight() - enterNameStr.getHeight()) / 2) - 80);
 		nameField.setMaxLength(10);
-		nameField.setPosition(enterNameStr.getX() + enterNameStr.getWidth(), (game.getSrcHeight() - nameField.getHeight()) / 2 - 80);
-		okButtonUp.setPosition(enterNameStr.getX() + enterNameStr.getWidth() + nameField.getWidth() + 20, (game.getSrcHeight() - okButtonUp.getHeight()) / 2 - 80);
+		nameField.setPosition(enterNameStr.getX() + enterNameStr.getWidth(), ((game.getSrcHeight() - nameField.getHeight()) / 2) - 80);
+		okButtonUp.setPosition(enterNameStr.getX() + enterNameStr.getWidth() + nameField.getWidth() + 20, ((game.getSrcHeight() - okButtonUp.getHeight()) / 2) - 80);
 		okButtonDown.setPosition(okButtonUp.getX(), okButtonUp.getY());
 		okButtonDown.setVisible(false);
 		newnameResult.setWidth(200);
@@ -170,13 +171,13 @@ public class OptionsScreen extends BackScreen {
 		swipeToPlayStr = new Image(g.getFlipTexRegion("swipetoplay"));
 
 		int trackNo = 0;
-		for (Musics music : Musics.values()) {
+		for (final Musics music : Musics.values()) {
 			trackStr[trackNo] = new Image(g.getFlipTexRegion(music.name()));
 			trackStr[trackNo].setName(music.name());
 			trackStr[trackNo].setVisible(curUserOPTS.getMusicTrack().equals(music));
-			trackStr[trackNo].addListener(new InputListener() {
+			trackStr[trackNo].addListener(new TouchListener() {
 				@Override
-				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 					for (int i = 0; i < trackStr.length; i++) {
 						if (trackStr[i].isVisible()) {
 							trackStr[i].setVisible(false);
@@ -207,13 +208,15 @@ public class OptionsScreen extends BackScreen {
 		swipeEnabled = new CheckBox("", g.getCheckBoxStyle("salsa", 18));
 		swipeEnabled.setChecked(curUserOPTS.isSwipeMove());
 
-		int x = 80, y = 75, yw = 60;
+		final int x = 80;
+		int y = 75;
+		final int yw = 60;
 		profileStr.setPosition(x, y = y + yw);
 		profileLeft.setPosition(profileStr.getX() + profileStr.getWidth(), y);
-		profileName.setBounds(profileLeft.getX() + profileLeft.getWidth(), y + (profileLeft.getHeight() - 10) / 2, 90, 10);
+		profileName.setBounds(profileLeft.getX() + profileLeft.getWidth(), y + ((profileLeft.getHeight() - 10) / 2), 90, 10);
 		profileRight.setPosition(profileName.getX() + profileName.getWidth(), y);
 
-		newButtonUp.setPosition(profileRight.getX() + profileRight.getWidth() + 20, (y + profileStr.getHeight() / 2) - (newButtonUp.getHeight() / 2));
+		newButtonUp.setPosition(profileRight.getX() + profileRight.getWidth() + 20, (y + (profileStr.getHeight() / 2)) - (newButtonUp.getHeight() / 2));
 		newButtonDown.setPosition(newButtonUp.getX(), newButtonUp.getY());
 
 		delButtonUp.setPosition(newButtonUp.getX() + newButtonUp.getWidth() + 10, newButtonUp.getY());
@@ -231,7 +234,7 @@ public class OptionsScreen extends BackScreen {
 
 		musicTrackStr.setPosition(x, y = y + yw);
 		trackLeft.setPosition(x + 157, y);
-		for (Image trkStr : trackStr) {
+		for (final Image trkStr : trackStr) {
 			trkStr.setPosition(x + 180, y + 2);
 		}
 		trackRight.setPosition(x + 250, y);
@@ -249,7 +252,7 @@ public class OptionsScreen extends BackScreen {
 
 		trackGroup = new Group();
 		trackGroup.addActor(trackLeft);
-		for (Image trkStr : trackStr) {
+		for (final Image trkStr : trackStr) {
 			trackGroup.addActor(trkStr);
 		}
 		trackGroup.addActor(trackRight);
@@ -294,53 +297,53 @@ public class OptionsScreen extends BackScreen {
 
 		sound.addListener(new ChangeListener() {
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
+			public void changed(final ChangeEvent event, final Actor actor) {
 				curUserOPTS.setSoundOn(((CheckBox) actor).isChecked());
 				Sounds.setState(curUserOPTS.isSoundOn());
 			}
 		});
 		soundVolume.addListener(new ChangeListener() {
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
+			public void changed(final ChangeEvent event, final Actor actor) {
 				curUserOPTS.setSoundVolume(((Slider) actor).getValue());
 				Sounds.setVolume(curUserOPTS.getSoundVolume());
 			}
 		});
 		music.addListener(new ChangeListener() {
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
+			public void changed(final ChangeEvent event, final Actor actor) {
 				curUserOPTS.setMusicOn(((CheckBox) actor).isChecked());
 				Musics.setState(curUserOPTS.isMusicOn());
 			}
 		});
 		musicVolume.addListener(new ChangeListener() {
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
+			public void changed(final ChangeEvent event, final Actor actor) {
 				curUserOPTS.setMusicVolume(((Slider) actor).getValue());
 				Musics.setVolume(curUserOPTS.getMusicVolume());
 			}
 		});
 		swipeEnabled.addListener(new ChangeListener() {
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
+			public void changed(final ChangeEvent event, final Actor actor) {
 				curUserOPTS.setSwipeMove(((CheckBox) actor).isChecked());
 			}
 		});
 
-		saveButtonGroup.addListener(new InputListener() {
+		saveButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				saveButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				saveButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				userLIST.updateUser(curUserOPTS);
-				Utils.deleteUserScores(deletedUsers);
-				Utils.saveGameOptions();
-				Utils.loadUserScores();
+				GameUtils.deleteUserScores(deletedUsers);
+				GameUtils.saveGameOptions();
+				GameUtils.loadUserScores();
 				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 					@Override
 					public void run() {
@@ -350,16 +353,16 @@ public class OptionsScreen extends BackScreen {
 			}
 		});
 
-		discardButtonGroup.addListener(new InputListener() {
+		discardButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				discardButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				Utils.loadGameOptions();
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+				GameUtils.loadUserOptions();
 				applyUserOptions();
 				discardButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
@@ -373,38 +376,39 @@ public class OptionsScreen extends BackScreen {
 
 		nameField.setTextFieldFilter(new TextFieldFilter() {
 			@Override
-			public boolean acceptChar(TextField textField, char c) {
-				if (Character.isAlphabetic(c) || Character.isDigit(c))
+			public boolean acceptChar(final TextField textField, final char c) {
+				if (Character.isAlphabetic(c) || Character.isDigit(c)) {
 					return true;
-				else
+				} else {
 					return false;
+				}
 			}
 		});
 
 		nameField.setTextFieldListener(new TextFieldListener() {
 			@Override
-			public void keyTyped(TextField textField, char c) {
+			public void keyTyped(final TextField textField, final char c) {
 				newnameResult.setText("");
 			}
 		});
 
-		okButtonGroup.addListener(new InputListener() {
+		okButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				okButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				okButtonDown.addAction(sequence(fadeOut(0.1f), visible(false)));
-				String userName = nameField.getText();
+				final String userName = nameField.getText();
 				if (userName.length() == 0) {
 					newnameResult.setText("Please enter a name");
 				} else {
-					if (userLIST.isUserExists(userName))
+					if (userLIST.isUserExists(userName)) {
 						newnameResult.setText("User already exists");
-					else {
+					} else {
 						curUserOPTS = userLIST.addUser(userName);
 						applyUserOptions();
 						optionsGroup.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
@@ -414,15 +418,15 @@ public class OptionsScreen extends BackScreen {
 			}
 		});
 
-		newButtonGroup.addListener(new InputListener() {
+		newButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				newButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				newButtonDown.addAction(sequence(fadeOut(0.1f), visible(false)));
 				userLIST.updateUser(curUserOPTS);
 				nameField.setText("");
@@ -432,17 +436,17 @@ public class OptionsScreen extends BackScreen {
 			}
 		});
 
-		delButtonGroup.addListener(new InputListener() {
+		delButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				delButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				delButtonDown.addAction(sequence(fadeOut(0.1f), visible(false)));
-				int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
+				final int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
 				userLIST.deleteUser(idx);
 				deletedUsers.add(curUserOPTS.getUserName());
 				if (userLIST.getUserCount() > 0) {
@@ -455,64 +459,64 @@ public class OptionsScreen extends BackScreen {
 			}
 		});
 
-		profileLeft.addListener(new InputListener() {
+		profileLeft.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				userLIST.updateUser(curUserOPTS);
-				int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
+				final int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
 				if (userLIST.getUserCount() > 1) {
-					curUserOPTS.setGameOpts(userLIST.getUserOptionsByIdx((idx - 1 + userLIST.getUserCount()) % userLIST.getUserCount()));
+					curUserOPTS.setGameOpts(userLIST.getUserOptionsByIdx(((idx - 1) + userLIST.getUserCount()) % userLIST.getUserCount()));
 					applyUserOptions();
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
 
-		profileRight.addListener(new InputListener() {
+		profileRight.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				userLIST.updateUser(curUserOPTS);
-				int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
-				if (userLIST.getUserCount() > 1) {
-					curUserOPTS.setGameOpts(userLIST.getUserOptionsByIdx((idx + 1 + userLIST.getUserCount()) % userLIST.getUserCount()));
-					applyUserOptions();
-				}
-				return true;
-			}
-		});
-
-		profileName.addListener(new InputListener() {
-			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				userLIST.updateUser(curUserOPTS);
-				int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
+				final int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
 				if (userLIST.getUserCount() > 1) {
 					curUserOPTS.setGameOpts(userLIST.getUserOptionsByIdx((idx + 1 + userLIST.getUserCount()) % userLIST.getUserCount()));
 					applyUserOptions();
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
 
-		trackLeft.addListener(new InputListener() {
+		profileName.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+				userLIST.updateUser(curUserOPTS);
+				final int idx = userLIST.getUserIndex(curUserOPTS.getUserName());
+				if (userLIST.getUserCount() > 1) {
+					curUserOPTS.setGameOpts(userLIST.getUserOptionsByIdx((idx + 1 + userLIST.getUserCount()) % userLIST.getUserCount()));
+					applyUserOptions();
+				}
+				return super.touchDown(event, x, y, pointer, button);
+			}
+		});
+
+		trackLeft.addListener(new TouchListener() {
+			@Override
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				for (int i = 0; i < trackStr.length; i++) {
 					if (trackStr[i].isVisible()) {
 						trackStr[i].setVisible(false);
-						trackStr[(i - 1 + trackStr.length) % trackStr.length].setVisible(true);
-						Musics.valueOf(trackStr[(i - 1 + trackStr.length) % trackStr.length].getName()).loadAndPlay();
-						curUserOPTS.setMusicTrack(Musics.valueOf(trackStr[(i - 1 + trackStr.length) % trackStr.length].getName()));
+						trackStr[((i - 1) + trackStr.length) % trackStr.length].setVisible(true);
+						Musics.valueOf(trackStr[((i - 1) + trackStr.length) % trackStr.length].getName()).loadAndPlay();
+						curUserOPTS.setMusicTrack(Musics.valueOf(trackStr[((i - 1) + trackStr.length) % trackStr.length].getName()));
 						break;
 					}
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
 
-		trackRight.addListener(new InputListener() {
+		trackRight.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				for (int i = 0; i < trackStr.length; i++) {
 					if (trackStr[i].isVisible()) {
 						trackStr[i].setVisible(false);
@@ -522,15 +526,15 @@ public class OptionsScreen extends BackScreen {
 						break;
 					}
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
 
 		stage.addListener(new InputListener() {
 			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
-					if(enterNameGroup.isVisible()) {
+			public boolean keyDown(final InputEvent event, final int keycode) {
+				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {
+					if (enterNameGroup.isVisible()) {
 						optionsGroup.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
 						enterNameGroup.addAction(sequence(fadeOut(0.1f), visible(false)));
 					} else {
@@ -549,8 +553,9 @@ public class OptionsScreen extends BackScreen {
 
 	@Override
 	public void dispose() {
-		if (optionsAtlas != null)
+		if (optionsAtlas != null) {
 			optionsAtlas.dispose();
+		}
 		super.dispose();
 	}
 
@@ -558,12 +563,12 @@ public class OptionsScreen extends BackScreen {
 		profileName.setText(curUserOPTS.getUserName());
 		music.setChecked(curUserOPTS.isMusicOn());
 		Musics.setState(curUserOPTS.isMusicOn());
-		for (int i = 0; i < trackStr.length; i++) {
-			if (curUserOPTS.getMusicTrack().name() == trackStr[i].getName()) {
-				trackStr[i].setVisible(true);
-				Musics.valueOf(trackStr[i].getName()).loadAndPlay();
+		for (final Image element : trackStr) {
+			if (curUserOPTS.getMusicTrack().name() == element.getName()) {
+				element.setVisible(true);
+				Musics.valueOf(element.getName()).loadAndPlay();
 			} else {
-				trackStr[i].setVisible(false);
+				element.setVisible(false);
 			}
 		}
 		musicVolume.setValue(curUserOPTS.getMusicVolume());

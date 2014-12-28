@@ -1,13 +1,13 @@
 package com.avy.cflag.game.utils;
 
 import com.avy.cflag.base.Musics;
-import com.avy.cflag.game.MemStore.Difficulty;
+import com.avy.cflag.game.EnumStore.Difficulty;
 
 public class UserOptions {
 	private String userName;
 	private boolean firstRun;
 	private boolean gameSaved;
-	private Difficulty lastDifficulty;
+	private Difficulty lastDclty;
 	private boolean soundOn;
 	private boolean musicOn;
 	private float musicVolume;
@@ -19,7 +19,7 @@ public class UserOptions {
 		userName = "No Profile";
 		firstRun = true;
 		gameSaved = false;
-		lastDifficulty = Difficulty.Novice;
+		lastDclty = Difficulty.Novice;
 		soundOn = true;
 		musicOn = true;
 		soundVolume = 0.3f;
@@ -28,11 +28,11 @@ public class UserOptions {
 		swipeMove = false;
 	}
 
-	public UserOptions(String inUserName) {
+	public UserOptions(final String inUserName) {
 		userName = inUserName;
 		firstRun = true;
 		gameSaved = false;
-		lastDifficulty = Difficulty.Novice;
+		lastDclty = Difficulty.Novice;
 		soundOn = true;
 		musicOn = true;
 		soundVolume = 0.3f;
@@ -41,21 +41,22 @@ public class UserOptions {
 		swipeMove = false;
 	}
 
-	public void setGameOpts(UserOptions gOpts) {
-		userName = gOpts.userName;
-		firstRun = gOpts.firstRun;
-		gameSaved = gOpts.gameSaved;
-		lastDifficulty = gOpts.lastDifficulty;
-		soundOn = gOpts.soundOn;
-		musicOn = gOpts.musicOn;
-		musicVolume = gOpts.musicVolume;
-		soundVolume = gOpts.soundVolume;
-		musicTrack = gOpts.musicTrack;
-		swipeMove = gOpts.swipeMove;
+	public void setGameOpts(final UserOptions inOpts) {
+		userName = inOpts.userName;
+		firstRun = inOpts.firstRun;
+		gameSaved = inOpts.gameSaved;
+		lastDclty = inOpts.lastDclty;
+		soundOn = inOpts.soundOn;
+		musicOn = inOpts.musicOn;
+		musicVolume = inOpts.musicVolume;
+		soundVolume = inOpts.soundVolume;
+		musicTrack = inOpts.musicTrack;
+		swipeMove = inOpts.swipeMove;
 	}
 
+	@Override
 	public UserOptions clone() {
-		UserOptions uo = new UserOptions();
+		final UserOptions uo = new UserOptions();
 		uo.setGameOpts(this);
 		return uo;
 	}
@@ -64,15 +65,11 @@ public class UserOptions {
 		return userName;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	public boolean isFirstRun() {
 		return firstRun;
 	}
 
-	public void setFirstRun(boolean firstRun) {
+	public void setFirstRun(final boolean firstRun) {
 		this.firstRun = firstRun;
 	}
 
@@ -80,23 +77,23 @@ public class UserOptions {
 		return gameSaved;
 	}
 
-	public void setGameSaved(boolean gameSaved) {
+	public void setGameSaved(final boolean gameSaved) {
 		this.gameSaved = gameSaved;
 	}
 
-	public void setLastDifficulty(Difficulty lastDifficulty) {
-		this.lastDifficulty = lastDifficulty;
+	public void setlastDclty(final Difficulty lastDclty) {
+		this.lastDclty = lastDclty;
 	}
 
 	public Difficulty getLastDifficulty() {
-		return lastDifficulty;
+		return lastDclty;
 	}
 
 	public boolean isSoundOn() {
 		return soundOn;
 	}
 
-	public void setSoundOn(boolean soundOn) {
+	public void setSoundOn(final boolean soundOn) {
 		this.soundOn = soundOn;
 	}
 
@@ -104,7 +101,7 @@ public class UserOptions {
 		return musicOn;
 	}
 
-	public void setMusicOn(boolean musicOn) {
+	public void setMusicOn(final boolean musicOn) {
 		this.musicOn = musicOn;
 	}
 
@@ -112,7 +109,7 @@ public class UserOptions {
 		return musicVolume;
 	}
 
-	public void setMusicVolume(float musicVolume) {
+	public void setMusicVolume(final float musicVolume) {
 		this.musicVolume = musicVolume;
 	}
 
@@ -120,7 +117,7 @@ public class UserOptions {
 		return soundVolume;
 	}
 
-	public void setSoundVolume(float soundVolume) {
+	public void setSoundVolume(final float soundVolume) {
 		this.soundVolume = soundVolume;
 	}
 
@@ -128,7 +125,7 @@ public class UserOptions {
 		return musicTrack;
 	}
 
-	public void setMusicTrack(Musics musicTrack) {
+	public void setMusicTrack(final Musics musicTrack) {
 		this.musicTrack = musicTrack;
 	}
 
@@ -136,7 +133,7 @@ public class UserOptions {
 		return swipeMove;
 	}
 
-	public void setSwipeMove(boolean swipeMove) {
+	public void setSwipeMove(final boolean swipeMove) {
 		this.swipeMove = swipeMove;
 	}
 

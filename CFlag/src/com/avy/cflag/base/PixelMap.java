@@ -5,23 +5,23 @@ import com.badlogic.gdx.graphics.Pixmap;
 
 public class PixelMap extends Pixmap {
 
-	public PixelMap(FileHandle file) {
+	public PixelMap(final FileHandle file) {
 		super(file);
 	}
 
-	public PixelMap(int width, int height, Format format) {
+	public PixelMap(final int width, final int height, final Format format) {
 		super(width, height, format);
 	}
 
-	public void drawPixmap(Pixmap pixmap, Point srcPos, Point srcLen, Point dstPos, Point dstLen) {
+	public void drawPixmap(final Pixmap pixmap, final Point srcPos, final Point srcLen, final Point dstPos, final Point dstLen) {
 		super.drawPixmap(pixmap, srcPos.x, srcPos.y, srcLen.x, srcLen.y, dstPos.x, dstPos.y, dstLen.x, dstLen.y);
 	}
 
-	public void drawPixmap(Pixmap pixmap, Point srcPos) {
+	public void drawPixmap(final Pixmap pixmap, final Point srcPos) {
 		super.drawPixmap(pixmap, srcPos.x, srcPos.y);
 	}
 
-	public void drawPixmap(Pixmap pixmap, Point dstPos, Point srcPos, Point srcLen) {
+	public void drawPixmap(final Pixmap pixmap, final Point dstPos, final Point srcPos, final Point srcLen) {
 		super.drawPixmap(pixmap, dstPos.x, dstPos.y, srcPos.x, srcPos.y, srcLen.x, srcLen.y);
 	}
 }

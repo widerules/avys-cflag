@@ -1,11 +1,11 @@
 package com.avy.cflag.game.elements;
 
 import com.avy.cflag.base.Point;
-import com.avy.cflag.game.MemStore.AntiTankState;
-import com.avy.cflag.game.MemStore.BulletState;
-import com.avy.cflag.game.MemStore.Direction;
-import com.avy.cflag.game.MemStore.PlayImages;
-import com.avy.cflag.game.Utils;
+import com.avy.cflag.game.EnumStore.AntiTankState;
+import com.avy.cflag.game.EnumStore.BulletState;
+import com.avy.cflag.game.EnumStore.Direction;
+import com.avy.cflag.game.EnumStore.PlayImages;
+import com.avy.cflag.game.PlayUtils;
 
 public class ATank {
 
@@ -23,8 +23,9 @@ public class ATank {
 		tankStateTime = 0;
 	}
 
+	@Override
 	public ATank clone() {
-		ATank newATank = new ATank();
+		final ATank newATank = new ATank();
 		newATank.tankBullet = tankBullet;
 		newATank.tankPos = tankPos;
 		newATank.tankDirection = tankDirection;
@@ -33,69 +34,70 @@ public class ATank {
 		return newATank;
 	}
 
-	public void fireTank(LTank lTank) {
+	public void fireTank(final LTank lTank) {
 		if (tankStateTime > 0) {
 			tankStateTime--;
 		} else {
-			PlayImages lvlPlayField[][] = lTank.getLvlPlayField();
+			final PlayImages lvlPlayField[][] = lTank.getLvlPlayField();
 			tankStateTime = 0;
 			switch (tankBullet.getCurBulletState()) {
-				case Exploded:
-					tankBullet.resetBullet();
-					tankState = AntiTankState.Exploded;
-					break;
-				case HitTank:
-					tankBullet.resetBullet();
-					tankState = AntiTankState.HitTank;
-					break;
-				case Fired:
-				case InMotion:
-					if (tankBullet.getCurBulletState() == BulletState.Fired) {
-						tankState = AntiTankState.Firing;
-						tankBullet.createBullet(tankPos, tankDirection);
-					} else {
-						tankBullet.createBullet();
-					}
+			case Exploded:
+				tankBullet.resetBullet();
+				tankState = AntiTankState.Exploded;
+				break;
+			case HitTank:
+				tankBullet.resetBullet();
+				tankState = AntiTankState.HitTank;
+				break;
+			case Fired:
+			case InMotion:
+				if (tankBullet.getCurBulletState() == BulletState.Fired) {
+					tankState = AntiTankState.Firing;
+					tankBullet.createBullet(tankPos, tankDirection);
+				} else {
+					tankBullet.createBullet();
+				}
 
-					Point curBltPos = tankBullet.getCurBulletPos();
-					Point nxtBltPos = Utils.getNextPosition(curBltPos, tankBullet.getCurBulletDirection());
-					PlayImages nxtPosObj = PlayImages.OutOfBounds;
-					if (Utils.positionWithinBounds(nxtBltPos))
-						nxtPosObj = lvlPlayField[nxtBltPos.x][nxtBltPos.y];
-					switch (nxtPosObj) {
-						case Hero_D:
-						case Hero_L:
-						case Hero_U:
-						case Hero_R:
-							tankBullet.setCurBulletState(BulletState.HitTank);
-							break;
-						case Brick:
-						case Rubber:
-						case Flag:
-						case MBlock:
-						case MMirror_D:
-						case MMirror_L:
-						case MMirror_R:
-						case MMirror_U:
-						case RMirror_D:
-						case RMirror_L:
-						case RMirror_R:
-						case RMirror_U:
-						case Steel:
-						case Villain_D:
-						case Villain_L:
-						case Villain_R:
-						case Villain_U:
-						case OutOfBounds:
-							tankBullet.setCurBulletState(BulletState.Exploded);
-							break;
-						default:
-							tankBullet.setCurBulletState(BulletState.InMotion);
-							break;
-					}
-					tankBullet.setCurBulletPos(nxtBltPos);
-				default:
+				final Point curBltPos = tankBullet.getCurBulletPos();
+				final Point nxtBltPos = PlayUtils.getNextPosition(curBltPos, tankBullet.getCurBulletDirection());
+				PlayImages nxtPosObj = PlayImages.OutOfBounds;
+				if (PlayUtils.positionWithinBounds(nxtBltPos)) {
+					nxtPosObj = lvlPlayField[nxtBltPos.x][nxtBltPos.y];
+				}
+				switch (nxtPosObj) {
+				case Hero_D:
+				case Hero_L:
+				case Hero_U:
+				case Hero_R:
+					tankBullet.setCurBulletState(BulletState.HitTank);
 					break;
+				case Brick:
+				case Rubber:
+				case Flag:
+				case MBlock:
+				case MMirror_D:
+				case MMirror_L:
+				case MMirror_R:
+				case MMirror_U:
+				case RMirror_D:
+				case RMirror_L:
+				case RMirror_R:
+				case RMirror_U:
+				case Steel:
+				case Villain_D:
+				case Villain_L:
+				case Villain_R:
+				case Villain_U:
+				case OutOfBounds:
+					tankBullet.setCurBulletState(BulletState.Exploded);
+					break;
+				default:
+					tankBullet.setCurBulletState(BulletState.InMotion);
+					break;
+				}
+				tankBullet.setCurBulletPos(nxtBltPos);
+			default:
+				break;
 			}
 		}
 	}
@@ -104,7 +106,7 @@ public class ATank {
 		return tankBullet;
 	}
 
-	public void setTankBullet(Bullet tankBullet) {
+	public void setTankBullet(final Bullet tankBullet) {
 		this.tankBullet = tankBullet;
 	}
 
@@ -112,7 +114,7 @@ public class ATank {
 		return tankPos;
 	}
 
-	public void setTankPos(Point tankPos) {
+	public void setTankPos(final Point tankPos) {
 		this.tankPos = tankPos;
 	}
 
@@ -120,7 +122,7 @@ public class ATank {
 		return tankDirection;
 	}
 
-	public void setTankDirection(Direction tankDirection) {
+	public void setTankDirection(final Direction tankDirection) {
 		this.tankDirection = tankDirection;
 	}
 
@@ -128,7 +130,7 @@ public class ATank {
 		return tankState;
 	}
 
-	public void setTankState(AntiTankState tankState) {
+	public void setTankState(final AntiTankState tankState) {
 		this.tankState = tankState;
 	}
 
@@ -136,7 +138,7 @@ public class ATank {
 		return tankStateTime;
 	}
 
-	public void setTankStateTime(int tankStateTime) {
+	public void setTankStateTime(final int tankStateTime) {
 		this.tankStateTime = tankStateTime;
 	}
 

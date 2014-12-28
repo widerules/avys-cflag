@@ -1,7 +1,9 @@
 package com.avy.cflag.game.screens;
 
+import static com.avy.cflag.game.Constants.PLAYSTORE_PRO_LINK;
 import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.curUserSCORE;
+import static com.avy.cflag.game.MemStore.dummyLvlCntPerDCLTY;
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
 import static com.badlogic.gdx.math.Interpolation.swingIn;
 import static com.badlogic.gdx.math.Interpolation.swingOut;
@@ -20,12 +22,14 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
+import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
+import com.avy.cflag.game.EnumStore.Difficulty;
 import com.avy.cflag.game.MemStore;
-import com.avy.cflag.game.MemStore.Difficulty;
-import com.avy.cflag.game.Utils;
+import com.avy.cflag.game.PlayUtils;
 import com.avy.cflag.game.elements.Level;
 import com.avy.cflag.game.utils.LevelScore;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -33,7 +37,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
@@ -52,13 +55,13 @@ public class LevelScreen extends BackScreen {
 	private final int totalDcltys = Difficulty.length();
 	private final int dcltyGrpCnt[] = new int[totalDcltys];
 
-	private Image dcltyButtonUp[] = new Image[totalDcltys];
-	private Image dcltyButtonDown[] = new Image[totalDcltys];
-	private Image dcltyStr[] = new Image[totalDcltys];
-	private Group dcltyButtonPageGroup[] = new Group[totalDcltys];
-	private Image dcltyPageFrame[] = new Image[totalDcltys];
-	private Group dcltyNumPageGroup[][] = new Group[totalDcltys][];
-	private Group dcltyNumGroup[] = new Group[totalDcltys];
+	private final Image dcltyButtonUp[] = new Image[totalDcltys];
+	private final Image dcltyButtonDown[] = new Image[totalDcltys];
+	private final Image dcltyStr[] = new Image[totalDcltys];
+	private final Group dcltyButtonPageGroup[] = new Group[totalDcltys];
+	private final Image dcltyPageFrame[] = new Image[totalDcltys];
+	private final Group dcltyNumPageGroup[][] = new Group[totalDcltys][];
+	private final Group dcltyNumGroup[] = new Group[totalDcltys];
 	private Group dcltyButtonGroup;
 
 	private final TextureAtlas levelAtlas;
@@ -82,6 +85,7 @@ public class LevelScreen extends BackScreen {
 	private Image backStr;
 
 	private Image unlockMsg;
+	private Image buyMsg;
 
 	private Difficulty selectedDclty;
 	private int curPage;
@@ -95,13 +99,13 @@ public class LevelScreen extends BackScreen {
 
 	private Image thumbnail;
 	private Image clickedNumButton;
-	private boolean unlockAnimate;
+	private final boolean unlockAnimate;
 
-	public LevelScreen(CFlagGame game, boolean unlockAnimate) {
+	public LevelScreen(final CFlagGame game, final boolean unlockAnimate) {
 		super(game, true, true, false);
 
 		for (int i = 0; i < dcltyGrpCnt.length; i++) {
-			dcltyGrpCnt[i] = lvlCntPerDCLTY[i] / perPageLvlCnt + (lvlCntPerDCLTY[i] % perPageLvlCnt > 0 ? 1 : 0);
+			dcltyGrpCnt[i] = (dummyLvlCntPerDCLTY[i] / perPageLvlCnt) + ((dummyLvlCntPerDCLTY[i] % perPageLvlCnt) > 0 ? 1 : 0);
 			dcltyNumPageGroup[i] = new Group[dcltyGrpCnt[i]];
 		}
 
@@ -126,20 +130,20 @@ public class LevelScreen extends BackScreen {
 		g.setFont(scoreFont);
 
 		midButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
-		midButtonUp.setPosition((bottomBar.getWidth() - midButtonUp.getWidth()) / 2, bottomBar.getY() + (bottomBar.getHeight() - midButtonUp.getHeight()) / 2);
+		midButtonUp.setPosition((bottomBar.getWidth() - midButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - midButtonUp.getHeight()) / 2));
 		midButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
 		midButtonDown.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		midButtonDown.setVisible(false);
 
 		final int sideButtonMargin = 18;
 		leftButtonUp = new Image(g.getFlipTexRegion("lefttributtonup"));
-		leftButtonUp.setPosition(sideButtonMargin, bottomBar.getY() + (bottomBar.getHeight() - leftButtonUp.getHeight()) / 2);
+		leftButtonUp.setPosition(sideButtonMargin, bottomBar.getY() + ((bottomBar.getHeight() - leftButtonUp.getHeight()) / 2));
 		leftButtonDown = new Image(g.getFlipTexRegion("lefttributtondown"));
 		leftButtonDown.setPosition(leftButtonUp.getX(), leftButtonUp.getY());
 		leftButtonDown.setVisible(false);
 
 		rightButtonUp = new Image(g.getFlipTexRegion("righttributtonup"));
-		rightButtonUp.setPosition(bottomBar.getWidth() - rightButtonUp.getWidth() - sideButtonMargin, bottomBar.getY() + (bottomBar.getHeight() - rightButtonUp.getHeight()) / 2);
+		rightButtonUp.setPosition(bottomBar.getWidth() - rightButtonUp.getWidth() - sideButtonMargin, bottomBar.getY() + ((bottomBar.getHeight() - rightButtonUp.getHeight()) / 2));
 		rightButtonDown = new Image(g.getFlipTexRegion("righttributtondown"));
 		rightButtonDown.setPosition(rightButtonUp.getX(), rightButtonUp.getY());
 		rightButtonDown.setVisible(false);
@@ -157,12 +161,17 @@ public class LevelScreen extends BackScreen {
 		playStr.setVisible(false);
 		playAgainStr.setVisible(false);
 		backStr.setVisible(true);
-		
+
 		unlockMsg = new Image(g.getFlipTexRegion("unlockmsg"));
-		unlockMsg.setPosition((game.getSrcWidth()-unlockMsg.getWidth())/2, (game.getSrcHeight()-unlockMsg.getHeight())/2);
+		unlockMsg.setPosition((game.getSrcWidth() - unlockMsg.getWidth()) / 2, (game.getSrcHeight() - unlockMsg.getHeight()) / 2);
 		unlockMsg.setVisible(false);
-		unlockMsg.getColor().a=0f;
-		
+		unlockMsg.getColor().a = 0f;
+
+		buyMsg = new Image(g.getFlipTexRegion("buymsg"));
+		buyMsg.setPosition((game.getSrcWidth() - buyMsg.getWidth()) / 2, (game.getSrcHeight() - buyMsg.getHeight()) / 2);
+		buyMsg.setVisible(false);
+		buyMsg.getColor().a = 0f;
+
 		midButtonGroup = new Group();
 		midButtonGroup.addActor(midButtonUp);
 		midButtonGroup.addActor(midButtonDown);
@@ -180,18 +189,20 @@ public class LevelScreen extends BackScreen {
 		leftButtonGroup = new Group();
 		leftButtonGroup.addActor(leftButtonUp);
 		leftButtonGroup.addActor(leftButtonDown);
-		if (curPage > 0)
+		if (curPage > 0) {
 			leftButtonGroup.setVisible(true);
-		else
+		} else {
 			leftButtonGroup.setVisible(false);
+		}
 
 		rightButtonGroup = new Group();
 		rightButtonGroup.addActor(rightButtonUp);
 		rightButtonGroup.addActor(rightButtonDown);
-		if (curPage < dcltyGrpCnt[selectedDclty.ordinal()] - 1)
+		if (curPage < (dcltyGrpCnt[selectedDclty.ordinal()] - 1)) {
 			rightButtonGroup.setVisible(true);
-		else
+		} else {
 			rightButtonGroup.setVisible(false);
+		}
 		stage.addActor(titleStr);
 		stage.addActor(midButtonGroup);
 		stage.addActor(leftButtonGroup);
@@ -202,14 +213,15 @@ public class LevelScreen extends BackScreen {
 		int idx = 0;
 		for (int dcltyNo = 0; dcltyNo < totalDcltys; dcltyNo++) {
 
-			Difficulty dclty = Utils.getDifficultyByIdx(idx);
-			if (lvlCntPerDCLTY[dcltyNo] > 0) {
+			final Difficulty dclty = PlayUtils.getDifficultyByIdx(idx);
+			if (dummyLvlCntPerDCLTY[dcltyNo] > 0) {
 				dcltyButtonUp[idx] = new Image(g.getFlipTexRegion("buttonup"));
 
-				if (idx == 0)
+				if (idx == 0) {
 					dcltyButtonUp[idx].setPosition((topBar.getWidth() - (dcltyButtonUp[idx].getWidth() * 5)) / 2, topBar.getHeight() + 20);
-				else
-					dcltyButtonUp[idx].setPosition(dcltyButtonUp[idx - 1].getX() + dcltyButtonUp[idx - 1].getWidth() - 1, dcltyButtonUp[idx - 1].getY());
+				} else {
+					dcltyButtonUp[idx].setPosition((dcltyButtonUp[idx - 1].getX() + dcltyButtonUp[idx - 1].getWidth()) - 1, dcltyButtonUp[idx - 1].getY());
+				}
 
 				dcltyButtonDown[idx] = new Image(g.getFlipTexRegion(dclty.name().toLowerCase() + "buttondown"));
 				dcltyButtonDown[idx].setPosition(dcltyButtonUp[idx].getX(), dcltyButtonUp[idx].getY());
@@ -229,11 +241,11 @@ public class LevelScreen extends BackScreen {
 				dcltyButtonPageGroup[idx].setVisible(true);
 				dcltyButtonPageGroup[idx].setName(Integer.toString(idx));
 
-				dcltyButtonPageGroup[idx].addListener(new InputListener() {
+				dcltyButtonPageGroup[idx].addListener(new TouchListener() {
 					@Override
-					public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-						Group tmp = (Group) event.getListenerActor();
-						int tmpDcltyNo = Integer.parseInt(tmp.getName());
+					public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+						final Group tmp = (Group) event.getListenerActor();
+						final int tmpDcltyNo = Integer.parseInt(tmp.getName());
 
 						if (!dcltyButtonDown[tmpDcltyNo].isVisible()) {
 							for (int i = 0; i < totalDcltys; i++) {
@@ -241,18 +253,20 @@ public class LevelScreen extends BackScreen {
 									dcltyButtonDown[i].addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
 									dcltyPageFrame[i].addAction(sequence(alpha(0), visible(true), alpha(0.5f)));
 									curPage = curUserSCORE.getMaxPlayedLevel(selectedDclty) / perPageLvlCnt;
-									selectedDclty = Utils.getDifficultyByIdx(i);
+									selectedDclty = PlayUtils.getDifficultyByIdx(i);
 									dcltyNumPageGroup[i][curPage].setVisible(true);
 									dcltyNumGroup[i].addAction(sequence(alpha(0), visible(true), alpha(1f)));
-									if (curPage > 0)
+									if (curPage > 0) {
 										leftButtonGroup.setVisible(true);
-									else
+									} else {
 										leftButtonGroup.setVisible(false);
+									}
 
-									if (curPage < dcltyGrpCnt[selectedDclty.ordinal()] - 1)
+									if (curPage < (dcltyGrpCnt[selectedDclty.ordinal()] - 1)) {
 										rightButtonGroup.setVisible(true);
-									else
+									} else {
 										rightButtonGroup.setVisible(false);
+									}
 								} else {
 									dcltyButtonDown[i].addAction(sequence(fadeOut(0.2f), visible(false)));
 									dcltyPageFrame[i].addAction(sequence(fadeOut(0.2f), visible(false)));
@@ -260,25 +274,26 @@ public class LevelScreen extends BackScreen {
 								}
 							}
 						}
-						return true;
+						return super.touchDown(event, x, y, pointer, button);
 					}
 				});
 
-				colGap = (dcltyPageFrame[idx].getWidth() - colCnt * numButWidth) / (colCnt + 1);
-				rowGap = (dcltyPageFrame[idx].getHeight() - rowCnt * numButHeight) / (rowCnt + 1);
+				colGap = (dcltyPageFrame[idx].getWidth() - (colCnt * numButWidth)) / (colCnt + 1);
+				rowGap = (dcltyPageFrame[idx].getHeight() - (rowCnt * numButHeight)) / (rowCnt + 1);
 				dcltyNumGroup[idx] = new Group();
 				int l = 1;
 				for (int i = 0; i < dcltyNumPageGroup[idx].length; i++) {
 					dcltyNumPageGroup[idx][i] = new Group();
 					for (int j = 0; j < rowCnt; j++) {
 						for (int k = 0; k < colCnt; k++) {
-							if (l <= lvlCntPerDCLTY[idx]) {
-								Group numButtonGroup = new Group();
-								Image numButtonUp = new Image(g.getFlipTexRegion("numbuttonup"));
-								numButtonUp.setPosition(dcltyPageFrame[idx].getX() + colGap + k * (numButtonUp.getWidth() + colGap), dcltyPageFrame[idx].getY() + rowGap + j * (numButtonUp.getHeight() + rowGap));
+							if (l <= dummyLvlCntPerDCLTY[idx]) {
+								final Group numButtonGroup = new Group();
+								final Image numButtonUp = new Image(g.getFlipTexRegion("numbuttonup"));
+								numButtonUp.setPosition(dcltyPageFrame[idx].getX() + colGap + (k * (numButtonUp.getWidth() + colGap)),
+										dcltyPageFrame[idx].getY() + rowGap + (j * (numButtonUp.getHeight() + rowGap)));
 								numButtonUp.setName("buttonUp");
 
-								Image numButtonDown = new Image(g.getFlipTexRegion("numbuttondown"));
+								final Image numButtonDown = new Image(g.getFlipTexRegion("numbuttondown"));
 								numButtonDown.setPosition(numButtonUp.getX(), numButtonUp.getY());
 								numButtonDown.setVisible(false);
 								numButtonDown.setName("buttonDown");
@@ -287,10 +302,10 @@ public class LevelScreen extends BackScreen {
 								numButtonGroup.addActor(numButtonDown);
 								numButtonGroup.setName(Integer.toString(l));
 
-								char numStr[] = Integer.toString(l).toCharArray();
+								final char numStr[] = Integer.toString(l).toCharArray();
 
 								Image numStr1 = null, numStr2 = null, numStr3 = null;
-								Group numStrGroup = new Group();
+								final Group numStrGroup = new Group();
 								float numStrLen = 0;
 
 								if (numStr.length > 0) {
@@ -307,7 +322,7 @@ public class LevelScreen extends BackScreen {
 								}
 
 								if (numStr.length > 0) {
-									numStr1.setPosition(numButtonUp.getX() + (numButtonUp.getWidth() - numStrLen) / 2, numButtonUp.getY() + (numButtonUp.getHeight() - numStr1.getHeight()) / 2);
+									numStr1.setPosition(numButtonUp.getX() + ((numButtonUp.getWidth() - numStrLen) / 2), numButtonUp.getY() + ((numButtonUp.getHeight() - numStr1.getHeight()) / 2));
 									numStrGroup.addActor(numStr1);
 								}
 								if (numStr.length > 1) {
@@ -320,17 +335,18 @@ public class LevelScreen extends BackScreen {
 								}
 								numButtonGroup.addActor(numStrGroup);
 
-								Image lockStr = new Image(g.getFlipTexRegion("lock"));
+								final Image lockStr = new Image(g.getFlipTexRegion("lock"));
 								lockStr.setPosition(numButtonUp.getX(), numButtonUp.getY());
 								numButtonGroup.addActor(lockStr);
 
 								if (l <= curUserSCORE.getMaxPlayedLevel(dclty)) {
-									if(unlockAnimate && l==curUserSCORE.getMaxPlayedLevel(dclty)){
+									if (unlockAnimate && (l == curUserSCORE.getMaxPlayedLevel(dclty))) {
 										numStrGroup.setVisible(false);
 										lockStr.setVisible(true);
-										lockStr.setOrigin(lockStr.getWidth()/2, lockStr.getHeight()/2);
-										lockStr.addAction(delay(1f,sequence(scaleBy(0.1f, 0.1f),repeat(4,rotateBy(360f,0.1f)),parallel(repeat(4,rotateBy(360f,0.1f)),fadeOut(1f)),visible(false))));
-										numStrGroup.addAction(delay(2f,sequence(visible(true),fadeIn(1f))));
+										lockStr.setOrigin(lockStr.getWidth() / 2, lockStr.getHeight() / 2);
+										lockStr.addAction(delay(1f,
+												sequence(scaleBy(0.1f, 0.1f), repeat(4, rotateBy(360f, 0.1f)), parallel(repeat(4, rotateBy(360f, 0.1f)), fadeOut(1f)), visible(false))));
+										numStrGroup.addAction(delay(2f, sequence(visible(true), fadeIn(1f))));
 									} else {
 										numStrGroup.setVisible(true);
 										lockStr.setVisible(false);
@@ -338,31 +354,36 @@ public class LevelScreen extends BackScreen {
 								} else {
 									numStrGroup.setVisible(false);
 									lockStr.setVisible(true);
-									numButtonGroup.getColor().a=0.7f;
+									numButtonGroup.getColor().a = 0.7f;
 								}
 
 								dcltyNumPageGroup[idx][i].addActor(numButtonGroup);
-								numButtonGroup.addListener(new InputListener() {
+								numButtonGroup.addListener(new TouchListener() {
 									@Override
-									public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-										Group tmp = (Group) event.getListenerActor();
-										Image buttonDown = (Image) tmp.findActor("buttonDown");
+									public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+										final Group tmp = (Group) event.getListenerActor();
+										final Image buttonDown = (Image) tmp.findActor("buttonDown");
 										buttonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-										return true;
+										return super.touchDown(event, x, y, pointer, button);
 									}
 
 									@Override
-									public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-										Group tmp = (Group) event.getListenerActor();
+									public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+										final Group tmp = (Group) event.getListenerActor();
 										clickedNumButton = (Image) tmp.findActor("buttonDown");
 										clickedNumButton.addAction(sequence(fadeOut(0.2f), visible(false)));
 										selectedLevel = Integer.parseInt(tmp.getName());
 										if (selectedLevel <= curUserSCORE.getMaxPlayedLevel(selectedDclty)) {
 											swingOutThumbnail();
-										} else {
-											if(!unlockMsg.isVisible()){
+										} else if (selectedLevel <= lvlCntPerDCLTY[selectedDclty.ordinal()]) {
+											if (!unlockMsg.isVisible()) {
 												dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(0.4f));
-												unlockMsg.addAction(sequence(visible(true),fadeIn(0.5f)));
+												unlockMsg.addAction(sequence(visible(true), fadeIn(0.5f)));
+											}
+										} else {
+											if (!unlockMsg.isVisible() && !buyMsg.isVisible()) {
+												dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(0.4f));
+												buyMsg.addAction(sequence(visible(true), fadeIn(0.5f)));
 											}
 										}
 									}
@@ -372,10 +393,11 @@ public class LevelScreen extends BackScreen {
 						}
 					}
 
-					if (idx == selectedDclty.ordinal() && i == curPage)
+					if ((idx == selectedDclty.ordinal()) && (i == curPage)) {
 						dcltyNumPageGroup[idx][i].setVisible(true);
-					else
+					} else {
 						dcltyNumPageGroup[idx][i].setVisible(false);
+					}
 
 					dcltyNumGroup[idx].addActor(dcltyNumPageGroup[idx][i]);
 
@@ -396,19 +418,20 @@ public class LevelScreen extends BackScreen {
 		}
 		stage.addActor(dcltyButtonGroup);
 		stage.addActor(unlockMsg);
+		stage.addActor(buyMsg);
 		stage.addActor(argbFull);
 
-		midButtonGroup.addListener(new InputListener() {
+		midButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				midButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				midButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
-				if(backStr.isVisible()){
+				if (backStr.isVisible()) {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 						@Override
 						public void run() {
@@ -418,11 +441,11 @@ public class LevelScreen extends BackScreen {
 				} else {
 					argbFull.addAction(sequence(visible(true), new Action() {
 						@Override
-						public boolean act(float delta) {
+						public boolean act(final float delta) {
 							thumbnail.addAction(fadeOut(0.1f));
 							return true;
 						}
-					},fadeIn(1f), run(new Runnable() {
+					}, fadeIn(1f), run(new Runnable() {
 						@Override
 						public void run() {
 							printLevelData = false;
@@ -435,44 +458,52 @@ public class LevelScreen extends BackScreen {
 			}
 		});
 
-		leftButtonGroup.addListener(new InputListener() {
+		leftButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				leftButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				leftButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				swipeRight();
 			}
 		});
 
-		rightButtonGroup.addListener(new InputListener() {
+		rightButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				rightButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				rightButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				swipeLeft();
+			}
+		});
+
+		buyMsg.addListener(new TouchListener() {
+			@Override
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+				Gdx.net.openURI(PLAYSTORE_PRO_LINK);
+				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
 
 		if (MemStore.curUserOPTS.isSwipeMove()) {
 			stage.addListener(new DragListener() {
 				@Override
-				public void dragStart(InputEvent event, float x, float y, int pointer) {
+				public void dragStart(final InputEvent event, final float x, final float y, final int pointer) {
 					dragStartX = x;
 					super.dragStart(event, x, y, pointer);
 				}
 
 				@Override
-				public void dragStop(InputEvent event, float x, float y, int pointer) {
+				public void dragStop(final InputEvent event, final float x, final float y, final int pointer) {
 					super.dragStop(event, x, y, pointer);
 					dragEndX = x;
 					if (dragStartX > dragEndX) {
@@ -484,23 +515,28 @@ public class LevelScreen extends BackScreen {
 			});
 		}
 
-		stage.addListener(new InputListener() {
+		stage.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if(unlockMsg.isVisible()){
-					unlockMsg.addAction(sequence(fadeOut(0.5f),visible(false)));
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+				if (unlockMsg.isVisible()) {
+					unlockMsg.addAction(sequence(fadeOut(0.5f), visible(false)));
+					dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(1f));
+				}
+				if (buyMsg.isVisible()) {
+					buyMsg.addAction(sequence(fadeOut(0.5f), visible(false)));
 					dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(1f));
 				}
 				if (printLevelData) {
-					if (!(event.getTarget().getName() != null && (event.getTarget().getName().equalsIgnoreCase("thumbnail") || event.getTarget().getName().equalsIgnoreCase("midbutton"))))
+					if (!((event.getTarget().getName() != null) && (event.getTarget().getName().equalsIgnoreCase("thumbnail") || event.getTarget().getName().equalsIgnoreCase("midbutton")))) {
 						swingInThumbnail();
+					}
 				}
 				return true;
 			}
 
 			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
+			public boolean keyDown(final InputEvent event, final int keycode) {
+				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {
 					if (!printLevelData) {
 						argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 							@Override
@@ -518,7 +554,7 @@ public class LevelScreen extends BackScreen {
 	}
 
 	@Override
-	public void render(float delta) {
+	public void render(final float delta) {
 		super.render(delta);
 		if (printLevelData) {
 			final LevelScore gScore = MemStore.curUserSCORE.getScores(selectedDclty, selectedLevel);
@@ -550,9 +586,9 @@ public class LevelScreen extends BackScreen {
 	}
 
 	public void swipeLeft() {
-		int selectedDcltyIdx = selectedDclty.ordinal();
+		final int selectedDcltyIdx = selectedDclty.ordinal();
 		if (!dragInProgress && rightButtonGroup.isVisible()) {
-			if (curPage < dcltyGrpCnt[selectedDcltyIdx] - 1) {
+			if (curPage < (dcltyGrpCnt[selectedDcltyIdx] - 1)) {
 				dcltyNumPageGroup[selectedDcltyIdx][curPage].addAction(sequence());
 				dcltyNumPageGroup[selectedDcltyIdx][curPage].addAction(sequence(run(new Runnable() {
 					@Override
@@ -561,17 +597,18 @@ public class LevelScreen extends BackScreen {
 					}
 				}), moveTo(-game.getSrcWidth(), dcltyNumPageGroup[selectedDcltyIdx][curPage].getY(), 1f), visible(false)));
 
-				dcltyNumPageGroup[selectedDclty.ordinal()][curPage + 1].addAction(sequence(alpha(0), moveTo(0, dcltyNumPageGroup[selectedDcltyIdx][curPage + 1].getY()), visible(true), fadeIn(1f), run(new Runnable() {
+				dcltyNumPageGroup[selectedDclty.ordinal()][curPage + 1].addAction(sequence(alpha(0), moveTo(0, dcltyNumPageGroup[selectedDcltyIdx][curPage + 1].getY()), visible(true), fadeIn(1f),
+						run(new Runnable() {
 
-					@Override
-					public void run() {
-						dragInProgress = false;
-					}
-				})));
+							@Override
+							public void run() {
+								dragInProgress = false;
+							}
+						})));
 				curPage++;
 			}
 		}
-		if (curPage >= dcltyGrpCnt[selectedDcltyIdx] - 1) {
+		if (curPage >= (dcltyGrpCnt[selectedDcltyIdx] - 1)) {
 			rightButtonGroup.setVisible(false);
 		}
 		if (curPage > 0) {
@@ -580,7 +617,7 @@ public class LevelScreen extends BackScreen {
 	}
 
 	public void swipeRight() {
-		int selectedDcltyIdx = selectedDclty.ordinal();
+		final int selectedDcltyIdx = selectedDclty.ordinal();
 		if (!dragInProgress && leftButtonGroup.isVisible()) {
 			if (curPage > 0) {
 				dcltyNumPageGroup[selectedDcltyIdx][curPage].addAction(sequence());
@@ -591,20 +628,21 @@ public class LevelScreen extends BackScreen {
 					}
 				}), moveTo(game.getSrcWidth(), dcltyNumPageGroup[selectedDcltyIdx][curPage].getY(), 1f), visible(false)));
 
-				dcltyNumPageGroup[selectedDcltyIdx][curPage - 1].addAction(sequence(alpha(0), moveTo(0, dcltyNumPageGroup[selectedDcltyIdx][curPage - 1].getY()), visible(true), fadeIn(1f), run(new Runnable() {
+				dcltyNumPageGroup[selectedDcltyIdx][curPage - 1].addAction(sequence(alpha(0), moveTo(0, dcltyNumPageGroup[selectedDcltyIdx][curPage - 1].getY()), visible(true), fadeIn(1f),
+						run(new Runnable() {
 
-					@Override
-					public void run() {
-						dragInProgress = false;
-					}
-				})));
+							@Override
+							public void run() {
+								dragInProgress = false;
+							}
+						})));
 				curPage--;
 			}
 		}
 		if (curPage <= 0) {
 			leftButtonGroup.setVisible(false);
 		}
-		if (curPage < dcltyGrpCnt[selectedDcltyIdx] - 1) {
+		if (curPage < (dcltyGrpCnt[selectedDcltyIdx] - 1)) {
 			rightButtonGroup.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
 		}
 	}
@@ -614,8 +652,8 @@ public class LevelScreen extends BackScreen {
 		thumbnail.setPosition(clickedNumButton.getX(), clickedNumButton.getY());
 		thumbnail.setOrigin(thumbnail.getWidth() / 2, thumbnail.getHeight() / 2);
 		thumbnail.setName("thumbnail");
-		float tempWidth = thumbnail.getWidth();
-		float tempHeight = thumbnail.getHeight();
+		final float tempWidth = thumbnail.getWidth();
+		final float tempHeight = thumbnail.getHeight();
 		thumbnail.setSize(clickedNumButton.getWidth(), clickedNumButton.getHeight());
 		stage.addActor(thumbnail);
 		thumbnail.clearActions();
@@ -644,8 +682,9 @@ public class LevelScreen extends BackScreen {
 	public void swingInThumbnail() {
 		thumbnail.setOrigin(clickedNumButton.getWidth() / 2, clickedNumButton.getWidth() / 2);
 		thumbnail.clearActions();
-		thumbnail.addAction(sequence(parallel(repeat(40, rotateBy(-1f)), sizeTo(clickedNumButton.getWidth(), clickedNumButton.getHeight(), 1f), moveTo(clickedNumButton.getX(), clickedNumButton.getY(), 1f, swingIn)), fadeOut(0.2f), visible(false),
-				run(new Runnable() {
+		thumbnail.addAction(sequence(
+				parallel(repeat(40, rotateBy(-1f)), sizeTo(clickedNumButton.getWidth(), clickedNumButton.getHeight(), 1f), moveTo(clickedNumButton.getX(), clickedNumButton.getY(), 1f, swingIn)),
+				fadeOut(0.2f), visible(false), run(new Runnable() {
 					@Override
 					public void run() {
 						thumbnail.clearActions();

@@ -2,11 +2,9 @@ package com.avy.cflag.game.utils;
 
 import java.util.ArrayList;
 
-import com.avy.cflag.game.Utils;
-
 public class UserList {
 	private int currentUser;
-	private ArrayList<UserOptions> userOptionsList;
+	private final ArrayList<UserOptions> userOptionsList;
 
 	public UserList() {
 		currentUser = -1;
@@ -21,31 +19,23 @@ public class UserList {
 		return currentUser;
 	}
 
-	public void setCurrentUser(int currentUser) {
-		this.currentUser = currentUser;
-	}
-
-	public ArrayList<UserOptions> getUserOptionsList() {
-		return userOptionsList;
-	}
-
-	public void setUserOptionsList(ArrayList<UserOptions> userOptionsList) {
-		this.userOptionsList = userOptionsList;
-	}
-
 	public UserOptions getCurrentUserOptions() {
-		return userOptionsList.get(currentUser);
+		if ((currentUser > -1) && (currentUser < getUserCount())) {
+			return userOptionsList.get(currentUser);
+		} else {
+			return new UserOptions();
+		}
 	}
 
-	public void setCurrentUserOptions(UserOptions userOptions) {
-		userOptionsList.set(currentUser, userOptions);
+	public UserOptions getUserOptionsByIdx(final int idx) {
+		if ((idx >= 0) && (idx < getUserCount())) {
+			return userOptionsList.get(idx);
+		} else {
+			return new UserOptions();
+		}
 	}
 
-	public UserOptions getUserOptionsByIdx(int idx) {
-		return userOptionsList.get(idx);
-	}
-
-	public boolean isUserExists(String userName) {
+	public boolean isUserExists(final String userName) {
 		for (int i = 0; i < userOptionsList.size(); i++) {
 			if (userOptionsList.get(i).getUserName().equalsIgnoreCase(userName)) {
 				return true;
@@ -54,7 +44,7 @@ public class UserList {
 		return false;
 	}
 
-	public int getUserIndex(String userName) {
+	public int getUserIndex(final String userName) {
 		for (int i = 0; i < userOptionsList.size(); i++) {
 			if (userOptionsList.get(i).getUserName().equalsIgnoreCase(userName)) {
 				return i;
@@ -63,12 +53,8 @@ public class UserList {
 		return -1;
 	}
 
-	public UserOptions getUserOptions(int index) {
-		return userOptionsList.get(index);
-	}
-
-	public UserOptions addUser(String userName) {
-		UserOptions userOpt = new UserOptions(userName);
+	public UserOptions addUser(final String userName) {
+		final UserOptions userOpt = new UserOptions(userName);
 		if (!isUserExists(userName)) {
 			addUser(userOpt);
 			return userOpt;
@@ -77,35 +63,23 @@ public class UserList {
 		}
 	}
 
-	public void addUser(UserOptions inGameOpts) {
+	public void addUser(final UserOptions inGameOpts) {
 		userOptionsList.add(inGameOpts);
 		currentUser = userOptionsList.size() - 1;
 	}
 
-	public void deleteUser(UserOptions inGameOpts) {
-		for (int i = 0; i < userOptionsList.size(); i++) {
-			if (userOptionsList.get(i).getUserName().equalsIgnoreCase(inGameOpts.getUserName())) {
-				userOptionsList.remove(i);
-				if (getUserCount() <= 0)
-					currentUser = -1;
-				else
-					currentUser = (currentUser + 1 + getUserCount()) % getUserCount();
-				return;
-			}
-		}
-	}
-
-	public void deleteUser(int idx) {
-		if (getUserCount() > 0 && idx >= 0) {
+	public void deleteUser(final int idx) {
+		if ((getUserCount() > 0) && (idx >= 0)) {
 			userOptionsList.remove(idx);
 		}
-		if (getUserCount() <= 0)
+		if (getUserCount() <= 0) {
 			currentUser = -1;
-		else
+		} else {
 			currentUser = (currentUser + 1 + getUserCount()) % getUserCount();
+		}
 	}
 
-	public void updateUser(UserOptions inGameOpts) {
+	public void updateUser(final UserOptions inGameOpts) {
 		for (int i = 0; i < userOptionsList.size(); i++) {
 			if (userOptionsList.get(i).getUserName().equalsIgnoreCase(inGameOpts.getUserName())) {
 				userOptionsList.set(i, inGameOpts.clone());

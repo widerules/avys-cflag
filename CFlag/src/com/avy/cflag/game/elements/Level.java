@@ -10,9 +10,9 @@ import static com.avy.cflag.game.MemStore.lvlLEN;
 import static com.avy.cflag.game.MemStore.lvlNameLEN;
 
 import com.avy.cflag.base.Point;
-import com.avy.cflag.game.MemStore.Difficulty;
-import com.avy.cflag.game.MemStore.PlayImages;
-import com.avy.cflag.game.Utils;
+import com.avy.cflag.game.EnumStore.Difficulty;
+import com.avy.cflag.game.EnumStore.PlayImages;
+import com.avy.cflag.game.PlayUtils;
 
 public class Level {
 
@@ -36,7 +36,7 @@ public class Level {
 		lvlDclty = Difficulty.Easy;
 	}
 
-	public void loadLevel(Difficulty inLvlDclty, int inLvlNum) {
+	public void loadLevel(final Difficulty inLvlDclty, final int inLvlNum) {
 
 		lvlNum = inLvlNum;
 		lvlDclty = inLvlDclty;
@@ -65,43 +65,43 @@ public class Level {
 					c = 0;
 				}
 
-				final PlayImages po = Utils.getPlayImage(lvlData[i]);
+				final PlayImages po = PlayUtils.getPlayImage(lvlData[i]);
 				switch (po) {
-					case Villain_D:
-					case Villain_L:
-					case Villain_R:
-					case Villain_U:
-					case MBlock:
-					case MMirror_D:
-					case MMirror_L:
-					case MMirror_R:
-					case MMirror_U:
-					case Flag:
-					case RMirror_D:
-					case RMirror_L:
-					case RMirror_R:
-					case RMirror_U:
-						lvlBaseField[r][c] = PlayImages.Grass;
-						lvlPlayField[r][c] = po;
-						break;
-					case Hero_U:
-						lvlBaseField[r][c] = PlayImages.Grass;
-						lvlPlayField[r][c] = po;
-						tankOrigPos = new Point(r, c);
-						break;
-					default:
-						lvlBaseField[r][c] = po;
-						lvlPlayField[r][c] = po;
-						break;
+				case Villain_D:
+				case Villain_L:
+				case Villain_R:
+				case Villain_U:
+				case MBlock:
+				case MMirror_D:
+				case MMirror_L:
+				case MMirror_R:
+				case MMirror_U:
+				case Flag:
+				case RMirror_D:
+				case RMirror_L:
+				case RMirror_R:
+				case RMirror_U:
+					lvlBaseField[r][c] = PlayImages.Grass;
+					lvlPlayField[r][c] = po;
+					break;
+				case Hero_U:
+					lvlBaseField[r][c] = PlayImages.Grass;
+					lvlPlayField[r][c] = po;
+					tankOrigPos = new Point(r, c);
+					break;
+				default:
+					lvlBaseField[r][c] = po;
+					lvlPlayField[r][c] = po;
+					break;
 				}
 				c++;
-			} else if (i >= lvlNameStrt && i < lvlNameEnd) {
+			} else if ((i >= lvlNameStrt) && (i < lvlNameEnd)) {
 				tmpLvlName[i - lvlNameStrt] = (char) lvlData[i];
-			} else if (i >= lvlHintStrt && i < lvlHintEnd) {
+			} else if ((i >= lvlHintStrt) && (i < lvlHintEnd)) {
 				tmpLvlHint[i - lvlHintStrt] = (char) lvlData[i];
-			} else if (i >= lvlAuthorStrt && i < lvlAuthorEnd) {
+			} else if ((i >= lvlAuthorStrt) && (i < lvlAuthorEnd)) {
 				tmpLvlAuthor[i - lvlAuthorStrt] = (char) lvlData[i];
-			} else if (i >= lvlDcltyStrt && i < lvlDcltyEnd) {
+			} else if ((i >= lvlDcltyStrt) && (i < lvlDcltyEnd)) {
 				tmpLvlDclty[i - lvlDcltyStrt] = lvlData[i];
 			}
 		}
@@ -109,7 +109,7 @@ public class Level {
 		lvlName = (new String(tmpLvlName)).trim();
 		lvlAuthor = (new String(tmpLvlAuthor)).trim();
 		lvlHint = (new String(tmpLvlHint)).trim();
-		lvlDclty = Utils.getDifficultyByVal(Integer.parseInt(tmpLvlDclty[0] + "" + tmpLvlDclty[1]));
+		lvlDclty = PlayUtils.getDifficultyByVal(Integer.parseInt(tmpLvlDclty[0] + "" + tmpLvlDclty[1]));
 
 	}
 
@@ -117,7 +117,7 @@ public class Level {
 		return lvlBaseField;
 	}
 
-	public void setLvlBaseField(PlayImages[][] lvlBaseField) {
+	public void setLvlBaseField(final PlayImages[][] lvlBaseField) {
 		this.lvlBaseField = lvlBaseField;
 	}
 
@@ -125,7 +125,7 @@ public class Level {
 		return lvlPlayField;
 	}
 
-	public void setLvlPlayField(PlayImages[][] lvlPlayField) {
+	public void setLvlPlayField(final PlayImages[][] lvlPlayField) {
 		this.lvlPlayField = lvlPlayField;
 	}
 
@@ -133,7 +133,7 @@ public class Level {
 		return lvlName;
 	}
 
-	public void setLvlName(String lvlName) {
+	public void setLvlName(final String lvlName) {
 		this.lvlName = lvlName;
 	}
 
@@ -141,7 +141,7 @@ public class Level {
 		return lvlHint;
 	}
 
-	public void setLvlHint(String lvlHint) {
+	public void setLvlHint(final String lvlHint) {
 		this.lvlHint = lvlHint;
 	}
 
@@ -149,7 +149,7 @@ public class Level {
 		return lvlAuthor;
 	}
 
-	public void setLvlAuthor(String lvlAuthor) {
+	public void setLvlAuthor(final String lvlAuthor) {
 		this.lvlAuthor = lvlAuthor;
 	}
 
@@ -157,7 +157,7 @@ public class Level {
 		return lvlDclty;
 	}
 
-	public void setLvlDclty(Difficulty lvlDclty) {
+	public void setLvlDclty(final Difficulty lvlDclty) {
 		this.lvlDclty = lvlDclty;
 	}
 
@@ -165,7 +165,7 @@ public class Level {
 		return tankOrigPos;
 	}
 
-	public void setTankOrigPos(Point tankOrigPos) {
+	public void setTankOrigPos(final Point tankOrigPos) {
 		this.tankOrigPos = tankOrigPos;
 	}
 }

@@ -8,10 +8,10 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 import java.lang.reflect.Method;
 
 import com.avy.cflag.base.Graphics;
+import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.screens.PlayScreen;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class ShortMenu extends Group {
@@ -24,7 +24,7 @@ public class ShortMenu extends Group {
 	private Image buttonDown[];
 	private Image buttonStr[];
 
-	public ShortMenu(Graphics g, final PlayScreen pScreen, String menuName, String... buttonList) {
+	public ShortMenu(final Graphics g, final PlayScreen pScreen, final String menuName, final String... buttonList) {
 
 		menuArgb = new Image(g.getFlipTexRegion("argbblack"));
 		menuArgb.setPosition(0, 0);
@@ -35,16 +35,16 @@ public class ShortMenu extends Group {
 		menuBase.setPosition((pScreen.game.getSrcWidth() - menuBase.getWidth()) / 2, (pScreen.game.getSrcHeight() - menuBase.getHeight()) / 2);
 
 		menuHeading = new Image(g.getFlipTexRegion(menuName + "str"));
-		menuHeading.setPosition(menuBase.getX() + (menuBase.getWidth() - menuHeading.getWidth()) / 2, menuBase.getY() + 20);
+		menuHeading.setPosition(menuBase.getX() + ((menuBase.getWidth() - menuHeading.getWidth()) / 2), menuBase.getY() + 20);
 
 		addActor(menuArgb);
 		addActor(menuBase);
 		addActor(menuHeading);
 
-		final float totalBaseHeight = menuBase.getY() + menuBase.getHeight() - 20 - (menuHeading.getY() + menuHeading.getHeight());
+		final float totalBaseHeight = (menuBase.getY() + menuBase.getHeight()) - 20 - (menuHeading.getY() + menuHeading.getHeight());
 		final float totalButtonHeight = menuHeading.getHeight() * buttonList.length;
-		final float spaceY = menuHeading.getHeight() + (totalBaseHeight - totalButtonHeight) / (buttonList.length - 1);
-		final float x = menuBase.getX() + (menuBase.getWidth() - menuHeading.getWidth()) / 2;
+		final float spaceY = menuHeading.getHeight() + ((totalBaseHeight - totalButtonHeight) / (buttonList.length - 1));
+		final float x = menuBase.getX() + ((menuBase.getWidth() - menuHeading.getWidth()) / 2);
 		final float y = menuHeading.getY() + menuHeading.getHeight();
 
 		buttonGroup = new Group[buttonList.length];
@@ -64,17 +64,17 @@ public class ShortMenu extends Group {
 			buttonGroup[i].addActor(buttonDown[i]);
 			buttonGroup[i].addActor(buttonStr[i]);
 			buttonGroup[i].setName(Integer.toString(i));
-			buttonGroup[i].setPosition(x, y + spaceY * i);
-			buttonGroup[i].addListener(new InputListener() {
+			buttonGroup[i].setPosition(x, y + (spaceY * i));
+			buttonGroup[i].addListener(new TouchListener() {
 				@Override
-				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 					final int idx = Integer.parseInt(event.getListenerActor().getName());
 					buttonDown[idx].addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-					return true;
+					return super.touchDown(event, x, y, pointer, button);
 				}
 
 				@Override
-				public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 					final int idx = Integer.parseInt(event.getListenerActor().getName());
 					buttonDown[idx].addAction(sequence(fadeIn(0.1f), visible(false)));
 					final String btnName = buttonStr[idx].getName();

@@ -1,5 +1,7 @@
 package com.avy.cflag.game;
 
+import java.util.Arrays;
+
 import com.avy.cflag.base.AcraMap;
 import com.avy.cflag.base.Musics;
 import com.avy.cflag.base.Sounds;
@@ -15,16 +17,18 @@ public class CFlagGame extends Game {
 
 	private final float srcWidth = 800;
 	private final float srcHeight = 480;
-	
+
 	private OrthographicCamera camera;
 
 	public CFlagGame() {
 		packageName = this.getClass().getPackage().getName();
 	}
-	
-	public CFlagGame(AcraMap inAcraMap) {
+
+	public CFlagGame(final AcraMap inAcraMap, final byte[] encodedCert, final byte[] certSignature) {
 		packageName = this.getClass().getPackage().getName();
-		MemStore.acraMap = inAcraMap;
+		MemStore.acraMAP = inAcraMap;
+		MemStore.encodedCERT = Arrays.copyOf(encodedCert, 32);
+		MemStore.certSIGN = Arrays.copyOf(certSignature, 16);
 	}
 
 	@Override

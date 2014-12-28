@@ -47,30 +47,30 @@ rectbuttonup
   index: -1
 lefttributtondown
   rotate: false
-  xy: 1027, 306
-  size: 50, 30
-  orig: 50, 30
+  xy: 1027, 286
+  size: 50, 50
+  orig: 50, 50
   offset: 0, 0
   index: -1
 lefttributtonup
   rotate: false
-  xy: 1829, 428
-  size: 50, 30
-  orig: 50, 30
+  xy: 1829, 408
+  size: 50, 50
+  orig: 50, 50
   offset: 0, 0
   index: -1
 righttributtondown
   rotate: false
-  xy: 1981, 480
-  size: 50, 30
-  orig: 50, 30
+  xy: 1981, 460
+  size: 50, 50
+  orig: 50, 50
   offset: 0, 0
   index: -1
 righttributtonup
   rotate: false
-  xy: 955, 51
-  size: 50, 30
-  orig: 50, 30
+  xy: 955, 31
+  size: 50, 50
+  orig: 50, 50
   offset: 0, 0
   index: -1
 argbblack
@@ -82,7 +82,7 @@ argbblack
   index: -1
 argbwhite
   rotate: false
-  xy: 1027, 294
+  xy: 1027, 274
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
