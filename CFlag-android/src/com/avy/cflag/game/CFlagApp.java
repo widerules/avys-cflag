@@ -25,10 +25,9 @@ import android.app.Application;
 
 
 public class CFlagApp extends Application {
-
-	  @Override
-	   public void onCreate() {
-	        super.onCreate();
-	        ACRA.init(this);
-	   }
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		ACRA.init(this);
+	}
 }
