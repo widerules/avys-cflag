@@ -7,19 +7,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 public class AnimActor extends Image {
 	private final AnimDrawable drawable;
 
-	public AnimActor(AnimDrawable drawable) {
+	public AnimActor(final AnimDrawable drawable) {
 		super(drawable);
 		this.drawable = drawable;
 	}
 
 	@Override
-	public void act(float delta) {
+	public void act(final float delta) {
 		drawable.act(delta);
 		super.act(delta);
 	}
 
 	@Override
-	public void draw(Batch batch, float parentAlpha) {
+	public void draw(final Batch batch, final float parentAlpha) {
 		validate();
 
 		final Color color = getColor();
@@ -31,7 +31,7 @@ public class AnimActor extends Image {
 		final float scaleY = getScaleY();
 
 		final float rotation = getRotation();
-		if (scaleX == 1 && scaleY == 1 && rotation == 0) {
+		if ((scaleX == 1) && (scaleY == 1) && (rotation == 0)) {
 			drawable.draw(batch, x + getImageX(), y + getImageY(), getImageWidth(), getImageHeight());
 		} else {
 			drawable.draw(batch, x + getImageX(), y + getImageY(), getOriginX() - getImageX(), getOriginY() - getImageY(), getImageWidth(), getImageHeight(), scaleX, scaleY, rotation);

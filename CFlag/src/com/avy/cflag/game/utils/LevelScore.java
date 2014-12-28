@@ -13,7 +13,7 @@ public class LevelScore {
 		hintUsed = false;
 	}
 
-	public LevelScore(int levelNo, int moves, int shots, boolean hintUsed) {
+	public LevelScore(final int levelNo, final int moves, final int shots, final boolean hintUsed) {
 		this.levelNo = levelNo;
 		this.moves = moves;
 		this.shots = shots;
@@ -24,7 +24,7 @@ public class LevelScore {
 		return levelNo;
 	}
 
-	public void setLevelNo(int levelNo) {
+	public void setLevelNo(final int levelNo) {
 		this.levelNo = levelNo;
 	}
 
@@ -32,7 +32,7 @@ public class LevelScore {
 		return moves;
 	}
 
-	public void setMoves(int moves) {
+	public void setMoves(final int moves) {
 		this.moves = moves;
 	}
 
@@ -40,7 +40,7 @@ public class LevelScore {
 		return shots;
 	}
 
-	public void setShots(int shots) {
+	public void setShots(final int shots) {
 		this.shots = shots;
 	}
 
@@ -48,7 +48,7 @@ public class LevelScore {
 		return hintUsed;
 	}
 
-	public void setHintUsed(boolean hintUsed) {
+	public void setHintUsed(final boolean hintUsed) {
 		this.hintUsed = hintUsed;
 	}
 }

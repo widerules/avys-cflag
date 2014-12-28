@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 public enum Sounds {
-	move, shoot, blast, burn;
+	move, shoot, blast, burn, click;
 
 	private static boolean enabled = true;
 	private static float volume = 0.1f;
@@ -24,11 +24,11 @@ public enum Sounds {
 		}
 	}
 
-	public static void setVolume(float volume) {
+	public static void setVolume(final float volume) {
 		Sounds.volume = volume;
 	}
 
-	public static void setState(boolean state) {
+	public static void setState(final boolean state) {
 		Sounds.enabled = state;
 	}
 

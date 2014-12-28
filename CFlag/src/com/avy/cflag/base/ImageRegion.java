@@ -10,22 +10,22 @@ public class ImageRegion extends TextureRegion {
 		flip(false, true);
 	}
 
-	public ImageRegion(Texture texture) {
+	public ImageRegion(final Texture texture) {
 		super(texture);
 		flip(false, true);
 	}
 
-	public ImageRegion(TextureRegion textureRegion) {
+	public ImageRegion(final TextureRegion textureRegion) {
 		super(textureRegion);
 		flip(false, true);
 	}
 
-	public ImageRegion(TextureRegion textureRegion, int x, int y, int width, int height) {
+	public ImageRegion(final TextureRegion textureRegion, final int x, final int y, final int width, final int height) {
 		super(textureRegion, x, y, width, height);
 		flip(false, true);
 	}
 
-	public ImageRegion(Texture texture, int x, int y, int width, int height) {
+	public ImageRegion(final Texture texture, final int x, final int y, final int width, final int height) {
 		super(texture, x, y, width, height);
 		flip(false, true);
 	}

@@ -9,13 +9,13 @@ public class Point {
 		y = 0;
 	}
 
-	public Point(int x, int y) {
+	public Point(final int x, final int y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public Point add(Point p) {
-		return new Point(this.x + p.x, this.y + p.y);
+	public Point add(final Point p) {
+		return new Point(x + p.x, y + p.y);
 
 	}
 }

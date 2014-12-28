@@ -6,11 +6,11 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class HintMenu extends Group {
-	private Image menuArgb;
-	private Image menuBase;
-	private Image menuHeading;
+	private final Image menuArgb;
+	private final Image menuBase;
+	private final Image menuHeading;
 
-	public HintMenu(Graphics g, final PlayScreen pScreen, String menuName) {
+	public HintMenu(final Graphics g, final PlayScreen pScreen, final String menuName) {
 
 		menuArgb = new Image(g.getFlipTexRegion("argbblack"));
 		menuArgb.setPosition(0, 0);
@@ -22,7 +22,7 @@ public class HintMenu extends Group {
 		menuBase.setName("base");
 
 		menuHeading = new Image(g.getFlipTexRegion(menuName + "str"));
-		menuHeading.setPosition(menuBase.getX() + (menuBase.getWidth() - menuHeading.getWidth()) / 2, menuBase.getY() + 20);
+		menuHeading.setPosition(menuBase.getX() + ((menuBase.getWidth() - menuHeading.getWidth()) / 2), menuBase.getY() + 20);
 		menuHeading.setName("heading");
 
 		addActor(menuArgb);

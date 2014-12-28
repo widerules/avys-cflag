@@ -25,13 +25,14 @@ public enum Musics {
 		}
 	}
 
-	public static void setVolume(float volume) {
+	public static void setVolume(final float volume) {
 		Musics.volume = volume;
-		if (curMusic != null)
+		if (curMusic != null) {
 			curMusic.setVolume(volume);
+		}
 	}
 
-	public static void setState(boolean state) {
+	public static void setState(final boolean state) {
 		Musics.enabled = state;
 		if (curMusic != null) {
 			if (curMusic.isPlaying() && !Musics.enabled) {

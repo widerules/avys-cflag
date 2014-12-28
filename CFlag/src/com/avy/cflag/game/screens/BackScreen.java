@@ -26,9 +26,8 @@ public class BackScreen extends BaseScreen {
 	protected Image midBar;
 	protected Image bottomBar;
 
-	public BackScreen(CFlagGame game, boolean graphicsOn, boolean spritesOn, boolean shapesOn) {
+	public BackScreen(final CFlagGame game, final boolean graphicsOn, final boolean spritesOn, final boolean shapesOn) {
 		super(game, graphicsOn, spritesOn, shapesOn);
-
 		commonAtlas = g.createImageAtlas("common");
 	}
 
@@ -37,7 +36,7 @@ public class BackScreen extends BaseScreen {
 		super.show();
 
 		final Random rand = new Random();
-		final float cloudPosY = rand.nextInt(167) - 67;
+		final float cloudPosY = rand.nextInt((79 - (-69)) + 1) - 69;
 		final int cloudAnimDirection = rand.nextInt(2);
 
 		g.setImageAtlas(commonAtlas);

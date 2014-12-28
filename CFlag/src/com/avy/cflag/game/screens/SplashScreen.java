@@ -5,63 +5,62 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.avy.cflag.base.BaseScreen;
+import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
-import com.avy.cflag.game.MemStore;
-import com.avy.cflag.game.Utils;
+import com.avy.cflag.game.GameUtils;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class SplashScreen extends BaseScreen {
-	private TextureAtlas imageAtlas;
+	private final TextureAtlas imageAtlas;
 	private Image splashImage;
 	private Image titleImage;
-	private boolean isRunning;
 
-	public SplashScreen(CFlagGame game) {
+	public SplashScreen(final CFlagGame game) {
 		super(game, true, false, false);
-		isRunning = true;
 		imageAtlas = g.createImageAtlas("splash");
 	}
 
 	@Override
 	public void show() {
 		super.show();
-		MemStore.acraMap.putCustomData("SplashScreen", "Entering");
 		g.setImageAtlas(imageAtlas);
 		splashImage = new Image(g.getFlipTexRegion("background"));
 		splashImage.rotateBy(90);
 		splashImage.setScaleY(game.getSrcWidth());
 		splashImage.setPosition(game.getSrcWidth(), 0);
-		stage.addActor(splashImage);
-
 		titleImage = new Image(g.getFlipTexRegion("title"));
 		titleImage.setPosition((game.getSrcWidth() - titleImage.getWidth()) / 2, (game.getSrcHeight() - titleImage.getHeight()) / 2);
+
+		stage.addActor(splashImage);
 		stage.addActor(titleImage);
+
 		stage.addAction(sequence(alpha(0), fadeIn(2f), new Action() {
 			@Override
-			public boolean act(float delta) {
-				Utils.loadLevelData();
-				Utils.loadGameOptions();
-				Utils.loadUserScores();
-				Utils.loadGameAudio();
+			public boolean act(final float delta) {
+				GameUtils.loadUserOptions();
+				GameUtils.loadGameAudio();
+				GameUtils.loadUserScores();
+				GameUtils.loadLevelData();
+				GameUtils.loadAcraMap();
+				GameUtils.loadThumbs();
 				return true;
 			}
 		}, new Action() {
 			@Override
-			public boolean act(float delta) {
-				isRunning = false;
-				return true;
+			public boolean act(final float delta) {
+				game.setScreen(new MenuScreen(game));
+				return false;
 			}
 		}));
 
-		stage.addListener(new InputListener() {
+		stage.addListener(new TouchListener() {
 			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
+			public boolean keyDown(final InputEvent event, final int keycode) {
+				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {
 					game.exitGame();
 				}
 				return true;
@@ -70,17 +69,10 @@ public class SplashScreen extends BaseScreen {
 	}
 
 	@Override
-	public void render(float delta) {
-		super.render(delta);
-		if (!isRunning) {
-			game.setScreen(new MenuScreen(game));
-		}
-	}
-
-	@Override
 	public void dispose() {
-		if (imageAtlas != null)
+		if (imageAtlas != null) {
 			imageAtlas.dispose();
+		}
 		splashImage = null;
 		titleImage = null;
 		super.dispose();

@@ -11,21 +11,20 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
+import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
+import com.avy.cflag.game.EnumStore.Difficulty;
+import com.avy.cflag.game.GameUtils;
 import com.avy.cflag.game.MemStore;
-import com.avy.cflag.game.MemStore.Difficulty;
-import com.avy.cflag.game.Utils;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
-import com.badlogic.gdx.utils.Json;
 
 public class HelpScreen extends BackScreen {
 
@@ -65,9 +64,9 @@ public class HelpScreen extends BackScreen {
 	private float dragEndX;
 	private boolean dragInProgress;
 
-	private String context;
+	private final String context;
 
-	public HelpScreen(CFlagGame game, String context) {
+	public HelpScreen(final CFlagGame game, final String context) {
 		super(game, true, false, false);
 
 		helpAtlas = g.createImageAtlas("help");
@@ -91,26 +90,23 @@ public class HelpScreen extends BackScreen {
 	public void show() {
 		super.show();
 
-		MemStore.acraMap.putCustomData("HelpScreen", "Before Crash");
-		MemStore.acraMap.putCustomData("Setting", (new Json()).toJson(curUserOPTS));
-		int rr = 100/0;
 		g.setImageAtlas(commonAtlas);
 
 		midButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
-		midButtonUp.setPosition((bottomBar.getWidth() - midButtonUp.getWidth()) / 2, bottomBar.getY() + (bottomBar.getHeight() - midButtonUp.getHeight()) / 2);
+		midButtonUp.setPosition((bottomBar.getWidth() - midButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - midButtonUp.getHeight()) / 2));
 		midButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
 		midButtonDown.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		midButtonDown.setVisible(false);
 
 		final int sideButtonMargin = 18;
 		leftButtonUp = new Image(g.getFlipTexRegion("lefttributtonup"));
-		leftButtonUp.setPosition(sideButtonMargin, bottomBar.getY() + (bottomBar.getHeight() - leftButtonUp.getHeight()) / 2);
+		leftButtonUp.setPosition(sideButtonMargin, bottomBar.getY() + ((bottomBar.getHeight() - leftButtonUp.getHeight()) / 2));
 		leftButtonDown = new Image(g.getFlipTexRegion("lefttributtondown"));
 		leftButtonDown.setPosition(leftButtonUp.getX(), leftButtonUp.getY());
 		leftButtonDown.setVisible(false);
 
 		rightButtonUp = new Image(g.getFlipTexRegion("righttributtonup"));
-		rightButtonUp.setPosition(bottomBar.getWidth() - rightButtonUp.getWidth() - sideButtonMargin, bottomBar.getY() + (bottomBar.getHeight() - rightButtonUp.getHeight()) / 2);
+		rightButtonUp.setPosition(bottomBar.getWidth() - rightButtonUp.getWidth() - sideButtonMargin, bottomBar.getY() + ((bottomBar.getHeight() - rightButtonUp.getHeight()) / 2));
 		rightButtonDown = new Image(g.getFlipTexRegion("righttributtondown"));
 		rightButtonDown.setPosition(rightButtonUp.getX(), rightButtonUp.getY());
 		rightButtonDown.setVisible(false);
@@ -128,10 +124,11 @@ public class HelpScreen extends BackScreen {
 		playStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		playStr.setVisible(false);
 
-		if (context.equalsIgnoreCase("newgame")||context.equalsIgnoreCase("levelselect"))
+		if (context.equalsIgnoreCase("newgame") || context.equalsIgnoreCase("levelselect")) {
 			skipStr.setVisible(true);
-		else
+		} else {
 			backStr.setVisible(true);
+		}
 
 		midButtonGroup = new Group();
 		midButtonGroup.addActor(midButtonUp);
@@ -177,10 +174,10 @@ public class HelpScreen extends BackScreen {
 		newnameResult = new Label("", g.getLabelStyle("salsa", 12));
 
 		title1Str.setPosition((topBar.getWidth() - title1Str.getWidth()) / 2, (topBar.getHeight() - title1Str.getHeight()) / 2);
-		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + okButtonUp.getWidth() + 20)) / 2, (game.getSrcHeight() - enterNameStr.getHeight()) / 2-80);
+		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + okButtonUp.getWidth() + 20)) / 2, ((game.getSrcHeight() - enterNameStr.getHeight()) / 2) - 80);
 		nameField.setMaxLength(10);
-		nameField.setPosition(enterNameStr.getX() + enterNameStr.getWidth(), (game.getSrcHeight() - nameField.getHeight()) / 2-80);
-		okButtonUp.setPosition(enterNameStr.getX() + enterNameStr.getWidth() + nameField.getWidth() + 20, (game.getSrcHeight() - okButtonUp.getHeight()) / 2-80);
+		nameField.setPosition(enterNameStr.getX() + enterNameStr.getWidth(), ((game.getSrcHeight() - nameField.getHeight()) / 2) - 80);
+		okButtonUp.setPosition(enterNameStr.getX() + enterNameStr.getWidth() + nameField.getWidth() + 20, ((game.getSrcHeight() - okButtonUp.getHeight()) / 2) - 80);
 		okButtonDown.setPosition(okButtonUp.getX(), okButtonUp.getY());
 		okButtonDown.setVisible(false);
 		newnameResult.setWidth(200);
@@ -210,54 +207,55 @@ public class HelpScreen extends BackScreen {
 		stage.addActor(enterNameGroup);
 		stage.addActor(argbFull);
 
-		leftButtonGroup.addListener(new InputListener() {
+		leftButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				leftButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				leftButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				swipeRight();
 			}
 		});
 
-		rightButtonGroup.addListener(new InputListener() {
+		rightButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				rightButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				rightButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				swipeLeft();
 			}
 		});
 
-		midButtonGroup.addListener(new InputListener() {
+		midButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				midButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.2f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				midButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
 				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 					@Override
 					public void run() {
 						if (context.equalsIgnoreCase("newgame")) {
-							if (curUserOPTS.isFirstRun())
+							if (curUserOPTS.isFirstRun()) {
 								game.setScreen(new PlayScreen(game, Difficulty.Novice, 1));
-							else
+							} else {
 								game.setScreen(new PlayScreen(game, curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty())));
+							}
 						} else if (context.equalsIgnoreCase("levelselect")) {
-							game.setScreen(new LevelScreen(game,false));
+							game.setScreen(new LevelScreen(game, false));
 						} else {
 							game.setScreen(new MenuScreen(game));
 						}
@@ -266,25 +264,25 @@ public class HelpScreen extends BackScreen {
 			}
 		});
 
-		okButtonGroup.addListener(new InputListener() {
+		okButtonGroup.addListener(new TouchListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				okButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				okButtonDown.addAction(sequence(fadeOut(0.1f), visible(false)));
-				String userName = nameField.getText();
+				final String userName = nameField.getText();
 				if (userName.length() == 0) {
 					newnameResult.setText("Please enter a Name");
 				} else {
-					if (userLIST.isUserExists(userName))
+					if (userLIST.isUserExists(userName)) {
 						newnameResult.setText("User already exists");
-					else {
+					} else {
 						curUserOPTS = userLIST.addUser(userName);
-						Utils.saveGameOptions();
+						GameUtils.saveGameOptions();
 						helpPageGroup.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
 						enterNameGroup.addAction(sequence(fadeOut(0.1f), visible(false)));
 					}
@@ -294,7 +292,7 @@ public class HelpScreen extends BackScreen {
 
 		stage.addListener(new DragListener() {
 			@Override
-			public void dragStart(InputEvent event, float x, float y, int pointer) {
+			public void dragStart(final InputEvent event, final float x, final float y, final int pointer) {
 				if (MemStore.curUserOPTS.isSwipeMove()) {
 					dragStartX = x;
 					super.dragStart(event, x, y, pointer);
@@ -302,7 +300,7 @@ public class HelpScreen extends BackScreen {
 			}
 
 			@Override
-			public void dragStop(InputEvent event, float x, float y, int pointer) {
+			public void dragStop(final InputEvent event, final float x, final float y, final int pointer) {
 				if (MemStore.curUserOPTS.isSwipeMove()) {
 					super.dragStop(event, x, y, pointer);
 					dragEndX = x;
@@ -315,8 +313,8 @@ public class HelpScreen extends BackScreen {
 			}
 
 			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
+			public boolean keyDown(final InputEvent event, final int keycode) {
+				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {
 					argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 						@Override
 						public void run() {
@@ -347,15 +345,16 @@ public class HelpScreen extends BackScreen {
 					}
 				}), moveTo(-game.getSrcWidth(), helpPages[curHelpPage].getY(), 1f), visible(false)));
 
-				helpPages[curHelpPage + 1].addAction(sequence(alpha(0), moveTo((game.getSrcWidth() - helpPages[curHelpPage + 1].getWidth()) / 2, helpPages[curHelpPage + 1].getY()), visible(true), fadeIn(1f), run(new Runnable() {
-					@Override
-					public void run() {
-						dragInProgress = false;
-					}
-				})));
+				helpPages[curHelpPage + 1].addAction(sequence(alpha(0), moveTo((game.getSrcWidth() - helpPages[curHelpPage + 1].getWidth()) / 2, helpPages[curHelpPage + 1].getY()), visible(true),
+						fadeIn(1f), run(new Runnable() {
+							@Override
+							public void run() {
+								dragInProgress = false;
+							}
+						})));
 				curHelpPage++;
 			}
-			if (curHelpPage >= totalHelpPages - 1) {
+			if (curHelpPage >= (totalHelpPages - 1)) {
 				rightButtonGroup.setVisible(false);
 				if (context.equalsIgnoreCase("newgame")) {
 					skipStr.setVisible(false);
@@ -378,12 +377,13 @@ public class HelpScreen extends BackScreen {
 					}
 				}), moveTo(game.getSrcWidth(), helpPages[curHelpPage].getY(), 1f), visible(false)));
 
-				helpPages[curHelpPage - 1].addAction(sequence(alpha(0), moveTo((game.getSrcWidth() - helpPages[curHelpPage - 1].getWidth()) / 2, helpPages[curHelpPage - 1].getY()), visible(true), fadeIn(1f), run(new Runnable() {
-					@Override
-					public void run() {
-						dragInProgress = false;
-					}
-				})));
+				helpPages[curHelpPage - 1].addAction(sequence(alpha(0), moveTo((game.getSrcWidth() - helpPages[curHelpPage - 1].getWidth()) / 2, helpPages[curHelpPage - 1].getY()), visible(true),
+						fadeIn(1f), run(new Runnable() {
+							@Override
+							public void run() {
+								dragInProgress = false;
+							}
+						})));
 				curHelpPage--;
 			}
 			if (curHelpPage <= 0) {

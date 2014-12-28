@@ -1,6 +1,5 @@
 package com.avy.cflag.base;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.utils.BaseDrawable;
@@ -11,7 +10,7 @@ public class AnimDrawable extends BaseDrawable {
 	private boolean animOn;
 	private boolean isAnimating;
 
-	public AnimDrawable(Animation anim) {
+	public AnimDrawable(final Animation anim) {
 		this.anim = anim;
 		animOn = true;
 		isAnimating = true;
@@ -19,8 +18,8 @@ public class AnimDrawable extends BaseDrawable {
 		setMinHeight(anim.getKeyFrame(0).getRegionHeight());
 	}
 
-	public void act(float delta) {
-		if (isAnimating && anim.getKeyFrameIndex(stateTime) == 0) {
+	public void act(final float delta) {
+		if (isAnimating && (anim.getKeyFrameIndex(stateTime) == 0)) {
 			isAnimating = false;
 			stateTime = 0;
 		}
@@ -38,7 +37,6 @@ public class AnimDrawable extends BaseDrawable {
 
 	public void reset() {
 		stateTime = 0;
-		Gdx.app.log("CFLAG", "reset");
 	}
 
 	public void stopAnim() {
@@ -50,12 +48,28 @@ public class AnimDrawable extends BaseDrawable {
 		stateTime = 0;
 	}
 
+	public float getStateTime() {
+		return stateTime;
+	}
+
+	public void setStateTime(final float stateTime) {
+		this.stateTime = stateTime;
+	}
+
 	@Override
-	public void draw(Batch batch, float x, float y, float width, float height) {
+	public void draw(final Batch batch, final float x, final float y, final float width, final float height) {
 		batch.draw(anim.getKeyFrame(stateTime), x, y, width, height);
 	}
 
-	public void draw(Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
+	public void draw(final Batch batch, final float x, final float y, final float originX, final float originY, final float width, final float height, final float scaleX, final float scaleY,
+			final float rotation) {
 		batch.draw(anim.getKeyFrame(stateTime), x, y, originX, originY, width, height, scaleX, scaleY, rotation);
 	}
+
+	public void cloneProperties(final AnimDrawable inDrawable) {
+		animOn = inDrawable.animOn;
+		isAnimating = inDrawable.isAnimating;
+		stateTime = inDrawable.stateTime;
+	}
+
 }

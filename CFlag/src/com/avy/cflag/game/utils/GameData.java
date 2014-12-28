@@ -1,7 +1,7 @@
 package com.avy.cflag.game.utils;
 
-import com.avy.cflag.game.MemStore.Difficulty;
-import com.avy.cflag.game.MemStore.GameState;
+import com.avy.cflag.game.EnumStore.Difficulty;
+import com.avy.cflag.game.EnumStore.GameState;
 import com.avy.cflag.game.elements.LTank;
 import com.avy.cflag.game.elements.Level;
 
@@ -20,7 +20,7 @@ public class GameData {
 		return currentDclty;
 	}
 
-	public void setCurrentDclty(Difficulty currentDclty) {
+	public void setCurrentDclty(final Difficulty currentDclty) {
 		this.currentDclty = currentDclty;
 	}
 
@@ -28,7 +28,7 @@ public class GameData {
 		return currentLevel;
 	}
 
-	public void setCurrentLevel(int currentLevel) {
+	public void setCurrentLevel(final int currentLevel) {
 		this.currentLevel = currentLevel;
 	}
 
@@ -36,7 +36,7 @@ public class GameData {
 		return gameState;
 	}
 
-	public void setGameState(GameState gameState) {
+	public void setGameState(final GameState gameState) {
 		this.gameState = gameState;
 	}
 
@@ -44,7 +44,7 @@ public class GameData {
 		return lvl;
 	}
 
-	public void setLvl(Level lvl) {
+	public void setLvl(final Level lvl) {
 		this.lvl = lvl;
 	}
 
@@ -52,7 +52,7 @@ public class GameData {
 		return ltank;
 	}
 
-	public void setLtank(LTank ltank) {
+	public void setLtank(final LTank ltank) {
 		this.ltank = ltank;
 	}
 
@@ -60,7 +60,7 @@ public class GameData {
 		return undoList;
 	}
 
-	public void setUndoList(LTank[] undoList) {
+	public void setUndoList(final LTank[] undoList) {
 		this.undoList = undoList;
 	}
 
@@ -68,7 +68,7 @@ public class GameData {
 		return undoCnt;
 	}
 
-	public void setUndoCnt(int undoCnt) {
+	public void setUndoCnt(final int undoCnt) {
 		this.undoCnt = undoCnt;
 	}
 
@@ -76,7 +76,7 @@ public class GameData {
 		return hintUsed;
 	}
 
-	public void setHintUsed(boolean hintUsed) {
+	public void setHintUsed(final boolean hintUsed) {
 		this.hintUsed = hintUsed;
 	}
 
@@ -84,7 +84,7 @@ public class GameData {
 		return stateChanged;
 	}
 
-	public void setStateChanged(boolean stateChanged) {
+	public void setStateChanged(final boolean stateChanged) {
 		this.stateChanged = stateChanged;
 	}
 
