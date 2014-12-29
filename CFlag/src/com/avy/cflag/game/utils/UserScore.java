@@ -32,6 +32,13 @@ public class UserScore {
 	}
 
 	public void updateScores(final Difficulty dclty, final LevelScore score) {
+		LevelScore existingScore = scores[dclty.ordinal()].get(score.getLevelNo() - 1);
+		if(score.getMoves()<existingScore.getMoves())
+			score.setMoves(existingScore.getMoves());
+		if(score.getShots()<existingScore.getShots())
+			score.setShots(existingScore.getShots());
+		if(!score.isHintUsed() && existingScore.isHintUsed())
+			score.setHintUsed(true);
 		scores[dclty.ordinal()].set(score.getLevelNo() - 1, score);
 	}
 

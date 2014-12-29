@@ -98,10 +98,10 @@ public class OptionsScreen extends BackScreen {
 		g.setImageAtlas(commonAtlas);
 
 		final int spaceFromMid = 20;
-		saveButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
-		discardButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
-		saveButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
-		discardButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
+		saveButtonUp = new Image(g.getFlipTexRegion("0_rectbuttonup"));
+		discardButtonUp = new Image(g.getFlipTexRegion("1_rectbuttonup"));
+		saveButtonDown = new Image(g.getFlipTexRegion("0_rectbuttondown"));
+		discardButtonDown = new Image(g.getFlipTexRegion("1_rectbuttondown"));
 
 		saveButtonUp.setPosition((bottomBar.getWidth() / 2) - saveButtonUp.getWidth() - spaceFromMid, bottomBar.getY() + ((bottomBar.getHeight() - saveButtonUp.getHeight()) / 2));
 		saveButtonDown.setPosition(saveButtonUp.getX(), saveButtonUp.getY());

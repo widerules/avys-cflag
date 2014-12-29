@@ -118,8 +118,8 @@ public class AboutScreen implements Screen {
 		cloudImage1.addAction(new Cloud(cloudImage1, cloudAnimDirection));
 		cloudImage2.addAction(new Cloud(cloudImage2, cloudAnimDirection));
 
-		backButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
-		backButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
+		backButtonUp = new Image(g.getFlipTexRegion("1_rectbuttonup"));
+		backButtonDown = new Image(g.getFlipTexRegion("1_rectbuttondown"));
 
 		g.setImageAtlas(aboutAtlas);
 		titleStr = new Image(g.getFlipTexRegion("title"));

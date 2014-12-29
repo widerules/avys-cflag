@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 public enum Sounds {
-	move, shoot, blast, burn, click;
+	move, shoot, blast, burn, click, dead, drown, won;
 
 	private static boolean enabled = true;
 	private static float volume = 0.1f;

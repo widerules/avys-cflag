@@ -64,7 +64,6 @@ public class Level {
 					r++;
 					c = 0;
 				}
-
 				final PlayImages po = PlayUtils.getPlayImage(lvlData[i]);
 				switch (po) {
 				case Villain_D:

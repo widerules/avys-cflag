@@ -78,7 +78,7 @@ public class EnumStore {
 	}
 
 	public static enum TankState {
-		OnStream, OnIce, OnWater, OnThinIce, OnTunnel, Firing, Moving, ShotDead, MissFire, CurATankFired, PrevATankFired, Blocked, BothATankFired, ReachedFlag
+		OnStream, OnIce, ObjOnIce, OnWater, OnThinIce, OnTunnel, Firing, Moving, ShotDead, MissFire, CurATankFired, PrevATankFired, Blocked, BothATankFired, ReachedFlag
 	}
 
 	public static enum AntiTankState {
