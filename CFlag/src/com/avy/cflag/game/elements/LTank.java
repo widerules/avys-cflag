@@ -33,6 +33,8 @@ public class LTank {
 	private int tankMoves;
 	private int tankShots;
 
+	private Point curPosOnIce;
+
 	private int undoChangeCount;
 	private boolean uiStateChanged;
 
@@ -52,6 +54,7 @@ public class LTank {
 		storedTankState = TankState.Moving;
 		tankMoves = 0;
 		tankShots = 0;
+		curPosOnIce = new Point(0, 0);
 		undoChangeCount = 0;
 		uiStateChanged = false;
 	}
@@ -76,6 +79,7 @@ public class LTank {
 		newLTank.storedTankState = storedTankState;
 		newLTank.tankMoves = tankMoves;
 		newLTank.tankShots = tankShots;
+		newLTank.curPosOnIce = curPosOnIce;
 		newLTank.tankStateTime = tankStateTime;
 		newLTank.aTankCur = aTankCur.clone();
 		newLTank.aTankPrev = aTankPrev.clone();
@@ -88,18 +92,18 @@ public class LTank {
 		final PlayImages curTankObj = lvlPlayField[curTankPos.x][curTankPos.y];
 		final PlayImages nxtTankObj = PlayUtils.turnTank(turnDirection);
 		switch (turnDirection) {
-		case Up:
-			turnTank = curTankObj != PlayImages.Hero_U;
-			break;
-		case Right:
-			turnTank = curTankObj != PlayImages.Hero_R;
-			break;
-		case Down:
-			turnTank = curTankObj != PlayImages.Hero_D;
-			break;
-		case Left:
-			turnTank = curTankObj != PlayImages.Hero_L;
-			break;
+			case Up:
+				turnTank = curTankObj != PlayImages.Hero_U;
+				break;
+			case Right:
+				turnTank = curTankObj != PlayImages.Hero_R;
+				break;
+			case Down:
+				turnTank = curTankObj != PlayImages.Hero_D;
+				break;
+			case Left:
+				turnTank = curTankObj != PlayImages.Hero_L;
+				break;
 		}
 
 		if (turnTank) {
@@ -119,7 +123,7 @@ public class LTank {
 			uiStateChanged = false;
 			Direction onStreamDirection = Direction.Up;
 			TankState tmpTankState = TankState.Moving;
-			if (curTankState == TankState.OnStream) {
+			if ((curTankState == TankState.OnStream) || (curTankState == TankState.OnIce)) {
 				if (isPosOnFire(aTankPrev, curTankPos)) {
 					tmpTankState = TankState.PrevATankFired;
 				}
@@ -165,11 +169,12 @@ public class LTank {
 							if (curTankState != nxtTankState) {
 								stateChangedForUndo = true;
 							}
-						} else if (nxtPosObj == PlayImages.Ice) {
+						} else if (nxtPosObj == PlayImages.Ice || nxtPosObj == PlayImages.ThinIce) {
 							tankStateTime = 2;
 							nxtTankState = TankState.OnIce;
-						} else if (nxtPosObj == PlayImages.ThinIce) {
-							lvlBaseField[nxtTankPos.x][nxtTankPos.y] = PlayImages.Water;
+							if (curTankState != nxtTankState) {
+								stateChangedForUndo = true;
+							}
 						} else if (nxtPosObj == PlayImages.Water) {
 							tankStateTime = 0;
 							nxtTankState = TankState.OnWater;
@@ -183,7 +188,11 @@ public class LTank {
 							nxtTankState = TankState.Moving;
 							stateChangedForUndo = true;
 						}
-
+						
+						if(curBaseObj==PlayImages.ThinIce){
+							lvlBaseField[curTankPos.x][curTankPos.y]=PlayImages.Water;
+							lvlPlayField[curTankPos.x][curTankPos.y]=PlayImages.Water;
+						}
 						curTankPos = nxtTankPos;
 						isMoved = true;
 						uiStateChanged = true;
@@ -191,13 +200,17 @@ public class LTank {
 						tankStateTime = 0;
 						nxtTankState = TankState.Blocked;
 					}
+				} else {
+					if(StreamObjects.contains(curBaseObj)||curBaseObj==PlayImages.Ice||curBaseObj==PlayImages.ThinIce)
+						nxtTankState = TankState.Blocked;
 				}
-			} else {
+ 			} else {
 				stateChangedForUndo = true;
 				uiStateChanged = true;
 			}
 
-			if (((nxtTankState == TankState.OnStream) && (onStreamDirection != moveDirection)) || ((nxtTankState != TankState.OnStream) && (nxtTankState != TankState.Blocked))) {
+			if (((nxtTankState == TankState.OnStream) && (onStreamDirection != moveDirection))
+					|| ((nxtTankState != TankState.OnIce) && (nxtTankState != TankState.OnStream) && (nxtTankState != TankState.Blocked))) {
 				if (isPosOnFire(aTankCur, curTankPos)) {
 					if (tmpTankState == TankState.PrevATankFired) {
 						nxtTankState = TankState.BothATankFired;
@@ -221,7 +234,7 @@ public class LTank {
 				undoChangeCount++;
 			}
 		}
-
+		
 		return isMoved;
 	}
 
@@ -250,6 +263,86 @@ public class LTank {
 			} else {
 				curTankState = TankState.ShotDead;
 			}
+		}
+	}
+
+	public void slideObjOnIce() {
+		if (tankStateTime > 0) {
+			tankStateTime--;
+		} else {
+		if (curTankBullet.getCurBulletState() == BulletState.Exploded) {
+			curTankBullet.resetBullet();
+		}
+		
+		Point nxtMovePos = PlayUtils.getNextPosition(curPosOnIce, curTankDirection);
+		final PlayImages curPosObj = lvlPlayField[curPosOnIce.x][curPosOnIce.y];
+		final PlayImages curPosBaseObj = lvlBaseField[curPosOnIce.x][curPosOnIce.y];
+		PlayImages nxtPosObj = PlayImages.OutOfBounds;
+		if (PlayUtils.positionWithinBounds(nxtMovePos)) {
+			nxtPosObj = lvlPlayField[nxtMovePos.x][nxtMovePos.y];
+		} else {
+			curTankState = TankState.Moving;
+		}
+
+		boolean isMoved = false;
+		switch (nxtPosObj) {
+			case Grass:
+			case Bridge:
+				lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
+				curTankState = TankState.Moving;
+				isMoved = true;
+				break;
+			case Stream_D:
+			case Stream_L:
+			case Stream_R:
+			case Stream_U:
+				lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
+				curTankState = TankState.OnStream;
+				isMoved = true;
+				break;
+			case Ice:
+			case ThinIce:	
+				lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
+				curTankState = TankState.ObjOnIce;
+				tankStateTime=1;
+				isMoved = true;
+				break;
+			case Water:
+				if (curPosObj == PlayImages.MBlock) {
+					lvlBaseField[nxtMovePos.x][nxtMovePos.y] = PlayImages.Bridge;
+					lvlPlayField[nxtMovePos.x][nxtMovePos.y] = PlayImages.Bridge;
+				}
+				curTankState = TankState.Moving;
+				isMoved = true;
+				break;
+			case Tunnel_0:
+			case Tunnel_1:
+			case Tunnel_2:
+			case Tunnel_3:
+			case Tunnel_4:
+			case Tunnel_5:
+			case Tunnel_6:
+			case Tunnel_7:
+				nxtMovePos = getTargetTunnelLocation(nxtPosObj, nxtMovePos);
+				lvlPlayField[curPosOnIce.x][curPosOnIce.y] = curPosBaseObj;
+				lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
+				curTankState = TankState.Moving;
+				isMoved = true;
+				break;
+			default:
+				break;
+		}
+		if (isMoved) {
+			if(curPosBaseObj==PlayImages.ThinIce) {
+				lvlBaseField[curPosOnIce.x][curPosOnIce.y] = PlayImages.Water;
+				lvlPlayField[curPosOnIce.x][curPosOnIce.y] = PlayImages.Water;
+			} else {
+				lvlPlayField[curPosOnIce.x][curPosOnIce.y] = curPosBaseObj;
+			}
+			if(curTankState==TankState.ObjOnIce){
+				curPosOnIce = nxtMovePos;
+			} 
+		}
 		}
 	}
 
@@ -282,234 +375,245 @@ public class LTank {
 				final BulletState curBulletState = curTankBullet.getCurBulletState();
 				final Direction curBulletDirection = curTankBullet.getCurBulletDirection();
 				switch (curBulletState) {
-				case MoveBlock:
-				case MoveMirror:
-				case MoveTank:
-					boolean isMoved = false;
-					switch (nxtPosObj) {
-					case Grass:
-					case Bridge:
-					case Stream_D:
-					case Stream_L:
-					case Stream_R:
-					case Stream_U:
-						lvlPlayField[nxtBltPos.x][nxtBltPos.y] = curPosObj;
-						curTankBullet.setCurBulletState(BulletState.Exploded);
-						if(StreamObjects.contains(lvlBaseField[curTankPos.x][curTankPos.y]) && curTankDirection==PlayUtils.getDirection(lvlBaseField[curTankPos.x][curTankPos.y])) {
-							curTankState=TankState.OnStream;
-							curTankBullet.resetBullet();
-						}
-						isMoved = true;
-						break;
-					case Water:
-						if (curBulletState == BulletState.MoveBlock) {
-							lvlBaseField[nxtBltPos.x][nxtBltPos.y] = PlayImages.Bridge;
-							lvlPlayField[nxtBltPos.x][nxtBltPos.y] = PlayImages.Bridge;
-						}
-						curTankBullet.setCurBulletState(BulletState.Exploded);
-						isMoved = true;
-						break;
-					case Tunnel_0:
-					case Tunnel_1:
-					case Tunnel_2:
-					case Tunnel_3:
-					case Tunnel_4:
-					case Tunnel_5:
-					case Tunnel_6:
-					case Tunnel_7:
-						nxtBltPos = getTargetTunnelLocation(nxtPosObj, nxtBltPos);
-						lvlPlayField[curBltPos.x][curBltPos.y] = curPosBaseObj;
-						lvlPlayField[nxtBltPos.x][nxtBltPos.y] = curPosObj;
-						curTankBullet.setCurBulletState(BulletState.Exploded);
-						isMoved = true;
-						break;
-					default:
-						curTankBullet.setCurBulletState(BulletState.Exploded);
-						break;
-					}
-					if (isMoved) {
-						stateChanged = true;
-						if (curPosObj == curPosBaseObj) {
-							lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
-							lvlPlayField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
-						} else {
-							lvlPlayField[curBltPos.x][curBltPos.y] = curPosBaseObj;
-						}
-					}
-					break;
-				case HitRMirror:
-					stateChanged = true;
-					lvlPlayField[curBltPos.x][curBltPos.y] = getRotatedMirror(curPosObj);
-					curTankBullet.setCurBulletState(BulletState.Exploded);
-					break;
-				case HitBrick:
-					stateChanged = true;
-					lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
-					lvlPlayField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
-					curTankBullet.setCurBulletState(BulletState.Exploded);
-					break;
-				case HitSteel:
-				case HitDTank:
-					curTankBullet.setCurBulletState(BulletState.Exploded);
-					break;
-				case HitTank:
-					stateChanged = true;
-					lvlPlayField[curBltPos.x][curBltPos.y] = PlayUtils.destroyTank(curPosObj);
-					curTankBullet.setCurBulletState(BulletState.Exploded);
-					break;
-				case EnterMMirror:
-					curTankBullet.setCurBulletDirection(getMirrorReflectDirecion(curPosObj, curBulletDirection));
-					nxtBltPos = curBltPos;
-					curTankBullet.setCurBulletState(BulletState.ExitMMirror);
-					break;
-				case EnterRMirror:
-					curTankBullet.setCurBulletDirection(getMirrorReflectDirecion(curPosObj, curBulletDirection));
-					nxtBltPos = curBltPos;
-					curTankBullet.setCurBulletState(BulletState.ExitRMirror);
-					break;
-				case InMotion:
-				case ExitMMirror:
-				case Fired:
-				case ExitRMirror:
-				case PassCrystal:
-					switch (nxtPosObj) {
-					case Hero_U:
-					case Hero_D:
-					case Hero_L:
-					case Hero_R:
-						curTankBullet.setCurBulletState(BulletState.Exploded);
-						curTankState = TankState.ShotDead;
-						break;
-					case DVillain_D:
-					case DVillain_L:
-					case DVillain_R:
-					case DVillain_U:
-						curTankBullet.setCurBulletState(BulletState.HitDTank);
-						break;
-					case Villain_U:
-						if (curBulletDirection == Direction.Down) {
-							curTankBullet.setCurBulletState(BulletState.HitTank);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.MoveTank);
-						}
-						break;
-					case Villain_R:
-						if (curBulletDirection == Direction.Left) {
-							curTankBullet.setCurBulletState(BulletState.HitTank);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.MoveTank);
-						}
-						break;
-					case Villain_D:
-						if (curBulletDirection == Direction.Up) {
-							curTankBullet.setCurBulletState(BulletState.HitTank);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.MoveTank);
-						}
-						break;
-					case Villain_L:
-						if (curBulletDirection == Direction.Right) {
-							curTankBullet.setCurBulletState(BulletState.HitTank);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.MoveTank);
-						}
-						break;
-					case Brick:
-						curTankBullet.setCurBulletState(BulletState.HitBrick);
-						break;
-					case Rubber:
-						curTankBullet.setCurBulletState(BulletState.PassCrystal);
-						break;
-					case MBlock:
-						curTankBullet.setCurBulletState(BulletState.MoveBlock);
-						break;
-					case MMirror_D:
-						if ((curBulletDirection == Direction.Right) || (curBulletDirection == Direction.Down)) {
-							curTankBullet.setCurBulletState(BulletState.MoveMirror);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.EnterMMirror);
-						}
-						break;
-					case MMirror_L:
-						if ((curBulletDirection == Direction.Left) || (curBulletDirection == Direction.Down)) {
-							curTankBullet.setCurBulletState(BulletState.MoveMirror);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.EnterMMirror);
-						}
-						break;
-					case MMirror_R:
-						if ((curBulletDirection == Direction.Right) || (curBulletDirection == Direction.Up)) {
-							curTankBullet.setCurBulletState(BulletState.MoveMirror);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.EnterMMirror);
-						}
-						break;
-					case MMirror_U:
-						if ((curBulletDirection == Direction.Left) || (curBulletDirection == Direction.Up)) {
-							curTankBullet.setCurBulletState(BulletState.MoveMirror);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.EnterMMirror);
-						}
-						break;
-					case RMirror_D:
-						if ((curBulletDirection == Direction.Right) || (curBulletDirection == Direction.Down)) {
-							curTankBullet.setCurBulletState(BulletState.HitRMirror);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.EnterRMirror);
-						}
-						break;
-					case RMirror_L:
-						if ((curBulletDirection == Direction.Left) || (curBulletDirection == Direction.Down)) {
-							curTankBullet.setCurBulletState(BulletState.HitRMirror);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.EnterRMirror);
-						}
-						break;
-					case RMirror_R:
-						if ((curBulletDirection == Direction.Right) || (curBulletDirection == Direction.Up)) {
-							curTankBullet.setCurBulletState(BulletState.HitRMirror);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.EnterRMirror);
-						}
-						break;
-					case RMirror_U:
-						if ((curBulletDirection == Direction.Left) || (curBulletDirection == Direction.Up)) {
-							curTankBullet.setCurBulletState(BulletState.HitRMirror);
-						} else {
-							curTankBullet.setCurBulletState(BulletState.EnterRMirror);
-						}
-						break;
-					case Steel:
-						curTankBullet.setCurBulletState(BulletState.HitSteel);
-						break;
-					case OutOfBounds:
-						curTankBullet.setCurBulletState(BulletState.Exploded);
-						break;
-					default:
-						curTankBullet.setCurBulletState(BulletState.InMotion);
-						break;
-					}
-
-					switch (curTankBullet.getCurBulletState()) {
-					case HitSteel:
-					case MoveMirror:
 					case MoveBlock:
-					case HitBrick:
-					case HitTank:
+					case MoveMirror:
 					case MoveTank:
-						Sounds.blast.play();
+						boolean isMoved = false;
+						switch (nxtPosObj) {
+							case Grass:
+							case Bridge:
+							case Stream_D:
+							case Stream_L:
+							case Stream_R:
+							case Stream_U:
+								lvlPlayField[nxtBltPos.x][nxtBltPos.y] = curPosObj;
+								curTankBullet.setCurBulletState(BulletState.Exploded);
+								if (StreamObjects.contains(lvlBaseField[curTankPos.x][curTankPos.y]) && (curTankDirection == PlayUtils.getDirection(lvlBaseField[curTankPos.x][curTankPos.y]))) {
+									curTankState = TankState.OnStream;
+									curTankBullet.resetBullet();
+								}
+								isMoved = true;
+								break;
+							case Ice:
+							case ThinIce:	
+								lvlPlayField[nxtBltPos.x][nxtBltPos.y] = curPosObj;
+								curTankBullet.setCurBulletState(BulletState.Exploded);
+								curTankState = TankState.ObjOnIce;
+								curPosOnIce = nxtBltPos;
+								tankStateTime =1;
+								isMoved = true;
+								break;
+							case Water:
+								if (curBulletState == BulletState.MoveBlock) {
+									lvlBaseField[nxtBltPos.x][nxtBltPos.y] = PlayImages.Bridge;
+									lvlPlayField[nxtBltPos.x][nxtBltPos.y] = PlayImages.Bridge;
+								}
+								curTankBullet.setCurBulletState(BulletState.Exploded);
+								isMoved = true;
+								break;
+							case Tunnel_0:
+							case Tunnel_1:
+							case Tunnel_2:
+							case Tunnel_3:
+							case Tunnel_4:
+							case Tunnel_5:
+							case Tunnel_6:
+							case Tunnel_7:
+								nxtBltPos = getTargetTunnelLocation(nxtPosObj, nxtBltPos);
+								lvlPlayField[curBltPos.x][curBltPos.y] = curPosBaseObj;
+								lvlPlayField[nxtBltPos.x][nxtBltPos.y] = curPosObj;
+								curTankBullet.setCurBulletState(BulletState.Exploded);
+								isMoved = true;
+								break;
+							default:
+								curTankBullet.setCurBulletState(BulletState.Exploded);
+								break;
+						}
+						if (isMoved) {
+							stateChanged = true;
+							if (curPosObj == curPosBaseObj) {
+								lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
+								lvlPlayField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
+							} else if(curPosBaseObj==PlayImages.ThinIce) { 
+								lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Water;
+							} else {
+								lvlPlayField[curBltPos.x][curBltPos.y] = curPosBaseObj;
+							}
+						}
 						break;
 					case HitRMirror:
-					case EnterRMirror:
+						stateChanged = true;
+						lvlPlayField[curBltPos.x][curBltPos.y] = getRotatedMirror(curPosObj);
+						curTankBullet.setCurBulletState(BulletState.Exploded);
+						break;
+					case HitBrick:
+						stateChanged = true;
+						lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
+						lvlPlayField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
+						curTankBullet.setCurBulletState(BulletState.Exploded);
+						break;
+					case HitSteel:
+					case HitDTank:
+						curTankBullet.setCurBulletState(BulletState.Exploded);
+						break;
+					case HitTank:
+						stateChanged = true;
+						lvlPlayField[curBltPos.x][curBltPos.y] = PlayUtils.destroyTank(curPosObj);
+						curTankBullet.setCurBulletState(BulletState.Exploded);
+						break;
 					case EnterMMirror:
-						Sounds.shoot.play();
+						curTankBullet.setCurBulletDirection(getMirrorReflectDirecion(curPosObj, curBulletDirection));
+						nxtBltPos = curBltPos;
+						curTankBullet.setCurBulletState(BulletState.ExitMMirror);
+						break;
+					case EnterRMirror:
+						curTankBullet.setCurBulletDirection(getMirrorReflectDirecion(curPosObj, curBulletDirection));
+						nxtBltPos = curBltPos;
+						curTankBullet.setCurBulletState(BulletState.ExitRMirror);
+						break;
+					case InMotion:
+					case ExitMMirror:
+					case Fired:
+					case ExitRMirror:
+					case PassCrystal:
+						switch (nxtPosObj) {
+							case Hero_U:
+							case Hero_D:
+							case Hero_L:
+							case Hero_R:
+								curTankBullet.setCurBulletState(BulletState.Exploded);
+								curTankState = TankState.ShotDead;
+								break;
+							case DVillain_D:
+							case DVillain_L:
+							case DVillain_R:
+							case DVillain_U:
+								curTankBullet.setCurBulletState(BulletState.HitDTank);
+								break;
+							case Villain_U:
+								if (curBulletDirection == Direction.Down) {
+									curTankBullet.setCurBulletState(BulletState.HitTank);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.MoveTank);
+								}
+								break;
+							case Villain_R:
+								if (curBulletDirection == Direction.Left) {
+									curTankBullet.setCurBulletState(BulletState.HitTank);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.MoveTank);
+								}
+								break;
+							case Villain_D:
+								if (curBulletDirection == Direction.Up) {
+									curTankBullet.setCurBulletState(BulletState.HitTank);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.MoveTank);
+								}
+								break;
+							case Villain_L:
+								if (curBulletDirection == Direction.Right) {
+									curTankBullet.setCurBulletState(BulletState.HitTank);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.MoveTank);
+								}
+								break;
+							case Brick:
+								curTankBullet.setCurBulletState(BulletState.HitBrick);
+								break;
+							case Rubber:
+								curTankBullet.setCurBulletState(BulletState.PassCrystal);
+								break;
+							case MBlock:
+								curTankBullet.setCurBulletState(BulletState.MoveBlock);
+								break;
+							case MMirror_D:
+								if ((curBulletDirection == Direction.Right) || (curBulletDirection == Direction.Down)) {
+									curTankBullet.setCurBulletState(BulletState.MoveMirror);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.EnterMMirror);
+								}
+								break;
+							case MMirror_L:
+								if ((curBulletDirection == Direction.Left) || (curBulletDirection == Direction.Down)) {
+									curTankBullet.setCurBulletState(BulletState.MoveMirror);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.EnterMMirror);
+								}
+								break;
+							case MMirror_R:
+								if ((curBulletDirection == Direction.Right) || (curBulletDirection == Direction.Up)) {
+									curTankBullet.setCurBulletState(BulletState.MoveMirror);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.EnterMMirror);
+								}
+								break;
+							case MMirror_U:
+								if ((curBulletDirection == Direction.Left) || (curBulletDirection == Direction.Up)) {
+									curTankBullet.setCurBulletState(BulletState.MoveMirror);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.EnterMMirror);
+								}
+								break;
+							case RMirror_D:
+								if ((curBulletDirection == Direction.Right) || (curBulletDirection == Direction.Down)) {
+									curTankBullet.setCurBulletState(BulletState.HitRMirror);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.EnterRMirror);
+								}
+								break;
+							case RMirror_L:
+								if ((curBulletDirection == Direction.Left) || (curBulletDirection == Direction.Down)) {
+									curTankBullet.setCurBulletState(BulletState.HitRMirror);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.EnterRMirror);
+								}
+								break;
+							case RMirror_R:
+								if ((curBulletDirection == Direction.Right) || (curBulletDirection == Direction.Up)) {
+									curTankBullet.setCurBulletState(BulletState.HitRMirror);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.EnterRMirror);
+								}
+								break;
+							case RMirror_U:
+								if ((curBulletDirection == Direction.Left) || (curBulletDirection == Direction.Up)) {
+									curTankBullet.setCurBulletState(BulletState.HitRMirror);
+								} else {
+									curTankBullet.setCurBulletState(BulletState.EnterRMirror);
+								}
+								break;
+							case Steel:
+								curTankBullet.setCurBulletState(BulletState.HitSteel);
+								break;
+							case OutOfBounds:
+								curTankBullet.setCurBulletState(BulletState.Exploded);
+								break;
+							default:
+								curTankBullet.setCurBulletState(BulletState.InMotion);
+								break;
+						}
+
+						switch (curTankBullet.getCurBulletState()) {
+							case HitSteel:
+							case MoveMirror:
+							case MoveBlock:
+							case HitBrick:
+							case HitTank:
+							case MoveTank:
+								Sounds.blast.play();
+								break;
+							case HitRMirror:
+							case EnterRMirror:
+							case EnterMMirror:
+								Sounds.shoot.play();
+								break;
+							default:
+								break;
+						}
 						break;
 					default:
 						break;
-					}
-					break;
-				default:
-					break;
 				}
 				curTankBullet.setCurBulletPos(nxtBltPos);
 			}
@@ -614,48 +718,56 @@ public class LTank {
 		FirePathState newState = FirePathState.Blocked;
 
 		switch (curObj) {
-		case Bridge:
-		case Grass:
-		case Ice:
-		case ThinIce:
-		case Water:
-		case Stream_D:
-		case Stream_L:
-		case Stream_R:
-		case Stream_U:
-			newState = FirePathState.Clear;
-			break;
-		case Villain_D:
-			if (curDirection == Direction.Up) {
-				newState = FirePathState.ATankFound;
-			} else {
+			case Bridge:
+			case Grass:
+			case Ice:
+			case ThinIce:
+			case Water:
+			case Stream_D:
+			case Stream_L:
+			case Stream_R:
+			case Stream_U:
+			case Tunnel_0:
+			case Tunnel_1:
+			case Tunnel_2:
+			case Tunnel_3:
+			case Tunnel_4:
+			case Tunnel_5:
+			case Tunnel_6:
+			case Tunnel_7:
+				newState = FirePathState.Clear;
+				break;
+			case Villain_D:
+				if (curDirection == Direction.Up) {
+					newState = FirePathState.ATankFound;
+				} else {
+					newState = FirePathState.Blocked;
+				}
+				break;
+			case Villain_R:
+				if (curDirection == Direction.Left) {
+					newState = FirePathState.ATankFound;
+				} else {
+					newState = FirePathState.Blocked;
+				}
+				break;
+			case Villain_U:
+				if (curDirection == Direction.Down) {
+					newState = FirePathState.ATankFound;
+				} else {
+					newState = FirePathState.Blocked;
+				}
+				break;
+			case Villain_L:
+				if (curDirection == Direction.Right) {
+					newState = FirePathState.ATankFound;
+				} else {
+					newState = FirePathState.Blocked;
+				}
+				break;
+			default:
 				newState = FirePathState.Blocked;
-			}
-			break;
-		case Villain_R:
-			if (curDirection == Direction.Left) {
-				newState = FirePathState.ATankFound;
-			} else {
-				newState = FirePathState.Blocked;
-			}
-			break;
-		case Villain_U:
-			if (curDirection == Direction.Down) {
-				newState = FirePathState.ATankFound;
-			} else {
-				newState = FirePathState.Blocked;
-			}
-			break;
-		case Villain_L:
-			if (curDirection == Direction.Right) {
-				newState = FirePathState.ATankFound;
-			} else {
-				newState = FirePathState.Blocked;
-			}
-			break;
-		default:
-			newState = FirePathState.Blocked;
-			break;
+				break;
 		}
 		return newState;
 	}
@@ -663,38 +775,38 @@ public class LTank {
 	public Direction getMirrorReflectDirecion(final PlayImages curBaseObj, final Direction curBulletDirection) {
 		Direction newDirection = curBulletDirection;
 		switch (curBulletDirection) {
-		case Up:
-			if (curBaseObj.name().contains("_D")) {
-				newDirection = Direction.Right;
-			}
-			if (curBaseObj.name().contains("_L")) {
-				newDirection = Direction.Left;
-			}
-			break;
-		case Down:
-			if (curBaseObj.name().contains("_R")) {
-				newDirection = Direction.Right;
-			}
-			if (curBaseObj.name().contains("_U")) {
-				newDirection = Direction.Left;
-			}
-			break;
-		case Left:
-			if (curBaseObj.name().contains("_D")) {
-				newDirection = Direction.Down;
-			}
-			if (curBaseObj.name().contains("_R")) {
-				newDirection = Direction.Up;
-			}
-			break;
-		case Right:
-			if (curBaseObj.name().contains("_U")) {
-				newDirection = Direction.Up;
-			}
-			if (curBaseObj.name().contains("_L")) {
-				newDirection = Direction.Down;
-			}
-			break;
+			case Up:
+				if (curBaseObj.name().contains("_D")) {
+					newDirection = Direction.Right;
+				}
+				if (curBaseObj.name().contains("_L")) {
+					newDirection = Direction.Left;
+				}
+				break;
+			case Down:
+				if (curBaseObj.name().contains("_R")) {
+					newDirection = Direction.Right;
+				}
+				if (curBaseObj.name().contains("_U")) {
+					newDirection = Direction.Left;
+				}
+				break;
+			case Left:
+				if (curBaseObj.name().contains("_D")) {
+					newDirection = Direction.Down;
+				}
+				if (curBaseObj.name().contains("_R")) {
+					newDirection = Direction.Up;
+				}
+				break;
+			case Right:
+				if (curBaseObj.name().contains("_U")) {
+					newDirection = Direction.Up;
+				}
+				if (curBaseObj.name().contains("_L")) {
+					newDirection = Direction.Down;
+				}
+				break;
 		}
 		return newDirection;
 	}
@@ -702,20 +814,20 @@ public class LTank {
 	public PlayImages getRotatedMirror(final PlayImages curRMirror) {
 		PlayImages newRMirror = null;
 		switch (curRMirror) {
-		case RMirror_U:
-			newRMirror = PlayImages.RMirror_R;
-			break;
-		case RMirror_D:
-			newRMirror = PlayImages.RMirror_L;
-			break;
-		case RMirror_L:
-			newRMirror = PlayImages.RMirror_U;
-			break;
-		case RMirror_R:
-			newRMirror = PlayImages.RMirror_D;
-			break;
-		default:
-			break;
+			case RMirror_U:
+				newRMirror = PlayImages.RMirror_R;
+				break;
+			case RMirror_D:
+				newRMirror = PlayImages.RMirror_L;
+				break;
+			case RMirror_L:
+				newRMirror = PlayImages.RMirror_U;
+				break;
+			case RMirror_R:
+				newRMirror = PlayImages.RMirror_D;
+				break;
+			default:
+				break;
 		}
 		return newRMirror;
 	}

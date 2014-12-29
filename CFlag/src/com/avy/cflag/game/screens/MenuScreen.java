@@ -221,7 +221,7 @@ public class MenuScreen extends BackScreen {
 							return false;
 						}
 					};
-					shootMenu(newGame, 28, 200, finalAction);
+					shootMenu(newGame, 28, 210, finalAction);
 				} else if (resumePressed) {
 					resumePressed = false;
 					final Action finalAction = new Action() {
@@ -235,7 +235,7 @@ public class MenuScreen extends BackScreen {
 							return false;
 						}
 					};
-					shootMenu(resume, 28, 200, finalAction);
+					shootMenu(resume, 28, 210, finalAction);
 				} else if (lselectPressed) {
 					lselectPressed = false;
 					final Action finalAction = new Action() {

@@ -92,9 +92,9 @@ public class HelpScreen extends BackScreen {
 
 		g.setImageAtlas(commonAtlas);
 
-		midButtonUp = new Image(g.getFlipTexRegion("rectbuttonup"));
+		midButtonUp = new Image(g.getFlipTexRegion("0_rectbuttonup"));
 		midButtonUp.setPosition((bottomBar.getWidth() - midButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - midButtonUp.getHeight()) / 2));
-		midButtonDown = new Image(g.getFlipTexRegion("rectbuttondown"));
+		midButtonDown = new Image(g.getFlipTexRegion("0_rectbuttondown"));
 		midButtonDown.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		midButtonDown.setVisible(false);
 

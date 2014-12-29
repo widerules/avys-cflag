@@ -246,7 +246,7 @@ public class Platform {
 			for (int j = 0; j < MemStore.lvlFieldLEN.y; j++) {
 				PlayImages topImage = PlayImages.valueOf(lvlPlayField[j][i].name());
 				final TextureRegion tRegion = g.getTexRegion(topImage.name().toLowerCase());
-				if (!topImage.name().equalsIgnoreCase("Ground")) {
+				if (!topImage.name().equalsIgnoreCase("Grass")) {
 					dstPixMap.drawPixmap(srcPixMap, new Point(tRegion.getRegionX(), tRegion.getRegionY()), playImageOrigLen, curPos, PlayImageScaledLen);
 				}
 				curPos.x = curPos.x + PlayImageScaledLen.x;

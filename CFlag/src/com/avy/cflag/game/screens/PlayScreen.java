@@ -106,6 +106,8 @@ public class PlayScreen extends BaseScreen {
 	private Group wonMenu;
 	private Group hintMenu;
 
+	private float fontAlpha=0.3f;
+	
 	private boolean updateInProgress = false;
 	private GameButtons pressedButton = GameButtons.None;
 	private GameButtons longPressButton = GameButtons.None;
@@ -147,10 +149,10 @@ public class PlayScreen extends BaseScreen {
 		PlayImages.load(g);
 		pressedButton = GameButtons.None;
 
-		dfltFont = g.createFont("ceaser", 20, true);
+		dfltFont = g.createFont("salsa", 20, true);
 		g.setFont(dfltFont);
 
-		lvlNmeFont = g.createFont("ceaser", 13, true);
+		lvlNmeFont = g.createFont("salsa", 13, true);
 		fadeOutActive = false;
 	}
 
@@ -181,7 +183,7 @@ public class PlayScreen extends BaseScreen {
 	public void show() {
 		super.show();
 
-		pausedMenu = new ShortMenu(g, this, "gamepaused", "resume", "restart", "savenquit");
+		pausedMenu = new ShortMenu(g, this, "gamepaused", "resume", "restart", "mainmenu");
 		pausedMenu.setVisible(false);
 		pausedMenu.getColor().a = 0;
 		drownedMenu = new ShortMenu(g, this, "drowned", "undo", "restart", "mainmenu");
@@ -274,8 +276,15 @@ public class PlayScreen extends BaseScreen {
 
 		pltfrm = new Platform(midPanel);
 		pltfrm.paintPlatform(ltank);
+		
 
-		argbFull.addAction(sequence(fadeOut(1f), visible(false)));
+		argbFull.addAction(sequence(fadeOut(1f), visible(false),new Action() {
+			@Override
+			public boolean act(float delta) {
+				fontAlpha=1f;
+				return true;
+			}
+		}));
 		argbFull.setName("Test");
 		stage.addActor(leftPanel);
 		stage.addActor(midPanel);
@@ -639,7 +648,14 @@ public class PlayScreen extends BaseScreen {
 			pressedButton = GameButtons.None;
 			break;
 		case OnIce:
+			setTouchEnabled(false);
 			ltank.moveTank(ltank.getCurTankDirection());
+			stateChanged = true;
+			break;
+		case ObjOnIce:
+			setTouchEnabled(false);
+			ltank.slideObjOnIce();
+			stateChanged = true;
 			break;
 		case OnTunnel:
 			ltank.moveTank(ltank.getCurTankDirection());
@@ -731,12 +747,21 @@ public class PlayScreen extends BaseScreen {
 
 	private void updatePaused() {
 		if (!pausedMenu.isVisible()) {
-			pausedMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+			fontAlpha=0.4f;
+			pausedMenu.addAction(sequence(visible(true), parallel(new Action() {
+				@Override
+				public boolean act(float delta) {
+					saveGame();
+					return true;
+				}
+			},fadeIn(0.2f))));
 		}
 	}
 
 	private void updateDrowned() {
 		if (!drownedMenu.isVisible()) {
+			fontAlpha=0.4f;
+			Sounds.drown.play();
 			drownedMenu.addAction(sequence(visible(true), fadeIn(0.1f)));
 			undoInProgress = true;
 			longPressButton = GameButtons.None;
@@ -745,6 +770,8 @@ public class PlayScreen extends BaseScreen {
 
 	private void updateDead() {
 		if (!deadMenu.isVisible()) {
+			fontAlpha=0.4f;
+			Sounds.dead.play();
 			deadMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 			undoInProgress = true;
 			longPressButton = GameButtons.None;
@@ -753,11 +780,13 @@ public class PlayScreen extends BaseScreen {
 
 	private void updateWon() {
 		if (!wonMenu.isVisible()) {
+			fontAlpha=0.4f;
 			wonMenu.addAction(sequence(visible(true), parallel(new Action() {
 				@Override
 				public boolean act(final float delta) {
 					deleteSave();
 					saveScores();
+					Sounds.won.play();
 					return true;
 				}
 			}, fadeIn(0.2f))));
@@ -766,7 +795,15 @@ public class PlayScreen extends BaseScreen {
 
 	private void updateHint() {
 		if (!hintMenu.isVisible()) {
-			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+			fontAlpha=0.4f;
+			hintMenu.addAction(sequence(visible(true), parallel(new Action() {
+				@Override
+				public boolean act(final float delta) {
+					hintUsed=true;
+					GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintUsed);
+					return true;
+				}
+			}, fadeIn(0.2f))));
 		}
 	}
 
@@ -815,16 +852,20 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void drawGameUI() {
+		if(!fadeOutActive) {
 		batch.begin();
-		g.drawString(Integer.toString(currentLevel), 82, 72, Color.BLACK);
-		g.drawStringWrapped(lvlNmeFont, lvl.getLvlName(), 82, 152, Color.BLACK);
-		g.drawString(lvl.getLvlDclty().toString(), 80, 241, Color.BLACK);
-		g.drawString(Integer.toString(ltank.getTankMoves()), 720, 72, Color.BLACK);
-		g.drawString(Integer.toString(ltank.getTankShots()), 720, 158, Color.BLACK);
+		g.drawString(Integer.toString(currentLevel), 82, 72, Color.GREEN, fontAlpha);
+		g.drawStringWrapped(lvlNmeFont, lvl.getLvlName(), 82, 241, Color.GREEN, fontAlpha);
+		g.drawString(lvlNmeFont, lvl.getLvlDclty().toString(), 80, 157, Color.GREEN, fontAlpha);
+		g.drawString(Integer.toString(ltank.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
+		g.drawString(Integer.toString(ltank.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
 		if ((gameState == GameState.Hint) && (hintMenu.getColor().a >= 0.7f)) {
-			g.drawStringWrapped(lvlNmeFont, lvl.getLvlHint(), 198, 234, 404, Color.BLACK);
+			g.drawStringWrapped(lvlNmeFont, lvl.getLvlHint(), 198, 234, 404, Color.GREEN, 1f);
 		}
+//		Rect bulletRect = ltank.getCurTankBullet().getCurBulletRect();
+//		batch.draw(bullet, bulletRect.left, bulletRect.top);
 		batch.end();
+		}
 
 		g.setSr(sr);
 		sr.begin(ShapeType.Filled);
@@ -840,7 +881,7 @@ public class PlayScreen extends BaseScreen {
 			undoCnt--;
 			ltank = null;
 			ltank = undoList[undoCnt].clone();
-			if ((ltank.getCurTankState() == TankState.OnTunnel) || (ltank.getCurTankState() == TankState.OnStream)) {
+			if ((ltank.getCurTankState() == TankState.OnTunnel) || (ltank.getCurTankState() == TankState.OnStream)|| (ltank.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
 				ltank = null;
 				ltank = undoList[undoCnt].clone();
@@ -848,8 +889,10 @@ public class PlayScreen extends BaseScreen {
 		}
 
 		if (gameState == GameState.Dead) {
+			fontAlpha = 1f;
 			deadMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 		} else if (gameState == GameState.Drowned) {
+			fontAlpha = 1f;
 			drownedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 		}
 		gameState = GameState.Running;
@@ -863,7 +906,7 @@ public class PlayScreen extends BaseScreen {
 			undoCnt--;
 			ltank = null;
 			ltank = undoList[undoCnt].clone();
-			if ((ltank.getCurTankState() == TankState.OnTunnel) || (ltank.getCurTankState() == TankState.OnStream)) {
+			if ((ltank.getCurTankState() == TankState.OnTunnel) || (ltank.getCurTankState() == TankState.OnStream)|| (ltank.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
 				ltank = null;
 				ltank = undoList[undoCnt].clone();
@@ -912,18 +955,20 @@ public class PlayScreen extends BaseScreen {
 	public void resume() {
 		if (gameState == GameState.Paused) {
 			if (pausedMenu.isVisible()) {
+				fontAlpha=1f;
 				pausedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			}
 			gameState = GameState.Running;
 		} else if (gameState == GameState.Hint) {
 			if (hintMenu.isVisible()) {
+				fontAlpha=1f;
 				hintMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			}
 			gameState = GameState.Running;
 		}
 	}
 
-	public void savenquit() {
+	public void saveGame() {
 		final GameData gData = new GameData();
 		gData.setCurrentDclty(currentDclty);
 		gData.setCurrentLevel(currentLevel);
@@ -937,8 +982,6 @@ public class PlayScreen extends BaseScreen {
 
 		GameUtils.saveGame(gData);
 		GameUtils.saveGameOptions();
-
-		mainmenu();
 	}
 
 	@Override
