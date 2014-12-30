@@ -3,107 +3,93 @@ help.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+page1
+  rotate: false
+  xy: 1, 680
+  size: 800, 320
+  orig: 800, 320
+  offset: 0, 0
+  index: -1
 page4
   rotate: false
-  xy: 1, 715
-  size: 740, 303
-  orig: 740, 303
+  xy: 1, 358
+  size: 800, 320
+  orig: 800, 320
   offset: 0, 0
   index: -1
 page3
   rotate: false
-  xy: 1, 408
+  xy: 803, 695
   size: 737, 305
   orig: 737, 305
   offset: 0, 0
   index: -1
 page2
   rotate: false
-  xy: 743, 730
+  xy: 1, 68
   size: 737, 288
   orig: 737, 288
   offset: 0, 0
   index: -1
-page1
-  rotate: false
-  xy: 1, 185
-  size: 756, 221
-  orig: 756, 221
-  offset: 0, 0
-  index: -1
 page0
   rotate: false
-  xy: 1, 33
+  xy: 803, 543
   size: 756, 150
   orig: 756, 150
   offset: 0, 0
   index: -1
 ctf
   rotate: false
-  xy: 1482, 953
+  xy: 1, 1
   size: 400, 65
   orig: 400, 65
   offset: 0, 0
   index: -1
 title
   rotate: false
-  xy: 1482, 895
+  xy: 803, 485
   size: 250, 56
   orig: 250, 56
   offset: 0, 0
   index: -1
 entername
   rotate: false
-  xy: 1, 1
+  xy: 1542, 970
   size: 200, 30
   orig: 200, 30
   offset: 0, 0
   index: -1
 back
   rotate: false
-  xy: 1884, 968
+  xy: 403, 16
   size: 150, 50
   orig: 150, 50
   offset: 0, 0
   index: -1
 play
   rotate: false
-  xy: 1482, 843
+  xy: 803, 433
   size: 150, 50
   orig: 150, 50
   offset: 0, 0
   index: -1
 skip
   rotate: false
-  xy: 1482, 791
+  xy: 1055, 491
   size: 150, 50
   orig: 150, 50
   offset: 0, 0
   index: -1
 textfieldbase
   rotate: false
-  xy: 1482, 749
+  xy: 1542, 928
   size: 160, 40
   orig: 160, 40
   offset: 0, 0
   index: -1
-okbuttondown
-  rotate: false
-  xy: 1734, 911
-  size: 80, 40
-  orig: 80, 40
-  offset: 0, 0
-  index: -1
-okbuttonup
-  rotate: false
-  xy: 1634, 853
-  size: 80, 40
-  orig: 80, 40
-  offset: 0, 0
-  index: -1
 cursor
   rotate: false
-  xy: 2036, 978
+  xy: 740, 316
   size: 2, 40
   orig: 2, 40
   offset: 0, 0
