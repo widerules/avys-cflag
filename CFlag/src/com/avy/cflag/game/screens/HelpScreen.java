@@ -33,8 +33,6 @@ public class HelpScreen extends BackScreen {
 	private Image title1Str;
 	private Image enterNameStr;
 	private TextField nameField;
-	private Image okButtonUp, okButtonDown;
-	private Group okButtonGroup;
 	private Label newnameResult;
 	private Group enterNameGroup;
 
@@ -71,7 +69,7 @@ public class HelpScreen extends BackScreen {
 
 		helpAtlas = g.createImageAtlas("help");
 
-		if (MemStore.curUserOPTS.isFirstRun()) {
+		if ((context.equalsIgnoreCase("newgame") || context.equalsIgnoreCase("levelselect")) && MemStore.curUserOPTS.isFirstRun()) {
 			totalHelpPages = 5;
 		} else {
 			totalHelpPages = 4;
@@ -124,12 +122,6 @@ public class HelpScreen extends BackScreen {
 		playStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		playStr.setVisible(false);
 
-		if (context.equalsIgnoreCase("newgame") || context.equalsIgnoreCase("levelselect")) {
-			skipStr.setVisible(true);
-		} else {
-			backStr.setVisible(true);
-		}
-
 		midButtonGroup = new Group();
 		midButtonGroup.addActor(midButtonUp);
 		midButtonGroup.addActor(midButtonDown);
@@ -149,7 +141,7 @@ public class HelpScreen extends BackScreen {
 
 		helpPageGroup = new Group();
 		for (int i = 0; i < totalHelpPages; i++) {
-			if (MemStore.curUserOPTS.isFirstRun()) {
+			if ((context.equalsIgnoreCase("newgame") || context.equalsIgnoreCase("levelselect")) && MemStore.curUserOPTS.isFirstRun()) {
 				helpPages[i] = new Image(g.getFlipTexRegion("page" + i));
 			} else {
 				helpPages[i] = new Image(g.getFlipTexRegion("page" + (i + 1)));
@@ -162,49 +154,47 @@ public class HelpScreen extends BackScreen {
 		}
 
 		helpPageGroup.addActor(title2Str);
-		helpPageGroup.addActor(midButtonGroup);
 		helpPageGroup.addActor(leftButtonGroup);
 		helpPageGroup.addActor(rightButtonGroup);
 
 		title1Str = new Image(g.getFlipTexRegion("ctf"));
 		enterNameStr = new Image(g.getFlipTexRegion("entername"));
 		nameField = new TextField("", g.getTextBoxStyle("salsa", 23));
-		okButtonUp = new Image(g.getFlipTexRegion("okbuttonup"));
-		okButtonDown = new Image(g.getFlipTexRegion("okbuttondown"));
 		newnameResult = new Label("", g.getLabelStyle("salsa", 12));
 
 		title1Str.setPosition((topBar.getWidth() - title1Str.getWidth()) / 2, (topBar.getHeight() - title1Str.getHeight()) / 2);
-		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + okButtonUp.getWidth() + 20)) / 2, ((game.getSrcHeight() - enterNameStr.getHeight()) / 2) - 80);
+		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + 20)) / 2, ((game.getSrcHeight() - enterNameStr.getHeight()) / 2) - 80);
 		nameField.setMaxLength(10);
 		nameField.setPosition(enterNameStr.getX() + enterNameStr.getWidth(), ((game.getSrcHeight() - nameField.getHeight()) / 2) - 80);
-		okButtonUp.setPosition(enterNameStr.getX() + enterNameStr.getWidth() + nameField.getWidth() + 20, ((game.getSrcHeight() - okButtonUp.getHeight()) / 2) - 80);
-		okButtonDown.setPosition(okButtonUp.getX(), okButtonUp.getY());
-		okButtonDown.setVisible(false);
 		newnameResult.setWidth(200);
 		newnameResult.setPosition((game.getSrcWidth() - newnameResult.getWidth()) / 2, enterNameStr.getY() + 60);
 		newnameResult.setAlignment(Align.center);
-
-		okButtonGroup = new Group();
-		okButtonGroup.addActor(okButtonUp);
-		okButtonGroup.addActor(okButtonDown);
 
 		enterNameGroup = new Group();
 		enterNameGroup.addActor(title1Str);
 		enterNameGroup.addActor(enterNameStr);
 		enterNameGroup.addActor(nameField);
-		enterNameGroup.addActor(okButtonGroup);
 		enterNameGroup.addActor(newnameResult);
 
-		if (userLIST.getCurrentUser() < 0) {
-			enterNameGroup.setVisible(true);
-			helpPageGroup.setVisible(false);
+		if (context.equalsIgnoreCase("newgame") || context.equalsIgnoreCase("levelselect")) {
+			if (userLIST.getCurrentUser() < 0) {
+				enterNameGroup.setVisible(true);
+				helpPageGroup.setVisible(false);
+				playStr.setVisible(true);
+			} else {
+				enterNameGroup.setVisible(false);
+				helpPageGroup.setVisible(true);
+				skipStr.setVisible(true);
+			}
 		} else {
 			enterNameGroup.setVisible(false);
 			helpPageGroup.setVisible(true);
+			backStr.setVisible(true);
 		}
 
 		stage.addActor(helpPageGroup);
 		stage.addActor(enterNameGroup);
+		stage.addActor(midButtonGroup);
 		stage.addActor(argbFull);
 
 		leftButtonGroup.addListener(new TouchListener() {
@@ -245,47 +235,43 @@ public class HelpScreen extends BackScreen {
 			@Override
 			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				midButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
-				argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
-					@Override
-					public void run() {
-						if (context.equalsIgnoreCase("newgame")) {
-							if (curUserOPTS.isFirstRun()) {
-								game.setScreen(new PlayScreen(game, Difficulty.Novice, 1));
-							} else {
-								game.setScreen(new PlayScreen(game, curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty())));
-							}
-						} else if (context.equalsIgnoreCase("levelselect")) {
-							game.setScreen(new LevelScreen(game, false));
+				if (enterNameGroup.isVisible()) {
+					final String userName = nameField.getText();
+					if (userName.length() == 0) {
+						newnameResult.setText("Please enter a Name");
+					} else {
+						if (userLIST.isUserExists(userName)) {
+							newnameResult.setText("User already exists");
 						} else {
-							game.setScreen(new MenuScreen(game));
+							curUserOPTS = userLIST.addUser(userName);
+							GameUtils.saveGameOptions();
+							helpPageGroup.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
+							enterNameGroup.addAction(sequence(fadeOut(0.1f), visible(false)));
+							playStr.setVisible(false);
+							if (context.equalsIgnoreCase("newgame") || context.equalsIgnoreCase("levelselect")) {
+								skipStr.setVisible(true);
+							} else {
+								backStr.setVisible(true);
+							}
 						}
 					}
-				})));
-			}
-		});
-
-		okButtonGroup.addListener(new TouchListener() {
-			@Override
-			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
-				okButtonDown.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
-				return super.touchDown(event, x, y, pointer, button);
-			}
-
-			@Override
-			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
-				okButtonDown.addAction(sequence(fadeOut(0.1f), visible(false)));
-				final String userName = nameField.getText();
-				if (userName.length() == 0) {
-					newnameResult.setText("Please enter a Name");
 				} else {
-					if (userLIST.isUserExists(userName)) {
-						newnameResult.setText("User already exists");
-					} else {
-						curUserOPTS = userLIST.addUser(userName);
-						GameUtils.saveGameOptions();
-						helpPageGroup.addAction(sequence(alpha(0), visible(true), fadeIn(0.1f)));
-						enterNameGroup.addAction(sequence(fadeOut(0.1f), visible(false)));
-					}
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
+						@Override
+						public void run() {
+							if (context.equalsIgnoreCase("newgame")) {
+								if (curUserOPTS.isFirstRun()) {
+									game.setScreen(new PlayScreen(game, Difficulty.Novice, 1));
+								} else {
+									game.setScreen(new PlayScreen(game, curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty())));
+								}
+							} else if (context.equalsIgnoreCase("levelselect")) {
+								game.setScreen(new LevelScreen(game, false));
+							} else {
+								game.setScreen(new MenuScreen(game));
+							}
+						}
+					})));
 				}
 			}
 		});
@@ -321,6 +307,18 @@ public class HelpScreen extends BackScreen {
 							game.setScreen(new MenuScreen(game));
 						}
 					})));
+				}
+				if (enterNameGroup.isVisible()) {
+					if (keycode == Keys.ENTER) {
+						final String userName = nameField.getText();
+						if (userName.length() == 0) {
+							newnameResult.setText("Please enter a Name");
+						} else if (userLIST.isUserExists(userName)) {
+							newnameResult.setText("User already exists");
+						}
+					} else {
+						newnameResult.setText("");
+					}
 				}
 				return true;
 			}

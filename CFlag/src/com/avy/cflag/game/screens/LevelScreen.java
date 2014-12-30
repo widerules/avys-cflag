@@ -25,11 +25,14 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
 import com.avy.cflag.game.EnumStore.Difficulty;
+import com.avy.cflag.game.GameUtils;
 import com.avy.cflag.game.MemStore;
 import com.avy.cflag.game.PlayUtils;
 import com.avy.cflag.game.elements.Level;
 import com.avy.cflag.game.utils.LevelScore;
+import com.avy.cflag.game.utils.SaveThumbs;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -39,6 +42,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 
 public class LevelScreen extends BackScreen {
@@ -569,6 +573,33 @@ public class LevelScreen extends BackScreen {
 				return true;
 			}
 		});
+		final ClickListener hackListener = new ClickListener(Buttons.LEFT) {
+			@Override
+			public void clicked(final InputEvent event, final float x, final float y) {
+				if (inTapSquare(780, 20) && (getTapCount() == 3)) {
+					int maxUnlockedLevel = curUserSCORE.getMaxPlayedLevel(selectedDclty);
+					if((maxUnlockedLevel + 1) <=lvlCntPerDCLTY[selectedDclty.ordinal()]) {
+						curUserOPTS.setlastDclty(selectedDclty);
+						GameUtils.saveGameOptions();
+						GameUtils.saveUserScores(selectedDclty, maxUnlockedLevel + 1, 0, 0, false);
+						final SaveThumbs st2 = new SaveThumbs(g, selectedDclty, maxUnlockedLevel + 1);
+						st2.setPlayAtlas();
+						st2.run();
+						argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+							@Override
+							public boolean act(final float delta) {
+								game.setScreen(new LevelScreen(game, true));
+								return false;
+							}
+						}));
+						
+					}
+				}
+				super.clicked(event, x, y);
+			}
+		};
+		hackListener.setTapSquareSize(20);
+		stage.addListener(hackListener);
 	}
 
 	@Override
@@ -684,6 +715,44 @@ public class LevelScreen extends BackScreen {
 		stage.addActor(thumbnail);
 		thumbnail.clearActions();
 		thumbnail.addAction(parallel(forever(rotateBy(1f)), sizeTo(tempWidth, tempHeight, 1f), moveTo((topBar.getWidth() - tempWidth) / 2, (480 - tempHeight) / 2, 1f, swingOut)));
+
+		thumbnail.addListener(new TouchListener() {
+			@Override
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+				midButtonDown.addAction(sequence(fadeOut(0.2f), visible(false)));
+				if (backStr.isVisible()) {
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
+						@Override
+						public void run() {
+							game.setScreen(new MenuScreen(game));
+						}
+					})));
+				} else {
+					argbFull.addAction(sequence(visible(true), 
+					new Action() {
+						@Override
+						public boolean act(final float delta) {
+							thumbnail.addAction(fadeOut(0.1f));
+							return true;
+						}
+					}, new Action() {
+						@Override
+						public boolean act(final float delta) {
+							printLevelData = false;
+							thumbnail.clearActions();
+							thumbnail.remove();
+							return true;
+						}
+					},fadeIn(1f), run(new Runnable() {
+						@Override
+						public void run() {
+							game.setScreen(new PlayScreen(game, selectedDclty, selectedLevel));
+						}
+					})));
+				}
+			}
+		});
+		
 		dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(0.1f));
 		leftButtonGroup.addAction(alpha(0f));
 		rightButtonGroup.addAction(alpha(0f));

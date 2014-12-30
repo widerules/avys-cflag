@@ -5,13 +5,13 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import com.avy.cflag.base.BaseScreen;
-import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
 import com.avy.cflag.game.GameUtils;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class SplashScreen extends BaseScreen {
@@ -47,6 +47,7 @@ public class SplashScreen extends BaseScreen {
 				GameUtils.loadLevelData();
 				GameUtils.loadAcraMap();
 				GameUtils.loadThumbs();
+				GameUtils.loadGame();
 				return true;
 			}
 		}, new Action() {
@@ -57,7 +58,7 @@ public class SplashScreen extends BaseScreen {
 			}
 		}));
 
-		stage.addListener(new TouchListener() {
+		stage.addListener(new InputListener() {
 			@Override
 			public boolean keyDown(final InputEvent event, final int keycode) {
 				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {

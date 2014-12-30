@@ -19,6 +19,7 @@ import static com.avy.cflag.game.MemStore.lvlFieldDataLEN;
 import static com.avy.cflag.game.MemStore.lvlHintLEN;
 import static com.avy.cflag.game.MemStore.lvlLEN;
 import static com.avy.cflag.game.MemStore.lvlNameLEN;
+import static com.avy.cflag.game.MemStore.savedGame;
 import static com.avy.cflag.game.MemStore.userLIST;
 
 import java.io.InputStream;
@@ -139,14 +140,15 @@ public class GameUtils {
 		st.disposePlayAtlas();
 	}
 
-	public static GameData loadGame() {
+	public static void loadGame() {
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
 		final String jsonStr = pr.getString(SAVE_GAME_TAG_NAME);
 		final Json jsn = new Json();
 		if (jsonStr != "") {
-			return (jsn.fromJson(GameData.class, jsonStr));
+			savedGame = jsn.fromJson(GameData.class, jsonStr);
+		} else {
+			savedGame=null;	
 		}
-		return null;
 	}
 
 	public static void saveGameOptions() {

@@ -2,10 +2,13 @@ package com.avy.cflag.game.screens;
 
 import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.curUserSCORE;
+import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
+import static com.avy.cflag.game.MemStore.savedGame;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
@@ -121,7 +124,6 @@ public class PlayScreen extends BaseScreen {
 	public PlayScreen(final CFlagGame game) {
 		super(game, true, true, true);
 		initImages();
-		final GameData savedGame = GameUtils.loadGame();
 		if (savedGame == null) {
 			initVariables(curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty()));
 		} else {
@@ -183,7 +185,7 @@ public class PlayScreen extends BaseScreen {
 	public void show() {
 		super.show();
 
-		pausedMenu = new ShortMenu(g, this, "gamepaused", "resume", "restart", "mainmenu");
+		pausedMenu = new ShortMenu(g, this, "gamepaused", "resumeme", "restart", "mainmenu");
 		pausedMenu.setVisible(false);
 		pausedMenu.getColor().a = 0;
 		drownedMenu = new ShortMenu(g, this, "drowned", "undo", "restart", "mainmenu");
@@ -485,7 +487,7 @@ public class PlayScreen extends BaseScreen {
 			@Override
 			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				if (gameState == GameState.Hint) {
-					resume();
+					resumeme();
 				}
 				return true;
 			};
@@ -494,9 +496,9 @@ public class PlayScreen extends BaseScreen {
 			public boolean keyDown(final InputEvent event, final int keycode) {
 				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {
 					if (gameState == GameState.Running) {
-						pause();
+						pauseme();
 					} else if ((gameState == GameState.Paused) || (gameState == GameState.Hint)) {
-						resume();
+						resumeme();
 					}
 				}
 				return true;
@@ -748,13 +750,11 @@ public class PlayScreen extends BaseScreen {
 	private void updatePaused() {
 		if (!pausedMenu.isVisible()) {
 			fontAlpha=0.4f;
-			pausedMenu.addAction(sequence(visible(true), parallel(new Action() {
-				@Override
-				public boolean act(float delta) {
+			pausedMenu.addAction(sequence(visible(true), parallel(run(new Runnable() {
+				public void run() {
 					saveGame();
-					return true;
 				}
-			},fadeIn(0.2f))));
+			}),fadeIn(0.2f))));
 		}
 	}
 
@@ -944,15 +944,13 @@ public class PlayScreen extends BaseScreen {
 		gameState = GameState.Hint;
 	}
 
-	@Override
-	public void pause() {
+	public void pauseme() {
 		if (gameState == GameState.Running) {
 			gameState = GameState.Paused;
 		}
 	}
 
-	@Override
-	public void resume() {
+	public void resumeme() {
 		if (gameState == GameState.Paused) {
 			if (pausedMenu.isVisible()) {
 				fontAlpha=1f;
@@ -968,6 +966,15 @@ public class PlayScreen extends BaseScreen {
 		}
 	}
 
+	@Override
+	public void pause() {
+		fontAlpha=0.4f;
+		pausedMenu.getColor().a=1f;;
+		gameState = GameState.Paused;
+		pausedMenu.setVisible(true);
+		saveGame();
+	}
+	
 	public void saveGame() {
 		final GameData gData = new GameData();
 		gData.setCurrentDclty(currentDclty);
@@ -1011,9 +1018,20 @@ public class PlayScreen extends BaseScreen {
 	private void saveScores() {
 		GameUtils.saveUserScores(currentDclty, currentLevel, ltank.getTankMoves(), ltank.getTankShots(), hintUsed);
 		if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
-			GameUtils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, false);
-			final SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel + 1);
-			st2.run();
+			if((currentLevel + 1) <=lvlCntPerDCLTY[currentDclty.ordinal()]) {
+				GameUtils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, false);
+				final SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel + 1);
+				st2.run();
+			} else {
+				Difficulty nxtDifficulty = PlayUtils.getDifficultyByIdx(currentDclty.ordinal()+1);
+				if(nxtDifficulty!=null) {
+					GameUtils.saveUserScores(nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty), 0, 0, false);
+					final SaveThumbs st2 = new SaveThumbs(g, nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty));
+					st2.run();
+					curUserOPTS.setlastDclty(nxtDifficulty);
+					GameUtils.saveGameOptions();
+				}
+			}
 		}
 	}
 
