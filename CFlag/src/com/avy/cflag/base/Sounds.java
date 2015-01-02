@@ -23,6 +23,12 @@ public enum Sounds {
 			sound.play(volume);
 		}
 	}
+	
+	public void mixPlay() {
+		if (enabled) {
+			sound.play(volume);
+		}
+	}
 
 	public static void setVolume(final float volume) {
 		Sounds.volume = volume;

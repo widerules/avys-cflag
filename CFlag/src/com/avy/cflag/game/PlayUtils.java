@@ -43,6 +43,13 @@ public class PlayUtils {
 		return outPoint;
 	}
 
+	public static Point convertPixToPoint(final Point inPix) {
+		final Point outPoint = new Point();
+		outPoint.x = inPix.x/playImageScaledLEN.x;
+		outPoint.y = inPix.y/playImageScaledLEN.y;
+		return outPoint;
+	}
+
 	public static PlayImages turnTank(final Direction inDirection) {
 		PlayImages outTank = PlayImages.Hero_U;
 		switch (inDirection) {
@@ -187,5 +194,31 @@ public class PlayUtils {
 		}
 
 		return newArray;
+	}
+	public static void printMatrix(PlayImages[][] input){
+		int len = 10;
+//		for (PlayImages[] playImages : input) {
+//			for (PlayImages playImages2 : playImages) {
+//				if(playImages2.name().length()>len)
+//					len=playImages2.name().length();
+//			}
+//		}
+		
+		
+		System.out.println("------------------------------");
+		String hdr = "                     ".substring(0, len)+ " | ";
+		
+		for (int i = 0; i < input.length; i++) 
+			hdr = hdr + (i + "                   ").substring(0, len)+ " | ";
+		
+		System.out.println(hdr);
+		for (int i = 0; i < input.length; i++) {
+			String line = "" + (i + "                   ").substring(0, len) + " | ";
+			for (int j = 0; j < input.length; j++) {
+				line = line + (input[j][i].name() + "                ").substring(0, len)+ " | ";
+			}
+			System.out.println(line);
+		}
+		System.out.println("------------------------------");
 	}
 }

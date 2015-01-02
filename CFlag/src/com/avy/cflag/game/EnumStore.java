@@ -74,15 +74,15 @@ public class EnumStore {
 	}
 
 	public static enum BulletState {
-		Fired, InMotion, MoveTank, HitTank, HitBrick, HitDTank, PassCrystal, MoveBlock, HitRMirror, EnterRMirror, ExitRMirror, MoveMirror, EnterMMirror, ExitMMirror, HitSteel, BlockExitsTunnel, Exploded
+		Fired, InMotion, MoveTank, HitTank, HitHero, HitBrick, HitDTank, PassCrystal, MoveBlock, HitRMirror, EnterRMirror, ExitRMirror, MoveMirror, EnterMMirror, ExitMMirror, HitSteel, BlockExitsTunnel, Exploded
 	}
 
 	public static enum TankState {
-		OnStream, OnIce, ObjOnIce, OnWater, OnThinIce, OnTunnel, Firing, Moving, ShotDead, MissFire, CurATankFired, PrevATankFired, Blocked, BothATankFired, ReachedFlag
+		OnStream, OnIce, ObjOnIce, OnWater, OnThinIce, OnTunnel, Firing, Moving, ShotDead, CurATankFired, PrevATankFired, Blocked, BothATankFired, ReachedFlag
 	}
 
 	public static enum AntiTankState {
-		MissFire, Fired, Firing, Exploded, HitTank
+		Fired, Firing, Exploded, HitTank, ObjOnIce
 	}
 
 	public static enum FirePathState {
