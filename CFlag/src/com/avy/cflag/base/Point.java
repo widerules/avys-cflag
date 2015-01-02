@@ -16,6 +16,9 @@ public class Point {
 
 	public Point add(final Point p) {
 		return new Point(x + p.x, y + p.y);
-
+	}
+	
+	public boolean equals(final Point p){
+		return p.x==x && p.y==y;
 	}
 }

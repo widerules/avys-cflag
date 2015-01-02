@@ -238,32 +238,84 @@ public class LTank {
 		return isMoved;
 	}
 
-	public void fireATankCur() {
-		if (aTankCur.getTankState() != AntiTankState.HitTank) {
-			aTankCur.fireTank(this);
-		} else {
-			curTankState = TankState.ShotDead;
-		}
-	}
-
-	public void fireATankPrev() {
-		if (aTankPrev.getTankState() != AntiTankState.Exploded) {
-			aTankPrev.fireTank(this);
-		} else {
-			curTankState = storedTankState;
-		}
-	}
-
-	public void fireBothATanks() {
-		if (aTankPrev.getTankState() != AntiTankState.Exploded) {
-			aTankPrev.fireTank(this);
-		} else {
-			if (aTankCur.getTankState() != AntiTankState.HitTank) {
-				aTankCur.fireTank(this);
-			} else {
+	public boolean fireATankCur() {
+		boolean stateChanged = false;
+		AntiTankState curATankState = aTankCur.getTankState();
+		switch(curATankState) {
+			case Fired:
+			case Firing:
+				stateChanged = aTankCur.fireTank(this);
+				break;
+			case ObjOnIce:
+				stateChanged = aTankCur.slideObjOnIce(this);
+				break;
+			case HitTank:
 				curTankState = TankState.ShotDead;
-			}
+				break;
+			default:
+				break;
 		}
+		return stateChanged;
+	}
+
+	public boolean fireATankPrev() {
+		boolean stateChanged = false;
+		AntiTankState prevATankState = aTankPrev.getTankState();
+		switch(prevATankState) {
+			case Exploded:
+				curTankState = storedTankState;
+				break;
+			case Fired:
+			case Firing:
+				stateChanged = aTankPrev.fireTank(this);
+				break;
+			case ObjOnIce:
+				stateChanged = aTankPrev.slideObjOnIce(this);
+				break;
+			case HitTank:
+				curTankState = TankState.ShotDead;
+				break;
+			default:
+				break;
+		}
+		return stateChanged;
+	}
+
+	public boolean fireBothATanks() {
+		boolean stateChanged = false;
+		AntiTankState prevATankState = aTankPrev.getTankState();
+		switch(prevATankState) {
+			case Fired:
+			case Firing:
+				stateChanged = aTankPrev.fireTank(this);
+				break;
+			case ObjOnIce:
+				stateChanged = aTankPrev.slideObjOnIce(this);
+				break;
+			case HitTank:
+				curTankState = TankState.ShotDead;
+				break;
+			case Exploded:
+				AntiTankState curATankState = aTankCur.getTankState();
+				switch(curATankState) {
+					case Fired:
+					case Firing:
+						stateChanged = aTankCur.fireTank(this);
+						break;
+					case ObjOnIce:
+						stateChanged = aTankCur.slideObjOnIce(this);
+						break;
+					case HitTank:
+						curTankState = TankState.ShotDead;
+						break;
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
+		}
+		return stateChanged;
 	}
 
 	public void slideObjOnIce() {
@@ -934,5 +986,9 @@ public class LTank {
 
 	public void setUiStateChanged(final boolean uiStateChanged) {
 		this.uiStateChanged = uiStateChanged;
+	}
+	
+	public void setCurPosOnIce(Point curPosOnIce) {
+		this.curPosOnIce = curPosOnIce;
 	}
 }
