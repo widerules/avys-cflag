@@ -147,7 +147,7 @@ public class GameUtils {
 		if (jsonStr != "") {
 			savedGame = jsn.fromJson(GameData.class, jsonStr);
 		} else {
-			savedGame=null;	
+			savedGame = null;
 		}
 	}
 
@@ -192,8 +192,15 @@ public class GameUtils {
 	public static void saveGame(final GameData gData) {
 		final Json jsn = new Json();
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
-		pr.putString(SAVE_GAME_TAG_NAME, jsn.toJson(gData));
+		long initTime = System.currentTimeMillis();
+		final String jSnStr = jsn.toJson(gData);
+		long timeTaken = System.currentTimeMillis() - initTime;
+		Gdx.app.log("com.avy.cflag.game", "To JSon Took : " + timeTaken + "ms");
+		initTime = System.currentTimeMillis();
+		pr.putString(SAVE_GAME_TAG_NAME, jSnStr);
 		pr.flush();
+		timeTaken = System.currentTimeMillis() - initTime;
+		Gdx.app.log("com.avy.cflag.game", "Save Game Took : " + timeTaken + "ms");
 		curUserOPTS.setGameSaved(true);
 	}
 }

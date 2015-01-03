@@ -66,32 +66,32 @@ public class Level {
 				}
 				final PlayImages po = PlayUtils.getPlayImage(lvlData[i]);
 				switch (po) {
-				case Villain_D:
-				case Villain_L:
-				case Villain_R:
-				case Villain_U:
-				case MBlock:
-				case MMirror_D:
-				case MMirror_L:
-				case MMirror_R:
-				case MMirror_U:
-				case Flag:
-				case RMirror_D:
-				case RMirror_L:
-				case RMirror_R:
-				case RMirror_U:
-					lvlBaseField[r][c] = PlayImages.Grass;
-					lvlPlayField[r][c] = po;
-					break;
-				case Hero_U:
-					lvlBaseField[r][c] = PlayImages.Grass;
-					lvlPlayField[r][c] = po;
-					tankOrigPos = new Point(r, c);
-					break;
-				default:
-					lvlBaseField[r][c] = po;
-					lvlPlayField[r][c] = po;
-					break;
+					case Villain_D:
+					case Villain_L:
+					case Villain_R:
+					case Villain_U:
+					case MBlock:
+					case MMirror_D:
+					case MMirror_L:
+					case MMirror_R:
+					case MMirror_U:
+					case Flag:
+					case RMirror_D:
+					case RMirror_L:
+					case RMirror_R:
+					case RMirror_U:
+						lvlBaseField[r][c] = PlayImages.Grass;
+						lvlPlayField[r][c] = po;
+						break;
+					case Hero_U:
+						lvlBaseField[r][c] = PlayImages.Grass;
+						lvlPlayField[r][c] = po;
+						tankOrigPos = new Point(r, c);
+						break;
+					default:
+						lvlBaseField[r][c] = po;
+						lvlPlayField[r][c] = po;
+						break;
 				}
 				c++;
 			} else if ((i >= lvlNameStrt) && (i < lvlNameEnd)) {

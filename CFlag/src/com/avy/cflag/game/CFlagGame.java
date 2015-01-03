@@ -33,7 +33,7 @@ public class CFlagGame extends Game {
 
 	@Override
 	public void create() {
-		Gdx.app.setLogLevel(Application.LOG_NONE);
+		Gdx.app.setLogLevel(Application.LOG_INFO);
 
 		camera = new OrthographicCamera(srcWidth, srcHeight);
 		camera.setToOrtho(true);

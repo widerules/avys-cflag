@@ -169,7 +169,7 @@ public class LTank {
 							if (curTankState != nxtTankState) {
 								stateChangedForUndo = true;
 							}
-						} else if (nxtPosObj == PlayImages.Ice || nxtPosObj == PlayImages.ThinIce) {
+						} else if ((nxtPosObj == PlayImages.Ice) || (nxtPosObj == PlayImages.ThinIce)) {
 							tankStateTime = 2;
 							nxtTankState = TankState.OnIce;
 							if (curTankState != nxtTankState) {
@@ -188,10 +188,10 @@ public class LTank {
 							nxtTankState = TankState.Moving;
 							stateChangedForUndo = true;
 						}
-						
-						if(curBaseObj==PlayImages.ThinIce){
-							lvlBaseField[curTankPos.x][curTankPos.y]=PlayImages.Water;
-							lvlPlayField[curTankPos.x][curTankPos.y]=PlayImages.Water;
+
+						if (curBaseObj == PlayImages.ThinIce) {
+							lvlBaseField[curTankPos.x][curTankPos.y] = PlayImages.Water;
+							lvlPlayField[curTankPos.x][curTankPos.y] = PlayImages.Water;
 						}
 						curTankPos = nxtTankPos;
 						isMoved = true;
@@ -201,10 +201,11 @@ public class LTank {
 						nxtTankState = TankState.Blocked;
 					}
 				} else {
-					if(StreamObjects.contains(curBaseObj)||curBaseObj==PlayImages.Ice||curBaseObj==PlayImages.ThinIce)
+					if (StreamObjects.contains(curBaseObj) || (curBaseObj == PlayImages.Ice) || (curBaseObj == PlayImages.ThinIce)) {
 						nxtTankState = TankState.Blocked;
+					}
 				}
- 			} else {
+			} else {
 				stateChangedForUndo = true;
 				uiStateChanged = true;
 			}
@@ -234,14 +235,14 @@ public class LTank {
 				undoChangeCount++;
 			}
 		}
-		
+
 		return isMoved;
 	}
 
 	public boolean fireATankCur() {
 		boolean stateChanged = false;
-		AntiTankState curATankState = aTankCur.getTankState();
-		switch(curATankState) {
+		final AntiTankState curATankState = aTankCur.getTankState();
+		switch (curATankState) {
 			case Fired:
 			case Firing:
 				stateChanged = aTankCur.fireTank(this);
@@ -260,8 +261,8 @@ public class LTank {
 
 	public boolean fireATankPrev() {
 		boolean stateChanged = false;
-		AntiTankState prevATankState = aTankPrev.getTankState();
-		switch(prevATankState) {
+		final AntiTankState prevATankState = aTankPrev.getTankState();
+		switch (prevATankState) {
 			case Exploded:
 				curTankState = storedTankState;
 				break;
@@ -283,8 +284,8 @@ public class LTank {
 
 	public boolean fireBothATanks() {
 		boolean stateChanged = false;
-		AntiTankState prevATankState = aTankPrev.getTankState();
-		switch(prevATankState) {
+		final AntiTankState prevATankState = aTankPrev.getTankState();
+		switch (prevATankState) {
 			case Fired:
 			case Firing:
 				stateChanged = aTankPrev.fireTank(this);
@@ -296,8 +297,8 @@ public class LTank {
 				curTankState = TankState.ShotDead;
 				break;
 			case Exploded:
-				AntiTankState curATankState = aTankCur.getTankState();
-				switch(curATankState) {
+				final AntiTankState curATankState = aTankCur.getTankState();
+				switch (curATankState) {
 					case Fired:
 					case Firing:
 						stateChanged = aTankCur.fireTank(this);
@@ -322,79 +323,79 @@ public class LTank {
 		if (tankStateTime > 0) {
 			tankStateTime--;
 		} else {
-		if (curTankBullet.getCurBulletState() == BulletState.Exploded) {
-			curTankBullet.resetBullet();
-		}
-		
-		Point nxtMovePos = PlayUtils.getNextPosition(curPosOnIce, curTankDirection);
-		final PlayImages curPosObj = lvlPlayField[curPosOnIce.x][curPosOnIce.y];
-		final PlayImages curPosBaseObj = lvlBaseField[curPosOnIce.x][curPosOnIce.y];
-		PlayImages nxtPosObj = PlayImages.OutOfBounds;
-		if (PlayUtils.positionWithinBounds(nxtMovePos)) {
-			nxtPosObj = lvlPlayField[nxtMovePos.x][nxtMovePos.y];
-		} else {
-			curTankState = TankState.Moving;
-		}
-
-		boolean isMoved = false;
-		switch (nxtPosObj) {
-			case Grass:
-			case Bridge:
-				lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
-				curTankState = TankState.Moving;
-				isMoved = true;
-				break;
-			case Stream_D:
-			case Stream_L:
-			case Stream_R:
-			case Stream_U:
-				lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
-				curTankState = TankState.OnStream;
-				isMoved = true;
-				break;
-			case Ice:
-			case ThinIce:	
-				lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
-				curTankState = TankState.ObjOnIce;
-				tankStateTime=1;
-				isMoved = true;
-				break;
-			case Water:
-				if (curPosObj == PlayImages.MBlock) {
-					lvlBaseField[nxtMovePos.x][nxtMovePos.y] = PlayImages.Bridge;
-					lvlPlayField[nxtMovePos.x][nxtMovePos.y] = PlayImages.Bridge;
-				}
-				curTankState = TankState.Moving;
-				isMoved = true;
-				break;
-			case Tunnel_0:
-			case Tunnel_1:
-			case Tunnel_2:
-			case Tunnel_3:
-			case Tunnel_4:
-			case Tunnel_5:
-			case Tunnel_6:
-			case Tunnel_7:
-				nxtMovePos = getTargetTunnelLocation(nxtPosObj, nxtMovePos);
-				lvlPlayField[curPosOnIce.x][curPosOnIce.y] = curPosBaseObj;
-				lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
-				curTankState = TankState.Moving;
-				isMoved = true;
-				break;
-			default:
-				break;
-		}
-		if (isMoved) {
-			if(curPosBaseObj==PlayImages.ThinIce) {
-				lvlBaseField[curPosOnIce.x][curPosOnIce.y] = PlayImages.Water;
-				lvlPlayField[curPosOnIce.x][curPosOnIce.y] = PlayImages.Water;
-			} else {
-				lvlPlayField[curPosOnIce.x][curPosOnIce.y] = curPosBaseObj;
+			if (curTankBullet.getCurBulletState() == BulletState.Exploded) {
+				curTankBullet.resetBullet();
 			}
-			if(curTankState==TankState.ObjOnIce){
-				curPosOnIce = nxtMovePos;
-			} 
-		}
+
+			Point nxtMovePos = PlayUtils.getNextPosition(curPosOnIce, curTankDirection);
+			final PlayImages curPosObj = lvlPlayField[curPosOnIce.x][curPosOnIce.y];
+			final PlayImages curPosBaseObj = lvlBaseField[curPosOnIce.x][curPosOnIce.y];
+			PlayImages nxtPosObj = PlayImages.OutOfBounds;
+			if (PlayUtils.positionWithinBounds(nxtMovePos)) {
+				nxtPosObj = lvlPlayField[nxtMovePos.x][nxtMovePos.y];
+			} else {
+				curTankState = TankState.Moving;
+			}
+
+			boolean isMoved = false;
+			switch (nxtPosObj) {
+				case Grass:
+				case Bridge:
+					lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
+					curTankState = TankState.Moving;
+					isMoved = true;
+					break;
+				case Stream_D:
+				case Stream_L:
+				case Stream_R:
+				case Stream_U:
+					lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
+					curTankState = TankState.OnStream;
+					isMoved = true;
+					break;
+				case Ice:
+				case ThinIce:
+					lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
+					curTankState = TankState.ObjOnIce;
+					tankStateTime = 1;
+					isMoved = true;
+					break;
+				case Water:
+					if (curPosObj == PlayImages.MBlock) {
+						lvlBaseField[nxtMovePos.x][nxtMovePos.y] = PlayImages.Bridge;
+						lvlPlayField[nxtMovePos.x][nxtMovePos.y] = PlayImages.Bridge;
+					}
+					curTankState = TankState.Moving;
+					isMoved = true;
+					break;
+				case Tunnel_0:
+				case Tunnel_1:
+				case Tunnel_2:
+				case Tunnel_3:
+				case Tunnel_4:
+				case Tunnel_5:
+				case Tunnel_6:
+				case Tunnel_7:
+					nxtMovePos = getTargetTunnelLocation(nxtPosObj, nxtMovePos);
+					lvlPlayField[curPosOnIce.x][curPosOnIce.y] = curPosBaseObj;
+					lvlPlayField[nxtMovePos.x][nxtMovePos.y] = curPosObj;
+					curTankState = TankState.Moving;
+					isMoved = true;
+					break;
+				default:
+					break;
+			}
+			if (isMoved) {
+				if (curPosBaseObj == PlayImages.ThinIce) {
+					lvlBaseField[curPosOnIce.x][curPosOnIce.y] = PlayImages.Water;
+					lvlPlayField[curPosOnIce.x][curPosOnIce.y] = PlayImages.Water;
+				} else {
+					lvlPlayField[curPosOnIce.x][curPosOnIce.y] = curPosBaseObj;
+				}
+				if (curTankState == TankState.ObjOnIce) {
+					curPosOnIce = nxtMovePos;
+				}
+			}
 		}
 	}
 
@@ -447,12 +448,12 @@ public class LTank {
 								isMoved = true;
 								break;
 							case Ice:
-							case ThinIce:	
+							case ThinIce:
 								lvlPlayField[nxtBltPos.x][nxtBltPos.y] = curPosObj;
 								curTankBullet.setCurBulletState(BulletState.Exploded);
 								curTankState = TankState.ObjOnIce;
 								curPosOnIce = nxtBltPos;
-								tankStateTime =1;
+								tankStateTime = 1;
 								isMoved = true;
 								break;
 							case Water:
@@ -486,7 +487,7 @@ public class LTank {
 							if (curPosObj == curPosBaseObj) {
 								lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
 								lvlPlayField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
-							} else if(curPosBaseObj==PlayImages.ThinIce) { 
+							} else if (curPosBaseObj == PlayImages.ThinIce) {
 								lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Water;
 							} else {
 								lvlPlayField[curBltPos.x][curBltPos.y] = curPosBaseObj;
@@ -987,8 +988,8 @@ public class LTank {
 	public void setUiStateChanged(final boolean uiStateChanged) {
 		this.uiStateChanged = uiStateChanged;
 	}
-	
-	public void setCurPosOnIce(Point curPosOnIce) {
+
+	public void setCurPosOnIce(final Point curPosOnIce) {
 		this.curPosOnIce = curPosOnIce;
 	}
 }

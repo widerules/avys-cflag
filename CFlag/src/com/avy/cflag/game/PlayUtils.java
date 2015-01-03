@@ -45,26 +45,51 @@ public class PlayUtils {
 
 	public static Point convertPixToPoint(final Point inPix) {
 		final Point outPoint = new Point();
-		outPoint.x = inPix.x/playImageScaledLEN.x;
-		outPoint.y = inPix.y/playImageScaledLEN.y;
+		outPoint.x = inPix.x / playImageScaledLEN.x;
+		outPoint.y = inPix.y / playImageScaledLEN.y;
 		return outPoint;
+	}
+
+	public static boolean isTouchDownUpInSameSquare(final Point touchDownPos, final Point touchUpPos) {
+		final int xDiff = Math.abs(touchDownPos.x - touchUpPos.x);
+		final int yDiff = Math.abs(touchDownPos.y - touchUpPos.y);
+		final boolean isSameSquare = (xDiff <= playImageScaledLEN.x) && (yDiff <= playImageScaledLEN.y);
+		return isSameSquare;
+	}
+
+	public static Direction getDirectionFromPoints(final Point src, final Point dst) {
+		final int xDiff = src.x - dst.x;
+		final int yDiff = src.y - dst.y;
+		if (xDiff == 1) {
+			return Direction.Left;
+		}
+		if (xDiff == -1) {
+			return Direction.Right;
+		}
+		if (yDiff == 1) {
+			return Direction.Up;
+		}
+		if (yDiff == -1) {
+			return Direction.Down;
+		}
+		return null;
 	}
 
 	public static PlayImages turnTank(final Direction inDirection) {
 		PlayImages outTank = PlayImages.Hero_U;
 		switch (inDirection) {
-		case Up:
-			outTank = PlayImages.Hero_U;
-			break;
-		case Right:
-			outTank = PlayImages.Hero_R;
-			break;
-		case Down:
-			outTank = PlayImages.Hero_D;
-			break;
-		case Left:
-			outTank = PlayImages.Hero_L;
-			break;
+			case Up:
+				outTank = PlayImages.Hero_U;
+				break;
+			case Right:
+				outTank = PlayImages.Hero_R;
+				break;
+			case Down:
+				outTank = PlayImages.Hero_D;
+				break;
+			case Left:
+				outTank = PlayImages.Hero_L;
+				break;
 		}
 		return outTank;
 	}
@@ -72,18 +97,18 @@ public class PlayUtils {
 	public static PlayImages destroyTank(final PlayImages curTank) {
 		PlayImages outTank = PlayImages.Villain_U;
 		switch (getDirection(curTank)) {
-		case Up:
-			outTank = PlayImages.DVillain_U;
-			break;
-		case Right:
-			outTank = PlayImages.DVillain_R;
-			break;
-		case Down:
-			outTank = PlayImages.DVillain_D;
-			break;
-		case Left:
-			outTank = PlayImages.DVillain_L;
-			break;
+			case Up:
+				outTank = PlayImages.DVillain_U;
+				break;
+			case Right:
+				outTank = PlayImages.DVillain_R;
+				break;
+			case Down:
+				outTank = PlayImages.DVillain_D;
+				break;
+			case Left:
+				outTank = PlayImages.DVillain_L;
+				break;
 		}
 		return outTank;
 	}
@@ -105,31 +130,31 @@ public class PlayUtils {
 		}
 		return outDirection;
 	}
-	
-	public static boolean isOpposite(Direction drc1, Direction drc2){
-		return Math.abs(drc1.ordinal()-drc2.ordinal())==2;
+
+	public static boolean isOpposite(final Direction drc1, final Direction drc2) {
+		return Math.abs(drc1.ordinal() - drc2.ordinal()) == 2;
 	}
 
 	public static Point getNextPosition(final Point curPos, final Direction moveDirection) {
 		final Point nxtPos = new Point();
 
 		switch (moveDirection) {
-		case Up:
-			nxtPos.x = curPos.x;
-			nxtPos.y = curPos.y - 1;
-			break;
-		case Right:
-			nxtPos.x = curPos.x + 1;
-			nxtPos.y = curPos.y;
-			break;
-		case Down:
-			nxtPos.x = curPos.x;
-			nxtPos.y = curPos.y + 1;
-			break;
-		case Left:
-			nxtPos.x = curPos.x - 1;
-			nxtPos.y = curPos.y;
-			break;
+			case Up:
+				nxtPos.x = curPos.x;
+				nxtPos.y = curPos.y - 1;
+				break;
+			case Right:
+				nxtPos.x = curPos.x + 1;
+				nxtPos.y = curPos.y;
+				break;
+			case Down:
+				nxtPos.x = curPos.x;
+				nxtPos.y = curPos.y + 1;
+				break;
+			case Left:
+				nxtPos.x = curPos.x - 1;
+				nxtPos.y = curPos.y;
+				break;
 		}
 		return nxtPos;
 	}
@@ -195,27 +220,28 @@ public class PlayUtils {
 
 		return newArray;
 	}
-	public static void printMatrix(PlayImages[][] input){
-		int len = 10;
-//		for (PlayImages[] playImages : input) {
-//			for (PlayImages playImages2 : playImages) {
-//				if(playImages2.name().length()>len)
-//					len=playImages2.name().length();
-//			}
-//		}
-		
-		
+
+	public static void printMatrix(final PlayImages[][] input) {
+		final int len = 10;
+		// for (PlayImages[] playImages : input) {
+		// for (PlayImages playImages2 : playImages) {
+		// if(playImages2.name().length()>len)
+		// len=playImages2.name().length();
+		// }
+		// }
+
 		System.out.println("------------------------------");
-		String hdr = "                     ".substring(0, len)+ " | ";
-		
-		for (int i = 0; i < input.length; i++) 
-			hdr = hdr + (i + "                   ").substring(0, len)+ " | ";
-		
+		String hdr = "                     ".substring(0, len) + " | ";
+
+		for (int i = 0; i < input.length; i++) {
+			hdr = hdr + (i + "                   ").substring(0, len) + " | ";
+		}
+
 		System.out.println(hdr);
 		for (int i = 0; i < input.length; i++) {
 			String line = "" + (i + "                   ").substring(0, len) + " | ";
-			for (int j = 0; j < input.length; j++) {
-				line = line + (input[j][i].name() + "                ").substring(0, len)+ " | ";
+			for (final PlayImages[] element : input) {
+				line = line + (element[i].name() + "                ").substring(0, len) + " | ";
 			}
 			System.out.println(line);
 		}

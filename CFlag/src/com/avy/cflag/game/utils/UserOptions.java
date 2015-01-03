@@ -13,7 +13,7 @@ public class UserOptions {
 	private float musicVolume;
 	private float soundVolume;
 	private Musics musicTrack;
-	private boolean swipeMove;
+	private float swipeSensitivity;
 
 	public UserOptions() {
 		userName = "No Profile";
@@ -25,7 +25,7 @@ public class UserOptions {
 		soundVolume = 0.3f;
 		musicVolume = 0.3f;
 		musicTrack = Musics.track1;
-		swipeMove = false;
+		swipeSensitivity = 40f;
 	}
 
 	public UserOptions(final String inUserName) {
@@ -38,7 +38,7 @@ public class UserOptions {
 		soundVolume = 0.3f;
 		musicVolume = 0.3f;
 		musicTrack = Musics.track1;
-		swipeMove = false;
+		swipeSensitivity = 40f;
 	}
 
 	public void setGameOpts(final UserOptions inOpts) {
@@ -51,7 +51,7 @@ public class UserOptions {
 		musicVolume = inOpts.musicVolume;
 		soundVolume = inOpts.soundVolume;
 		musicTrack = inOpts.musicTrack;
-		swipeMove = inOpts.swipeMove;
+		swipeSensitivity = inOpts.swipeSensitivity;
 	}
 
 	@Override
@@ -129,12 +129,11 @@ public class UserOptions {
 		this.musicTrack = musicTrack;
 	}
 
-	public boolean isSwipeMove() {
-		return swipeMove;
+	public float getSwipeSensitivity() {
+		return swipeSensitivity;
 	}
 
-	public void setSwipeMove(final boolean swipeMove) {
-		this.swipeMove = swipeMove;
+	public void setSwipeSensitivity(final float swipeSensitivity) {
+		this.swipeSensitivity = swipeSensitivity;
 	}
-
 }

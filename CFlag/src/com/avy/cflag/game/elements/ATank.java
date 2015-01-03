@@ -49,14 +49,14 @@ public class ATank {
 			if (tankBullet.getCurBulletState() == BulletState.Exploded) {
 				tankBullet.resetBullet();
 				tankState = AntiTankState.Exploded;
-			} else if (tankBullet.getCurBulletState() == BulletState.HitHero) { 
+			} else if (tankBullet.getCurBulletState() == BulletState.HitHero) {
 				tankBullet.resetBullet();
 				tankState = AntiTankState.HitTank;
 			} else {
 
 				if (tankBullet.getCurBulletState() == BulletState.Fired) {
 					tankStateTime = 0;
-					curPosOnIce = new Point(0,0);
+					curPosOnIce = new Point(0, 0);
 					curOnIceDrc = Direction.Up;
 					tankState = AntiTankState.Firing;
 					tankBullet.createBullet(tankPos, tankDirection);

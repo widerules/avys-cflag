@@ -101,13 +101,13 @@ public class Graphics {
 		return textureRegion;
 	}
 
-	public void drawString(final String txt, final int x, final int y, final Color color, float alpha) {
+	public void drawString(final String txt, final int x, final int y, final Color color, final float alpha) {
 		font.setColor(color.r, color.g, color.b, alpha);
 		final TextBounds tb = font.getBounds(txt);
 		font.draw(batch, txt, x - (tb.width / 2), y - (tb.height / 2));
 	}
 
-	public void drawString(final BitmapFont font, final String txt, final int x, final int y, final Color color, float alpha) {
+	public void drawString(final BitmapFont font, final String txt, final int x, final int y, final Color color, final float alpha) {
 		font.setColor(color.r, color.g, color.b, alpha);
 		final TextBounds tb = font.getBounds(txt);
 		font.draw(batch, txt, x - (tb.width / 2), y - (tb.height / 2));
@@ -120,14 +120,14 @@ public class Graphics {
 		font.drawWrapped(batch, txt, x - 50, y - (h / 2), 100, HAlignment.CENTER);
 	}
 
-	public void drawStringWrapped(final BitmapFont font, final String txt, final int x, final int y, final Color color, float alpha) {
+	public void drawStringWrapped(final BitmapFont font, final String txt, final int x, final int y, final Color color, final float alpha) {
 		final TextBounds tb = font.getBounds(txt);
 		final float h = tb.height * (int) (tb.width / 100);
 		font.setColor(color.r, color.g, color.b, alpha);
 		font.drawWrapped(batch, txt, x - 50, y - (h / 2), 100, HAlignment.CENTER);
 	}
 
-	public void drawStringWrapped(final BitmapFont font, final String txt, final float x, final float y, final float width, final Color color, float alpha) {
+	public void drawStringWrapped(final BitmapFont font, final String txt, final float x, final float y, final float width, final Color color, final float alpha) {
 		font.setColor(color.r, color.g, color.b, alpha);
 		font.drawWrapped(batch, txt, x, y, width, HAlignment.CENTER);
 	}

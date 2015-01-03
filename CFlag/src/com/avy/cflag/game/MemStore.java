@@ -27,7 +27,7 @@ public class MemStore {
 	public static UserScore curUserSCORE = null;
 	public static UserOptions curUserOPTS = null;
 	public static GameData savedGame = null;
-	
+
 	public static Point pltfrmStartPOS = null;
 	public static Point pltfrmLEN = null;
 	public static final Point playImageOrigLEN = new Point(30, 30);

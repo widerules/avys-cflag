@@ -39,8 +39,6 @@ public class OptionsScreen extends BackScreen {
 
 	private Image enterNameStr;
 	private TextField nameField;
-	private Image okButtonUp, okButtonDown;
-	private Group okButtonGroup;
 	private Label newnameResult;
 	private Group enterNameGroup;
 
@@ -68,8 +66,8 @@ public class OptionsScreen extends BackScreen {
 	private final Image[] trackStr;
 	private Group trackGroup;
 
-	private Image swipeToPlayStr;
-	private CheckBox swipeEnabled;
+	private Image swipeSensitivityStr;
+	private Slider swipeSensitivity;
 
 	private Image saveButtonUp;
 	private Image saveButtonDown;
@@ -80,6 +78,12 @@ public class OptionsScreen extends BackScreen {
 	private Image discardButtonDown;
 	private Image discardStr;
 	private Group discardButtonGroup;
+
+	private Image okButtonUp;
+	private Image okButtonDown;
+	private Image okStr;
+	private Group okButtonGroup;
+	
 	private Group optionsGroup;
 	ArrayList<String> deletedUsers;
 
@@ -96,6 +100,12 @@ public class OptionsScreen extends BackScreen {
 		super.show();
 
 		g.setImageAtlas(commonAtlas);
+		
+		okButtonUp = new Image(g.getFlipTexRegion("0_rectbuttonup"));
+		okButtonUp.setPosition((bottomBar.getWidth() - okButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - okButtonUp.getHeight()) / 2));
+		okButtonDown = new Image(g.getFlipTexRegion("0_rectbuttondown"));
+		okButtonDown.setPosition(okButtonUp.getX(), okButtonUp.getY());
+		okButtonDown.setVisible(false);
 
 		final int spaceFromMid = 20;
 		saveButtonUp = new Image(g.getFlipTexRegion("0_rectbuttonup"));
@@ -116,36 +126,34 @@ public class OptionsScreen extends BackScreen {
 		titleStr = new Image(g.getFlipTexRegion("title"));
 		saveStr = new Image(g.getFlipTexRegion("save"));
 		discardStr = new Image(g.getFlipTexRegion("discard"));
+		okStr = new Image(g.getFlipTexRegion("ok"));
 
 		titleStr.setPosition((topBar.getWidth() - titleStr.getWidth()) / 2, (topBar.getHeight() - titleStr.getHeight()) / 2);
 		saveStr.setPosition(saveButtonUp.getX(), saveButtonUp.getY());
 		discardStr.setPosition(discardButtonUp.getX(), discardButtonUp.getY());
+		okStr.setPosition(okButtonUp.getX(), okButtonUp.getY());
 
 		enterNameStr = new Image(g.getFlipTexRegion("entername"));
 		nameField = new TextField("", g.getTextBoxStyle("salsa", 23));
-		okButtonUp = new Image(g.getFlipTexRegion("okbuttonup"));
-		okButtonDown = new Image(g.getFlipTexRegion("okbuttondown"));
 		newnameResult = new Label("", g.getLabelStyle("salsa", 12));
 
-		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + okButtonUp.getWidth() + 20)) / 2, ((game.getSrcHeight() - enterNameStr.getHeight()) / 2) - 80);
+		enterNameStr.setPosition((game.getSrcWidth() - (enterNameStr.getWidth() + nameField.getWidth() + 20)) / 2, ((game.getSrcHeight() - enterNameStr.getHeight()) / 2) - 80);
 		nameField.setMaxLength(10);
 		nameField.setPosition(enterNameStr.getX() + enterNameStr.getWidth(), ((game.getSrcHeight() - nameField.getHeight()) / 2) - 80);
-		okButtonUp.setPosition(enterNameStr.getX() + enterNameStr.getWidth() + nameField.getWidth() + 20, ((game.getSrcHeight() - okButtonUp.getHeight()) / 2) - 80);
-		okButtonDown.setPosition(okButtonUp.getX(), okButtonUp.getY());
-		okButtonDown.setVisible(false);
 		newnameResult.setWidth(200);
 		newnameResult.setPosition((game.getSrcWidth() - newnameResult.getWidth()) / 2, enterNameStr.getY() + 60);
 		newnameResult.setAlignment(Align.center);
 
 		okButtonGroup = new Group();
-		okButtonGroup.addActor(okButtonUp);
 		okButtonGroup.addActor(okButtonDown);
-
+		okButtonGroup.addActor(okButtonUp);
+		okButtonGroup.addActor(okStr);
+		
 		enterNameGroup = new Group();
 		enterNameGroup.addActor(enterNameStr);
 		enterNameGroup.addActor(nameField);
-		enterNameGroup.addActor(okButtonGroup);
 		enterNameGroup.addActor(newnameResult);
+		enterNameGroup.addActor(okButtonGroup);
 		enterNameGroup.setVisible(false);
 
 		profileStr = new Image(g.getFlipTexRegion("userprofile"));
@@ -168,7 +176,7 @@ public class OptionsScreen extends BackScreen {
 		musicTrackStr = new Image(g.getFlipTexRegion("musictrack"));
 		trackLeft = new Image(g.getFlipTexRegion("strokeleft"));
 		trackRight = new Image(g.getFlipTexRegion("strokeright"));
-		swipeToPlayStr = new Image(g.getFlipTexRegion("swipetoplay"));
+		swipeSensitivityStr = new Image(g.getFlipTexRegion("swipesensitivity"));
 
 		int trackNo = 0;
 		for (final Musics music : Musics.values()) {
@@ -205,14 +213,14 @@ public class OptionsScreen extends BackScreen {
 		musicVolume = new Slider(0f, 1f, 0.1f, false, g.getSliderStyle());
 		musicVolume.setValue(curUserOPTS.getMusicVolume());
 
-		swipeEnabled = new CheckBox("", g.getCheckBoxStyle("salsa", 18));
-		swipeEnabled.setChecked(curUserOPTS.isSwipeMove());
+		swipeSensitivity = new Slider(10f, 110f, 10f, false, g.getSliderStyle());
+		swipeSensitivity.setValue(curUserOPTS.getSwipeSensitivity());
 
-		final int x = 80;
+		final int x = 60;
 		int y = 75;
 		final int yw = 60;
 		profileStr.setPosition(x, y = y + yw);
-		profileLeft.setPosition(profileStr.getX() + profileStr.getWidth(), y);
+		profileLeft.setPosition(profileStr.getX() + profileStr.getWidth()-2, y);
 		profileName.setBounds(profileLeft.getX() + profileLeft.getWidth(), y + ((profileLeft.getHeight() - 10) / 2), 90, 10);
 		profileRight.setPosition(profileName.getX() + profileName.getWidth(), y);
 
@@ -222,24 +230,24 @@ public class OptionsScreen extends BackScreen {
 		delButtonUp.setPosition(newButtonUp.getX() + newButtonUp.getWidth() + 10, newButtonUp.getY());
 		delButtonDown.setPosition(delButtonUp.getX(), delButtonUp.getY());
 
-		soundStr.setPosition(x, y = y + yw);
-		sound.setPosition(x + 160, y);
-		soundVolumeStr.setPosition(x + 340, y);
-		soundVolume.setPosition(x + 495, y);
+		soundStr.setPosition(profileStr.getX(), y = y + yw);
+		sound.setPosition(profileLeft.getX(), y);
+		soundVolumeStr.setPosition(newButtonUp.getX(), y);
+		soundVolume.setPosition(soundVolumeStr.getX() + soundVolumeStr.getWidth(), y);
 
-		musicStr.setPosition(x, y = y + yw);
-		music.setPosition(x + 160, y);
-		musicVolumeStr.setPosition(x + 340, y);
-		musicVolume.setPosition(x + 495, y);
+		musicStr.setPosition(profileStr.getX(), y = y + yw);
+		music.setPosition(profileLeft.getX(), y);
+		musicVolumeStr.setPosition(newButtonUp.getX(), y);
+		musicVolume.setPosition(musicVolumeStr.getX() + musicVolumeStr.getWidth(), y);
 
-		musicTrackStr.setPosition(x, y = y + yw);
-		trackLeft.setPosition(x + 157, y);
+		musicTrackStr.setPosition(profileStr.getX(), y = y + yw);
+		trackLeft.setPosition(profileLeft.getX()-2, y);
 		for (final Image trkStr : trackStr) {
-			trkStr.setPosition(x + 180, y + 2);
+			trkStr.setPosition(trackLeft.getX()+trackLeft.getWidth()-13, y + 2);
 		}
-		trackRight.setPosition(x + 250, y);
-		swipeToPlayStr.setPosition(x + 340, y);
-		swipeEnabled.setPosition(x + 500, y);
+		trackRight.setPosition(trackStr[0].getX() + trackStr[0].getWidth()-14, y);
+		swipeSensitivityStr.setPosition(newButtonUp.getX(), y);
+		swipeSensitivity.setPosition(musicVolumeStr.getX() + musicVolumeStr.getWidth(), y);
 
 		newButtonGroup = new Group();
 		newButtonGroup.addActor(newButtonUp);
@@ -279,13 +287,13 @@ public class OptionsScreen extends BackScreen {
 		optionsGroup.addActor(musicStr);
 		optionsGroup.addActor(musicVolumeStr);
 		optionsGroup.addActor(musicTrackStr);
-		optionsGroup.addActor(swipeToPlayStr);
+		optionsGroup.addActor(swipeSensitivityStr);
 		optionsGroup.addActor(sound);
 		optionsGroup.addActor(soundVolume);
 		optionsGroup.addActor(music);
 		optionsGroup.addActor(musicVolume);
 		optionsGroup.addActor(trackGroup);
-		optionsGroup.addActor(swipeEnabled);
+		optionsGroup.addActor(swipeSensitivity);
 		optionsGroup.addActor(saveButtonGroup);
 		optionsGroup.addActor(discardButtonGroup);
 		optionsGroup.setVisible(true);
@@ -323,10 +331,11 @@ public class OptionsScreen extends BackScreen {
 				Musics.setVolume(curUserOPTS.getMusicVolume());
 			}
 		});
-		swipeEnabled.addListener(new ChangeListener() {
+		
+		swipeSensitivity.addListener(new ChangeListener() {
 			@Override
 			public void changed(final ChangeEvent event, final Actor actor) {
-				curUserOPTS.setSwipeMove(((CheckBox) actor).isChecked());
+				curUserOPTS.setSwipeSensitivity(((Slider) actor).getValue());
 			}
 		});
 
@@ -545,6 +554,18 @@ public class OptionsScreen extends BackScreen {
 							}
 						})));
 					}
+					if (enterNameGroup.isVisible()) {
+						if (keycode == Keys.ENTER) {
+							final String userName = nameField.getText();
+							if (userName.length() == 0) {
+								newnameResult.setText("Please enter a Name");
+							} else if (userLIST.isUserExists(userName)) {
+								newnameResult.setText("User already exists");
+							}
+						} else {
+							newnameResult.setText("");
+						}
+					}
 				}
 				return true;
 			}
@@ -577,6 +598,6 @@ public class OptionsScreen extends BackScreen {
 		Sounds.setState(curUserOPTS.isSoundOn());
 		soundVolume.setValue(curUserOPTS.getSoundVolume());
 		Sounds.setVolume(curUserOPTS.getSoundVolume());
-		swipeEnabled.setChecked(curUserOPTS.isSwipeMove());
+		swipeSensitivity.setValue(curUserOPTS.getSwipeSensitivity());
 	}
 }
