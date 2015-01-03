@@ -279,15 +279,12 @@ public class HelpScreen extends BackScreen {
 		stage.addListener(new DragListener() {
 			@Override
 			public void dragStart(final InputEvent event, final float x, final float y, final int pointer) {
-				if (MemStore.curUserOPTS.isSwipeMove()) {
 					dragStartX = x;
 					super.dragStart(event, x, y, pointer);
-				}
 			}
 
 			@Override
 			public void dragStop(final InputEvent event, final float x, final float y, final int pointer) {
-				if (MemStore.curUserOPTS.isSwipeMove()) {
 					super.dragStop(event, x, y, pointer);
 					dragEndX = x;
 					if (dragStartX > dragEndX) {
@@ -295,7 +292,6 @@ public class HelpScreen extends BackScreen {
 					} else if (dragStartX < dragEndX) {
 						swipeRight();
 					}
-				}
 			}
 
 			@Override

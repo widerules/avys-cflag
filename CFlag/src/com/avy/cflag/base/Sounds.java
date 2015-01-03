@@ -23,7 +23,7 @@ public enum Sounds {
 			sound.play(volume);
 		}
 	}
-	
+
 	public void mixPlay() {
 		if (enabled) {
 			sound.play(volume);

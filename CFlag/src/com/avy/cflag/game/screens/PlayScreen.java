@@ -8,7 +8,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
@@ -26,13 +25,14 @@ import com.avy.cflag.game.EnumStore.PlayImages;
 import com.avy.cflag.game.EnumStore.TankState;
 import com.avy.cflag.game.GameUtils;
 import com.avy.cflag.game.PlayUtils;
-import com.avy.cflag.game.PathFinder;
 import com.avy.cflag.game.elements.LTank;
 import com.avy.cflag.game.elements.Level;
 import com.avy.cflag.game.elements.Platform;
 import com.avy.cflag.game.graphics.HintMenu;
 import com.avy.cflag.game.graphics.ShortMenu;
+import com.avy.cflag.game.pathfinding.PathFinder;
 import com.avy.cflag.game.utils.GameData;
+import com.avy.cflag.game.utils.SaveGame;
 import com.avy.cflag.game.utils.SaveThumbs;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
@@ -115,8 +115,8 @@ public class PlayScreen extends BaseScreen {
 	private Group wonMenu;
 	private Group hintMenu;
 
-	private float fontAlpha=0.3f;
-	
+	private float fontAlpha = 0.3f;
+
 	private boolean updateInProgress = false;
 	private GameButtons pressedButton = GameButtons.None;
 	private GameButtons longPressButton = GameButtons.None;
@@ -124,13 +124,14 @@ public class PlayScreen extends BaseScreen {
 	private int longPressTimer = 0;
 	private float dragStartX = 0, dragStartY = 0;
 	DragListener dragListener = null;
+	private float swipeSensitivity = 40f;
 	private boolean undoInProgress = false;
 	private boolean touchEnabled = true;
-	private PathFinder pathFinder = new PathFinder();;
-	private ArrayList<Direction> autoMovePath= new ArrayList<Direction>();;
-	private int autoMoveCounter=0;
-	private boolean autoMoveActive=false;
-	
+	private final PathFinder pathFinder = new PathFinder();;
+	private ArrayList<Direction> autoMovePath = new ArrayList<Direction>();;
+	private int autoMoveCounter = 0;
+	private boolean autoMoveActive = false;
+
 	public PlayScreen(final CFlagGame game) {
 		super(game, true, true, true);
 		initImages();
@@ -190,6 +191,7 @@ public class PlayScreen extends BaseScreen {
 		hintUsed = false;
 		stateChanged = false;
 		aTankStateChanged = false;
+		swipeSensitivity = 120 - curUserOPTS.getSwipeSensitivity();
 	}
 
 	@Override
@@ -289,12 +291,11 @@ public class PlayScreen extends BaseScreen {
 
 		pltFrm = new Platform(midPanel);
 		pltFrm.paintPlatform(lTank);
-		
 
-		argbFull.addAction(sequence(fadeOut(1f), visible(false),new Action() {
+		argbFull.addAction(sequence(fadeOut(1f), visible(false), new Action() {
 			@Override
-			public boolean act(float delta) {
-				fontAlpha=1f;
+			public boolean act(final float delta) {
+				fontAlpha = 1f;
 				return true;
 			}
 		}));
@@ -464,20 +465,6 @@ public class PlayScreen extends BaseScreen {
 			};
 		});
 
-		midPanel.addListener(new ClickListener(){
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if(!autoMoveActive) {
-					if (getTapCount() == 1) {
-						if(initAutoMove(new Point((int)x,(int)y))) {
-							autoMoveActive=true;
-						}
-					}
-				}
-				super.clicked(event, x, y);
-			}
-		});
-		
 		fireButton.addListener(new ActorGestureListener(20, 0.4f, 0.3f, 0.15f) {
 			@Override
 			public boolean longPress(final Actor actor, final float x, final float y) {
@@ -489,7 +476,7 @@ public class PlayScreen extends BaseScreen {
 		stage.addListener(new ActorGestureListener() {
 			@Override
 			public void fling(final InputEvent event, final float velocityX, final float velocityY, final int button) {
-				if (!undoInProgress && curUserOPTS.isSwipeMove()) {
+				if (!undoInProgress) {
 					if (Math.abs(velocityX) > (Math.abs(velocityY) + 10)) {
 						if (velocityX > 0) {
 							pressedButton = GameButtons.ArrowRight;
@@ -508,13 +495,33 @@ public class PlayScreen extends BaseScreen {
 			}
 		});
 
+		midPanel.addListener(new DragListener() {
+			Point touchDownPos = new Point();
+
+			@Override
+			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+				touchDownPos = new Point((int) x, (int) y);
+				return true;
+			};
+
+			@Override
+			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+				final Point touchUpPos = new Point((int) x, (int) y);
+				if (!autoMoveActive && PlayUtils.isTouchDownUpInSameSquare(touchUpPos, touchDownPos)) {
+					if (initAutoMove(new Point((int) x, (int) y))) {
+						autoMoveActive = true;
+					}
+				}
+			}
+		});
+
 		dragListener = new DragListener() {
 			@Override
 			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 				if (gameState == GameState.Hint) {
 					resumeme();
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			};
 
 			@Override
@@ -531,10 +538,10 @@ public class PlayScreen extends BaseScreen {
 
 			@Override
 			public void drag(final InputEvent event, final float x, final float y, final int pointer) {
-				if (touchEnabled && !undoInProgress && curUserOPTS.isSwipeMove()) {
+				if (touchEnabled && !undoInProgress) {
 					final float velocityX = x - dragStartX;
 					final float velocityY = y - dragStartY;
-					if ((Math.abs(velocityX) > 20) || (Math.abs(velocityY) > 20)) {
+					if ((Math.abs(velocityX) > swipeSensitivity) || (Math.abs(velocityY) > swipeSensitivity)) {
 						if (Math.abs(velocityX) > (Math.abs(velocityY) + 10)) {
 							if (velocityX > 0) {
 								longPressButton = GameButtons.ArrowRight;
@@ -572,7 +579,7 @@ public class PlayScreen extends BaseScreen {
 		final ClickListener hackListener = new ClickListener(Buttons.LEFT) {
 			@Override
 			public void clicked(final InputEvent event, final float x, final float y) {
-				if (inTapSquare(780, 460) && (getTapCount() == 3)) {
+				if (inTapSquare(780, 20) && (getTapCount() == 3)) {
 					gameState = GameState.Won;
 				}
 				super.clicked(event, x, y);
@@ -607,34 +614,34 @@ public class PlayScreen extends BaseScreen {
 	public void update(final float delta) {
 		updateInProgress = true;
 		switch (gameState) {
-		case Ready:
-			updateReady();
-			break;
-		case Running:
-			updateRunning();
-			break;
-		case Paused:
-			updatePaused();
-			break;
-		case Drowned:
-			updateDrowned();
-			break;
-		case Dead:
-			updateDead();
-			break;
-		case Won:
-			updateWon();
-			break;
-		case Hint:
-			updateHint();
-			break;
-		case Menu:
-		case Restart:
-		case NextLevel:
-			updateFadeOut(delta);
-			break;
-		default:
-			break;
+			case Ready:
+				updateReady();
+				break;
+			case Running:
+				updateRunning();
+				break;
+			case Paused:
+				updatePaused();
+				break;
+			case Drowned:
+				updateDrowned();
+				break;
+			case Dead:
+				updateDead();
+				break;
+			case Won:
+				updateWon();
+				break;
+			case Hint:
+				updateHint();
+				break;
+			case Menu:
+			case Restart:
+			case NextLevel:
+				updateFadeOut();
+				break;
+			default:
+				break;
 		}
 		updateInProgress = false;
 	}
@@ -650,97 +657,69 @@ public class PlayScreen extends BaseScreen {
 		final int stateChangeCount = lTank.getStateChangeCount();
 
 		switch (lTank.getCurTankState()) {
-		case PrevATankFired:
-			aTankStateChanged = lTank.fireATankPrev();
-			break;
-		case CurATankFired:
-			undoInProgress = true;
-			aTankStateChanged = lTank.fireATankCur();
-			break;
-		case BothATankFired:
-			undoInProgress = true;
-			aTankStateChanged = lTank.fireBothATanks();
-			break;
-		case OnStream:
-			setTouchEnabled(false);
-			undoButton.setTouchable(Touchable.enabled);
-			lTank.moveTank(lTank.getCurTankDirection());
-			stateChanged = true;
-			if (pressedButton == GameButtons.UnDo) {
-				undoInGame();
-			}
-			longPressButton = GameButtons.None;
-			pressedButton = GameButtons.None;
-			break;
-		case OnIce:
-			setTouchEnabled(false);
-			lTank.moveTank(lTank.getCurTankDirection());
-			stateChanged = true;
-			break;
-		case ObjOnIce:
-			setTouchEnabled(false);
-			lTank.slideObjOnIce();
-			stateChanged = true;
-			break;
-		case OnTunnel:
-			lTank.moveTank(lTank.getCurTankDirection());
-			stateChanged = true;
-			break;
-		case OnWater:
-			undoInProgress = true;
-			gameState = GameState.Drowned;
-			break;
-		case ShotDead:
-			undoInProgress = true;
-			gameState = GameState.Dead;
-			break;
-		case ReachedFlag:
-			gameState = GameState.Won;
-			break;
-		case Firing:
-			lTank.fireTank();
-			break;
-		case Moving:
-		case Blocked:
-			if(autoMoveActive) {
-				Direction autoMoveDirection = getAutoMoveDirection();
-				if(autoMoveDirection!=null) {
-					moveHero(autoMoveDirection);
-				} else {
-					autoMoveActive=false;
-					setTouchEnabled(true);
-				}
-			} else {
-				setTouchEnabled(true);
-				switch (pressedButton) {
-				case ArrowUp:
-					moveHero(Direction.Up);
-					break;
-				case ArrowRight:
-					moveHero(Direction.Right);
-					break;
-				case ArrowDown:
-					moveHero(Direction.Down);
-					break;
-				case ArrowLeft:
-					moveHero(Direction.Left);
-					break;
-				case UnDo:
+			case PrevATankFired:
+				aTankStateChanged = lTank.fireATankPrev();
+				break;
+			case CurATankFired:
+				undoInProgress = true;
+				aTankStateChanged = lTank.fireATankCur();
+				break;
+			case BothATankFired:
+				undoInProgress = true;
+				aTankStateChanged = lTank.fireBothATanks();
+				break;
+			case OnStream:
+				setTouchEnabled(false);
+				undoButton.setTouchable(Touchable.enabled);
+				lTank.moveTank(lTank.getCurTankDirection());
+				stateChanged = true;
+				if (pressedButton == GameButtons.UnDo) {
 					undoInGame();
-					stateChanged = true;
-					break;
-				case Fire:
-					fireHero();
-					break;
-				case Hint:
-					gameState = GameState.Hint;
-					break;
-				default:
-					if (longPressTimer < longPressReflexDelay) {
-						longPressTimer++;
+				}
+				longPressButton = GameButtons.None;
+				pressedButton = GameButtons.None;
+				break;
+			case OnIce:
+				setTouchEnabled(false);
+				lTank.moveTank(lTank.getCurTankDirection());
+				stateChanged = true;
+				break;
+			case ObjOnIce:
+				setTouchEnabled(false);
+				lTank.slideObjOnIce();
+				stateChanged = true;
+				break;
+			case OnTunnel:
+				lTank.moveTank(lTank.getCurTankDirection());
+				stateChanged = true;
+				break;
+			case OnWater:
+				undoInProgress = true;
+				gameState = GameState.Drowned;
+				break;
+			case ShotDead:
+				undoInProgress = true;
+				gameState = GameState.Dead;
+				break;
+			case ReachedFlag:
+				gameState = GameState.Won;
+				break;
+			case Firing:
+				lTank.fireTank();
+				break;
+			case Moving:
+			case Blocked:
+				if (autoMoveActive) {
+					final Direction autoMoveDirection = getAutoMoveDirection();
+					if (autoMoveDirection != null) {
+						moveHero(autoMoveDirection);
 					} else {
-						longPressTimer = 0;
-						switch (longPressButton) {
+						autoMoveActive = false;
+						setTouchEnabled(true);
+					}
+				} else {
+					setTouchEnabled(true);
+					switch (pressedButton) {
 						case ArrowUp:
 							moveHero(Direction.Up);
 							break;
@@ -760,16 +739,44 @@ public class PlayScreen extends BaseScreen {
 						case Fire:
 							fireHero();
 							break;
-						default:
+						case Hint:
+							gameState = GameState.Hint;
 							break;
-						}
+						default:
+							if (longPressTimer < longPressReflexDelay) {
+								longPressTimer++;
+							} else {
+								longPressTimer = 0;
+								switch (longPressButton) {
+									case ArrowUp:
+										moveHero(Direction.Up);
+										break;
+									case ArrowRight:
+										moveHero(Direction.Right);
+										break;
+									case ArrowDown:
+										moveHero(Direction.Down);
+										break;
+									case ArrowLeft:
+										moveHero(Direction.Left);
+										break;
+									case UnDo:
+										undoInGame();
+										stateChanged = true;
+										break;
+									case Fire:
+										fireHero();
+										break;
+									default:
+										break;
+								}
+							}
+							break;
 					}
-					break;
+					pressedButton = GameButtons.None;
 				}
-			pressedButton = GameButtons.None;
-			}
-		default:
-			break;
+			default:
+				break;
 		}
 
 		if (lTank.getStateChangeCount() > stateChangeCount) {
@@ -783,19 +790,22 @@ public class PlayScreen extends BaseScreen {
 	private void updatePaused() {
 		autoMoveActive = false;
 		if (!pausedMenu.isVisible()) {
-			fontAlpha=0.4f;
-			pausedMenu.addAction(sequence(visible(true), parallel(run(new Runnable() {
-				public void run() {
+			fontAlpha = 0.4f;
+			pausedMenu.addAction(sequence(visible(true), parallel(new Action() {
+				@Override
+				public boolean act(final float delta) {
 					saveGame();
+					return true;
 				}
-			}),fadeIn(0.2f))));
+
+			}, fadeIn(0.2f))));
 		}
 	}
 
 	private void updateDrowned() {
 		autoMoveActive = false;
 		if (!drownedMenu.isVisible()) {
-			fontAlpha=0.4f;
+			fontAlpha = 0.4f;
 			Sounds.drown.play();
 			drownedMenu.addAction(sequence(visible(true), fadeIn(0.1f)));
 			undoInProgress = true;
@@ -806,7 +816,7 @@ public class PlayScreen extends BaseScreen {
 	private void updateDead() {
 		autoMoveActive = false;
 		if (!deadMenu.isVisible()) {
-			fontAlpha=0.4f;
+			fontAlpha = 0.4f;
 			Sounds.dead.play();
 			deadMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 			undoInProgress = true;
@@ -817,92 +827,82 @@ public class PlayScreen extends BaseScreen {
 	private void updateWon() {
 		autoMoveActive = false;
 		if (!wonMenu.isVisible()) {
-			fontAlpha=0.4f;
-			wonMenu.addAction(sequence(visible(true), parallel(new Action() {
-				@Override
-				public boolean act(final float delta) {
-					deleteSave();
-					saveScores();
-					Sounds.won.play();
-					return true;
-				}
-			}, fadeIn(0.2f))));
+			fontAlpha = 0.4f;
+			wonMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+			deleteSave();
+			saveScores();
+			Sounds.won.play();
 		}
 	}
 
 	private void updateHint() {
 		autoMoveActive = false;
 		if (!hintMenu.isVisible()) {
-			fontAlpha=0.4f;
-			hintMenu.addAction(sequence(visible(true), parallel(new Action() {
-				@Override
-				public boolean act(final float delta) {
-					hintUsed=true;
-					GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintUsed);
-					return true;
-				}
-			}, fadeIn(0.2f))));
+			fontAlpha = 0.4f;
+			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+			hintUsed = true;
+			GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintUsed);
 		}
 	}
 
-	private void updateFadeOut(final float delta) {
+	private void updateFadeOut() {
 		if (!fadeOutActive) {
 			switch (gameState) {
-			case Menu:
-			case Quit:
-				fadeOutActive = true;
-				argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
-					@Override
-					public boolean act(final float delta) {
-						game.setScreen(new MenuScreen(game));
-						return false;
-					}
-				}));
-				break;
-			case Restart:
-				fadeOutActive = true;
-				argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
-					@Override
-					public boolean act(final float delta) {
-						game.setScreen(new PlayScreen(game, currentDclty, currentLevel));
-						return false;
-					}
-				}));
-				break;
-			case NextLevel:
-				fadeOutActive = true;
-				argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
-					@Override
-					public boolean act(final float delta) {
-						if (curUserSCORE.getMaxPlayedLevel(currentDclty) == (currentLevel + 1)) {
-							game.setScreen(new LevelScreen(game, true));
-						} else {
-							game.setScreen(new LevelScreen(game, false));
+				case Menu:
+				case Quit:
+					fadeOutActive = true;
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+						@Override
+						public boolean act(final float delta) {
+							game.setScreen(new MenuScreen(game));
+							return false;
 						}
-						return false;
-					}
-				}));
-				break;
-			default:
-				break;
+					}));
+					break;
+				case Restart:
+					fadeOutActive = true;
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+						@Override
+						public boolean act(final float delta) {
+							game.setScreen(new PlayScreen(game, currentDclty, currentLevel));
+							return false;
+						}
+					}));
+					break;
+				case NextLevel:
+					fadeOutActive = true;
+					argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+						@Override
+						public boolean act(final float delta) {
+							if (curUserSCORE.getMaxPlayedLevel(currentDclty) == (currentLevel + 1)) {
+								game.setScreen(new LevelScreen(game, true));
+							} else {
+								game.setScreen(new LevelScreen(game, false));
+							}
+							return false;
+						}
+					}));
+					break;
+				default:
+					break;
 			}
 		}
 	}
 
 	public void drawGameUI() {
-		if(!fadeOutActive) {
-		batch.begin();
-		g.drawString(Integer.toString(currentLevel), 82, 72, Color.GREEN, fontAlpha);
-		g.drawStringWrapped(lvlNmeFont, lVl.getLvlName(), 82, 241, Color.GREEN, fontAlpha);
-		g.drawString(lvlNmeFont, lVl.getLvlDclty().toString(), 80, 157, Color.GREEN, fontAlpha);
-		g.drawString(Integer.toString(lTank.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
-		g.drawString(Integer.toString(lTank.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
-		if ((gameState == GameState.Hint) && (hintMenu.getColor().a >= 0.7f)) {
-			g.drawStringWrapped(lvlNmeFont, lVl.getLvlHint(), 198, 234, 404, Color.GREEN, 1f);
-		}
-//		Rect bulletRect = ltank.getCurTankBullet().getCurBulletRect();
-//		batch.draw(bullet, bulletRect.left, bulletRect.top);
-		batch.end();
+		if (!fadeOutActive) {
+			batch.begin();
+			g.drawString(Integer.toString(currentLevel), 82, 72, Color.GREEN, fontAlpha);
+			g.drawStringWrapped(lvlNmeFont, lVl.getLvlName(), 82, 241, Color.GREEN, fontAlpha);
+			g.drawString(lvlNmeFont, lVl.getLvlDclty().toString(), 80, 157, Color.GREEN, fontAlpha);
+			g.drawString(Integer.toString(lTank.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
+			g.drawString(Integer.toString(lTank.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
+			if ((gameState == GameState.Hint) && (hintMenu.getColor().a >= 0.7f)) {
+				g.drawStringWrapped(lvlNmeFont, lVl.getLvlHint(), 198, 234, 404, Color.GREEN, 1f);
+			}
+			// Rect bulletRect = ltank.getCurTankBullet().getCurBulletRect();
+			// batch.draw(bullet, bulletRect.left, bulletRect.top);
+			batch.end();
 		}
 
 		g.setSr(sr);
@@ -919,7 +919,7 @@ public class PlayScreen extends BaseScreen {
 			undoCnt--;
 			lTank = null;
 			lTank = undoList[undoCnt].clone();
-			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream)|| (lTank.getCurTankState() == TankState.OnIce)) {
+			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
 				lTank = null;
 				lTank = undoList[undoCnt].clone();
@@ -944,7 +944,7 @@ public class PlayScreen extends BaseScreen {
 			undoCnt--;
 			lTank = null;
 			lTank = undoList[undoCnt].clone();
-			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream)|| (lTank.getCurTankState() == TankState.OnIce)) {
+			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
 				lTank = null;
 				lTank = undoList[undoCnt].clone();
@@ -991,47 +991,48 @@ public class PlayScreen extends BaseScreen {
 	public void resumeme() {
 		if (gameState == GameState.Paused) {
 			if (pausedMenu.isVisible()) {
-				fontAlpha=1f;
+				fontAlpha = 1f;
 				pausedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			}
 			gameState = GameState.Running;
 		} else if (gameState == GameState.Hint) {
 			if (hintMenu.isVisible()) {
-				fontAlpha=1f;
+				fontAlpha = 1f;
 				hintMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			}
 			gameState = GameState.Running;
 		}
 	}
 
-//	@Override
-//	public void pause() {
-//		fontAlpha=0.4f;
-//		pausedMenu.getColor().a=1f;;
-//		gameState = GameState.Paused;
-//		pausedMenu.setVisible(true);
-//		saveGame();
-//	}
-	
-	public boolean initAutoMove(Point clickPos){
-		Point dstPoint = PlayUtils.convertPixToPoint(clickPos);
+	@Override
+	public void pause() {
+		fontAlpha = 0.4f;
+		pausedMenu.getColor().a = 1f;
+		gameState = GameState.Paused;
+		pausedMenu.setVisible(true);
+		saveGame();
+	}
+
+	public boolean initAutoMove(final Point clickPos) {
+		final Point dstPoint = PlayUtils.convertPixToPoint(clickPos);
 		autoMovePath = pathFinder.findPath(lTank.getLvlPlayField(), lTank.getCurTankDirection(), lTank.getCurTankPos(), dstPoint);
-		if(autoMovePath.size()>0) {
-			autoMoveCounter=0;
+		if (autoMovePath.size() > 0) {
+			autoMoveCounter = 0;
 			setTouchEnabled(false);
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
-	public Direction getAutoMoveDirection(){
-		if(autoMoveCounter<autoMovePath.size()) {
+
+	public Direction getAutoMoveDirection() {
+		if (autoMoveCounter < autoMovePath.size()) {
 			return autoMovePath.get(autoMoveCounter++);
-		} else
+		} else {
 			return null;
+		}
 	}
-	
+
 	public void saveGame() {
 		final GameData gData = new GameData();
 		gData.setCurrentDclty(currentDclty);
@@ -1043,9 +1044,8 @@ public class PlayScreen extends BaseScreen {
 		gData.setStateChanged(stateChanged);
 		gData.setUndoCnt(undoCnt);
 		gData.setUndoList(undoList);
-
-		GameUtils.saveGame(gData);
-		GameUtils.saveGameOptions();
+		final SaveGame sg = new SaveGame(gData);
+		sg.start();
 	}
 
 	private void deleteSave() {
@@ -1056,13 +1056,13 @@ public class PlayScreen extends BaseScreen {
 	private void saveScores() {
 		GameUtils.saveUserScores(currentDclty, currentLevel, lTank.getTankMoves(), lTank.getTankShots(), hintUsed);
 		if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
-			if((currentLevel + 1) <=lvlCntPerDCLTY[currentDclty.ordinal()]) {
+			if ((currentLevel + 1) <= lvlCntPerDCLTY[currentDclty.ordinal()]) {
 				GameUtils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, false);
 				final SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel + 1);
 				st2.run();
 			} else {
-				Difficulty nxtDifficulty = PlayUtils.getDifficultyByIdx(currentDclty.ordinal()+1);
-				if(nxtDifficulty!=null) {
+				final Difficulty nxtDifficulty = PlayUtils.getDifficultyByIdx(currentDclty.ordinal() + 1);
+				if (nxtDifficulty != null) {
 					GameUtils.saveUserScores(nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty), 0, 0, false);
 					final SaveThumbs st2 = new SaveThumbs(g, nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty));
 					st2.run();
@@ -1074,28 +1074,28 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void setTouchEnabled(final boolean isEnabled) {
-			if (isEnabled) {
-				touchEnabled=true;
-				arrowButton_Up.setTouchable(Touchable.enabled);
-				arrowButton_Right.setTouchable(Touchable.enabled);
-				arrowButton_Down.setTouchable(Touchable.enabled);
-				arrowButton_Left.setTouchable(Touchable.enabled);
-				hintButton.setTouchable(Touchable.enabled);
-				undoButton.setTouchable(Touchable.enabled);
-				fireButton.setTouchable(Touchable.enabled);
-			} else {
-				dragListener.cancel();
-				touchEnabled=false;
-				arrowButton_Up.setTouchable(Touchable.disabled);
-				arrowButton_Right.setTouchable(Touchable.disabled);
-				arrowButton_Down.setTouchable(Touchable.disabled);
-				arrowButton_Left.setTouchable(Touchable.disabled);
-				hintButton.setTouchable(Touchable.disabled);
-				undoButton.setTouchable(Touchable.disabled);
-				fireButton.setTouchable(Touchable.disabled);
-			}
+		if (isEnabled) {
+			touchEnabled = true;
+			arrowButton_Up.setTouchable(Touchable.enabled);
+			arrowButton_Right.setTouchable(Touchable.enabled);
+			arrowButton_Down.setTouchable(Touchable.enabled);
+			arrowButton_Left.setTouchable(Touchable.enabled);
+			hintButton.setTouchable(Touchable.enabled);
+			undoButton.setTouchable(Touchable.enabled);
+			fireButton.setTouchable(Touchable.enabled);
+		} else {
+			dragListener.cancel();
+			touchEnabled = false;
+			arrowButton_Up.setTouchable(Touchable.disabled);
+			arrowButton_Right.setTouchable(Touchable.disabled);
+			arrowButton_Down.setTouchable(Touchable.disabled);
+			arrowButton_Left.setTouchable(Touchable.disabled);
+			hintButton.setTouchable(Touchable.disabled);
+			undoButton.setTouchable(Touchable.disabled);
+			fireButton.setTouchable(Touchable.disabled);
+		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (playAtlas != null) {

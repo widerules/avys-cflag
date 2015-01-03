@@ -32,18 +32,21 @@ public class UserScore {
 	}
 
 	public void updateScores(final Difficulty dclty, final LevelScore score) {
-		LevelScore existingScore = scores[dclty.ordinal()].get(score.getLevelNo() - 1);
-		if(score.getMoves()<existingScore.getMoves())
+		final LevelScore existingScore = scores[dclty.ordinal()].get(score.getLevelNo() - 1);
+		if (score.getMoves() < existingScore.getMoves()) {
 			score.setMoves(existingScore.getMoves());
-		if(score.getShots()<existingScore.getShots())
+		}
+		if (score.getShots() < existingScore.getShots()) {
 			score.setShots(existingScore.getShots());
-		if(!score.isHintUsed() && existingScore.isHintUsed())
+		}
+		if (!score.isHintUsed() && existingScore.isHintUsed()) {
 			score.setHintUsed(true);
+		}
 		scores[dclty.ordinal()].set(score.getLevelNo() - 1, score);
 	}
 
 	public LevelScore getScores(final Difficulty dclty, final int levelNo) {
-		if (levelNo < scores[dclty.ordinal()].size()) {
+		if (levelNo - 1< scores[dclty.ordinal()].size()) {
 			return scores[dclty.ordinal()].get(levelNo - 1);
 		} else {
 			return new LevelScore();

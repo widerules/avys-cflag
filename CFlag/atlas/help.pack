@@ -5,91 +5,91 @@ filter: Linear,Linear
 repeat: none
 page1
   rotate: false
-  xy: 1, 680
+  xy: 1, 688
+  size: 800, 320
+  orig: 800, 320
+  offset: 0, 0
+  index: -1
+page2
+  rotate: false
+  xy: 1, 366
   size: 800, 320
   orig: 800, 320
   offset: 0, 0
   index: -1
 page4
   rotate: false
-  xy: 1, 358
+  xy: 803, 688
   size: 800, 320
   orig: 800, 320
   offset: 0, 0
   index: -1
 page3
   rotate: false
-  xy: 803, 695
+  xy: 1, 59
   size: 737, 305
   orig: 737, 305
   offset: 0, 0
   index: -1
-page2
-  rotate: false
-  xy: 1, 68
-  size: 737, 288
-  orig: 737, 288
-  offset: 0, 0
-  index: -1
 page0
   rotate: false
-  xy: 803, 543
+  xy: 803, 536
   size: 756, 150
   orig: 756, 150
   offset: 0, 0
   index: -1
 ctf
   rotate: false
-  xy: 1, 1
+  xy: 1605, 943
   size: 400, 65
   orig: 400, 65
   offset: 0, 0
   index: -1
 title
   rotate: false
-  xy: 803, 485
+  xy: 1, 1
   size: 250, 56
   orig: 250, 56
   offset: 0, 0
   index: -1
 entername
   rotate: false
-  xy: 1542, 970
+  xy: 803, 504
   size: 200, 30
   orig: 200, 30
   offset: 0, 0
   index: -1
 back
   rotate: false
-  xy: 403, 16
+  xy: 1605, 891
   size: 150, 50
   orig: 150, 50
   offset: 0, 0
   index: -1
 play
   rotate: false
-  xy: 803, 433
+  xy: 253, 7
   size: 150, 50
   orig: 150, 50
   offset: 0, 0
   index: -1
 skip
   rotate: false
-  xy: 1055, 491
+  xy: 803, 452
   size: 150, 50
   orig: 150, 50
   offset: 0, 0
   index: -1
 textfieldbase
   rotate: false
-  xy: 1542, 928
+  xy: 1757, 901
   size: 160, 40
   orig: 160, 40
   offset: 0, 0
   index: -1
 cursor
   rotate: false
-  xy: 740, 316
+  xy: 740, 324
   size: 2, 40
   orig: 2, 40
   offset: 0, 0
