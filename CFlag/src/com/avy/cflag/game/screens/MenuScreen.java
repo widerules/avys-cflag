@@ -55,16 +55,16 @@ public class MenuScreen extends BackScreen {
 	private AnimActor hero;
 	private Image bullet;
 
-	public boolean ngamePressed = false;
-	public boolean lselectPressed = false;
-	public boolean resumePressed = false;
-	public boolean optionsPressed = false;
-	public boolean helpPressed = false;
-	public boolean quitPressed = false;
-	public boolean touchActive = false;
+	private boolean ngamePressed = false;
+	private boolean lselectPressed = false;
+	private boolean resumePressed = false;
+	private boolean optionsPressed = false;
+	private boolean helpPressed = false;
+	private boolean quitPressed = false;
+	private boolean touchActive = false;
 
-	public ParticleEffect explodeEffect;
-	public boolean explodeOn = false;
+	private ParticleEffect explodeEffect;
+	private boolean explodeOn = false;
 
 	public MenuScreen(final CFlagGame game) {
 		super(game, true, true, false);
@@ -122,7 +122,7 @@ public class MenuScreen extends BackScreen {
 		hero.addAction(new MenuHeroAction(hero, 0));
 
 		explodeEffect = new ParticleEffect();
-		explodeEffect.load(Gdx.files.internal("atlas/explosion.p"), menuAtlas);
+		explodeEffect.load(Gdx.files.internal("effects/explosion.p"), menuAtlas);
 		explodeEffect.setPosition(200, 100);
 		explodeEffect.start();
 

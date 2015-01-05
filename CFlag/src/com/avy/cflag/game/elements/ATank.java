@@ -5,6 +5,7 @@ import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.EnumStore.AntiTankState;
 import com.avy.cflag.game.EnumStore.BulletState;
 import com.avy.cflag.game.EnumStore.Direction;
+import com.avy.cflag.game.EnumStore.ExplodeState;
 import com.avy.cflag.game.EnumStore.PlayImages;
 import com.avy.cflag.game.PlayUtils;
 
@@ -107,6 +108,8 @@ public class ATank {
 									lvlBaseField[nxtBltPos.x][nxtBltPos.y] = PlayImages.Bridge;
 									lvlPlayField[nxtBltPos.x][nxtBltPos.y] = PlayImages.Bridge;
 								}
+								tankBullet.setExplodeState(ExplodeState.DrownOn);
+								tankBullet.setExplodePos(PlayUtils.getCenterPixPos(nxtBltPos));
 								tankBullet.setCurBulletState(BulletState.Exploded);
 								isMoved = true;
 								break;
@@ -129,6 +132,10 @@ public class ATank {
 								break;
 						}
 						if (isMoved) {
+							if(nxtPosObj!=PlayImages.Water) {
+							tankBullet.setExplodeState(ExplodeState.BlastMoveOn);
+							tankBullet.setExplodePos(PlayUtils.getCenterPixPos(curBltPos));
+							}
 							stateChanged = true;
 							if (curPosObj == curPosBaseObj) {
 								lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
@@ -180,6 +187,8 @@ public class ATank {
 							case Hero_D:
 							case Hero_L:
 							case Hero_R:
+								tankBullet.setExplodeState(ExplodeState.DieOn);
+								tankBullet.setExplodePos(PlayUtils.getCenterPixPos(nxtBltPos));
 								tankBullet.setCurBulletState(BulletState.HitHero);
 								break;
 							case DVillain_D:

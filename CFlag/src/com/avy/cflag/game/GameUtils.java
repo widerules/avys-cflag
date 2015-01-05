@@ -141,12 +141,16 @@ public class GameUtils {
 	}
 
 	public static void loadGame() {
-		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
-		final String jsonStr = pr.getString(SAVE_GAME_TAG_NAME);
-		final Json jsn = new Json();
-		if (jsonStr != "") {
-			savedGame = jsn.fromJson(GameData.class, jsonStr);
-		} else {
+		try {
+			final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
+			final String jsonStr = pr.getString(SAVE_GAME_TAG_NAME);
+			final Json jsn = new Json();
+			if (jsonStr != "") {
+				savedGame = jsn.fromJson(GameData.class, jsonStr);
+			} else {
+				savedGame = null;
+			}
+		} catch (Exception e) {
 			savedGame = null;
 		}
 	}

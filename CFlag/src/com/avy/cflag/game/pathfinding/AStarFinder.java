@@ -39,7 +39,7 @@ public class AStarFinder {
 		});
 	}
 
-	public boolean findPath(final GridCell startNode, final GridCell endNode, final NavigationGrid graph) {
+	public boolean findPath(final GridCell startNode, final GridCell endNode, final NavigationGrid graph) throws Exception {
 		if (jobId == Integer.MAX_VALUE) {
 			jobId = 0;
 		}
@@ -107,7 +107,7 @@ public class AStarFinder {
 		return false;
 	}
 
-	public float calculateManhattanDistance(final GridCell from, final GridCell to) {
+	public float calculateManhattanDistance(final GridCell from, final GridCell to) throws Exception{
 		final GridCell c1 = from, c2 = to;
 		return Math.abs(c2.x - c1.x) + Math.abs(c2.y - c1.y);
 	}

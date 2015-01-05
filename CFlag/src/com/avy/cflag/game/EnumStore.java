@@ -74,7 +74,11 @@ public class EnumStore {
 	}
 
 	public static enum BulletState {
-		Fired, InMotion, MoveTank, HitTank, HitHero, HitBrick, HitDTank, PassCrystal, MoveBlock, HitRMirror, EnterRMirror, ExitRMirror, MoveMirror, EnterMMirror, ExitMMirror, HitSteel, BlockExitsTunnel, Exploded
+		Fired, InMotion, MoveTank, HitTank, HitHero, HitBrick, HitDTank, PassCrystal, MoveBlock, HitRMirror, EnterRMirror, ExitRMirror, MoveMirror, EnterMMirror, ExitMMirror, HitSteel, BlockExitsTunnel, Exploded, Drowned
+	}
+
+	public static enum ExplodeState {
+		Off, BreakOn, Break, BlastOn, Blast, BlastMoveOn, BlastDown, BlastUp, BlastLeft, BlastRight, DrownOn, Drown, DrownDieOn, DrownDie, DieOn, Die, BurnOn, Burn 
 	}
 
 	public static enum TankState {

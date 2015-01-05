@@ -88,4 +88,8 @@ public class ShortMenu extends Group {
 			addActor(buttonGroup[i]);
 		}
 	}
+	
+	public Image getMenuBase() {
+		return menuBase;
+	}
 }

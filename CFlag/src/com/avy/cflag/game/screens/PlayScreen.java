@@ -1,5 +1,6 @@
 package com.avy.cflag.game.screens;
 
+import static com.avy.cflag.game.MemStore.acraMAP;
 import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
@@ -20,11 +21,13 @@ import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
 import com.avy.cflag.game.EnumStore.Difficulty;
 import com.avy.cflag.game.EnumStore.Direction;
+import com.avy.cflag.game.EnumStore.ExplodeState;
 import com.avy.cflag.game.EnumStore.GameState;
 import com.avy.cflag.game.EnumStore.PlayImages;
 import com.avy.cflag.game.EnumStore.TankState;
 import com.avy.cflag.game.GameUtils;
 import com.avy.cflag.game.PlayUtils;
+import com.avy.cflag.game.elements.Bullet;
 import com.avy.cflag.game.elements.LTank;
 import com.avy.cflag.game.elements.Level;
 import com.avy.cflag.game.elements.Platform;
@@ -34,10 +37,12 @@ import com.avy.cflag.game.pathfinding.PathFinder;
 import com.avy.cflag.game.utils.GameData;
 import com.avy.cflag.game.utils.SaveGame;
 import com.avy.cflag.game.utils.SaveThumbs;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -115,6 +120,12 @@ public class PlayScreen extends BaseScreen {
 	private Group wonMenu;
 	private Group hintMenu;
 
+	private ParticleEffect blastEffect;
+	private ParticleEffect breakEffect;
+	private ParticleEffect burnEffect;
+	private ParticleEffect splashEffect;
+	private Point effectStrtPos = new Point(0,0);
+
 	private float fontAlpha = 0.3f;
 
 	private boolean updateInProgress = false;
@@ -136,6 +147,7 @@ public class PlayScreen extends BaseScreen {
 		super(game, true, true, true);
 		initImages();
 		if (savedGame == null) {
+			acraMAP.put("LoadFromSave", "TiredButNotLoaded");
 			initVariables(curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty()));
 		} else {
 			currentDclty = savedGame.getCurrentDclty();
@@ -147,11 +159,14 @@ public class PlayScreen extends BaseScreen {
 			undoList = savedGame.getUndoList();
 			hintUsed = savedGame.isHintUsed();
 			stateChanged = savedGame.isStateChanged();
+			acraMAP.put("LoadFromSave", "Yes");
+			acraMAP.put("LevelInPlay", currentDclty.name() + " : " + currentLevel);
 		}
 	}
 
 	public PlayScreen(final CFlagGame game, final Difficulty selectedDclty, final int selectedLevel) {
 		super(game, true, true, true);
+		acraMAP.put("DirectLoad", "Yes");
 		initImages();
 		initVariables(selectedDclty, selectedLevel);
 	}
@@ -192,6 +207,7 @@ public class PlayScreen extends BaseScreen {
 		stateChanged = false;
 		aTankStateChanged = false;
 		swipeSensitivity = 120 - curUserOPTS.getSwipeSensitivity();
+		acraMAP.put("LevelInPlay", currentDclty.name() + " : " + currentLevel);
 	}
 
 	@Override
@@ -289,6 +305,26 @@ public class PlayScreen extends BaseScreen {
 		undoButton.setPosition(690, 293);
 		fireButton.setPosition(690, 390);
 
+		blastEffect = new ParticleEffect();
+		blastEffect.load(Gdx.files.internal("effects/blast.p"), playAtlas);
+		blastEffect.setPosition(0, 0);
+		blastEffect.start();
+
+		breakEffect = new ParticleEffect();
+		breakEffect.load(Gdx.files.internal("effects/break.p"), playAtlas);
+		breakEffect.setPosition(0, 0);
+		breakEffect.start();
+
+		burnEffect = new ParticleEffect();
+		burnEffect.load(Gdx.files.internal("effects/burn.p"), playAtlas);
+		burnEffect.setPosition(0, 0);
+		burnEffect.start();
+
+		splashEffect = new ParticleEffect();
+		splashEffect.load(Gdx.files.internal("effects/splash.p"), playAtlas);
+		splashEffect.setPosition(0, 0);
+		splashEffect.start();
+		
 		pltFrm = new Platform(midPanel);
 		pltFrm.paintPlatform(lTank);
 
@@ -607,7 +643,7 @@ public class PlayScreen extends BaseScreen {
 		}
 
 		if (lTank != null) {
-			drawGameUI();
+			drawGameUI(delta);
 		}
 	}
 
@@ -889,7 +925,7 @@ public class PlayScreen extends BaseScreen {
 		}
 	}
 
-	public void drawGameUI() {
+	public void drawGameUI(final float delta) {
 		if (!fadeOutActive) {
 			batch.begin();
 			g.drawString(Integer.toString(currentLevel), 82, 72, Color.GREEN, fontAlpha);
@@ -902,23 +938,169 @@ public class PlayScreen extends BaseScreen {
 			}
 			// Rect bulletRect = ltank.getCurTankBullet().getCurBulletRect();
 			// batch.draw(bullet, bulletRect.left, bulletRect.top);
+			
+			drawExplosions(delta, lTank.getCurTankBullet());
+			drawExplosions(delta, lTank.getaTankPrev().getTankBullet());
+			drawExplosions(delta, lTank.getaTankCur().getTankBullet());
 			batch.end();
 		}
 
 		g.setSr(sr);
 		sr.begin(ShapeType.Filled);
+
 		g.drawRectWithBorder(lTank.getCurTankBullet().getCurBulletRect(), Color.GREEN);
 		g.drawRectWithBorder(lTank.getaTankPrev().getTankBullet().getCurBulletRect(), Color.RED);
 		g.drawRectWithBorder(lTank.getaTankCur().getTankBullet().getCurBulletRect(), Color.RED);
 		sr.end();
+
+	}
+
+	public void drawExplosions(final float delta, Bullet bullet){
+		Image menuBase = ((ShortMenu)drownedMenu).getMenuBase();
+		switch (bullet.getExplodeState()) {
+			case BlastOn:
+				blastEffect.reset();
+				effectStrtPos = bullet.getExplodePos();
+				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				bullet.setExplodeState(ExplodeState.Blast);
+				break;
+			case Blast:
+				blastEffect.draw(batch, delta);
+				if (blastEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case BlastMoveOn:
+				blastEffect.reset();
+				effectStrtPos = bullet.getExplodePos();
+				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				bullet.setExplodeState(PlayUtils.getExplodeStateFromDirection(bullet.getCurBulletDirection()));
+				break;
+			case BlastUp:
+				effectStrtPos = new Point(effectStrtPos.x,effectStrtPos.y-2);
+				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				blastEffect.draw(batch, delta);
+				if (blastEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case BlastDown:
+				effectStrtPos = new Point(effectStrtPos.x,effectStrtPos.y+2);
+				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				blastEffect.draw(batch, delta);
+				if (blastEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case BlastLeft:
+				effectStrtPos = new Point(effectStrtPos.x-2,effectStrtPos.y);
+				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				blastEffect.draw(batch, delta);
+				if (blastEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case BlastRight:
+				effectStrtPos = new Point(effectStrtPos.x+2,effectStrtPos.y);
+				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				blastEffect.draw(batch, delta);
+				if (blastEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case BreakOn:
+				breakEffect.reset();
+				breakEffect.setPosition(bullet.getExplodePos().x, bullet.getExplodePos().y);
+				bullet.setExplodeState(ExplodeState.Break);
+				break;
+			case Break:
+				breakEffect.draw(batch, delta);
+				if (breakEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case DieOn:
+				burnEffect.reset();
+				effectStrtPos = bullet.getExplodePos();
+				burnEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				burnEffect.getEmitters().get(0).setContinuous(true);
+				burnEffect.getEmitters().get(1).setContinuous(true);
+				if(effectStrtPos.x>menuBase.getX() && effectStrtPos.x<menuBase.getX()+menuBase.getWidth() && 
+						effectStrtPos.y>menuBase.getY() && effectStrtPos.y<menuBase.getY()+menuBase.getHeight())
+					bullet.setExplodeState(ExplodeState.Off);
+				else
+					bullet.setExplodeState(ExplodeState.Die);
+				break;
+			case Die:
+				burnEffect.draw(batch, delta);
+				if (burnEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case BurnOn:
+				burnEffect.reset();
+				effectStrtPos = bullet.getExplodePos();
+				burnEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				burnEffect.getEmitters().get(0).setContinuous(false);
+				burnEffect.getEmitters().get(1).setContinuous(false);
+				bullet.setExplodeState(ExplodeState.Die);
+				break;
+			case Burn:
+				burnEffect.draw(batch, delta);
+				if (burnEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case DrownOn:
+				splashEffect.reset();
+				effectStrtPos = bullet.getExplodePos();
+				System.out.println("DrownOn");
+				splashEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				splashEffect.getEmitters().get(0).setContinuous(false);
+				bullet.setExplodeState(ExplodeState.Drown);
+				break;
+			case Drown:
+				Sounds.drown.play();
+				splashEffect.draw(batch, delta);
+				if (splashEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			case DrownDieOn:
+				splashEffect.reset();
+				effectStrtPos = bullet.getExplodePos();
+				System.out.println("DrownDieOn");
+				splashEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				splashEffect.getEmitters().get(0).setContinuous(true);
+				if(effectStrtPos.x>menuBase.getX() && effectStrtPos.x<menuBase.getX()+menuBase.getWidth() && 
+						effectStrtPos.y>menuBase.getY() && effectStrtPos.y<menuBase.getY()+menuBase.getHeight())
+					bullet.setExplodeState(ExplodeState.Off);
+				else
+					bullet.setExplodeState(ExplodeState.DrownDie);
+				break;
+			case DrownDie:
+				splashEffect.draw(batch, delta);
+				if (splashEffect.isComplete()) {
+					bullet.setExplodeState(ExplodeState.Off);
+				}
+				break;
+			default:
+				break;
+		}
 	}
 
 	public void undo() {
 		setTouchEnabled(true);
 		if (undoCnt > 0) {
+			resetEffects();			
 			undoCnt--;
 			lTank = null;
 			lTank = undoList[undoCnt].clone();
+			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
+				undoCnt--;
+				lTank = null;
+				lTank = undoList[undoCnt].clone();
+			}
 			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
 				lTank = null;
@@ -941,9 +1123,15 @@ public class PlayScreen extends BaseScreen {
 
 	public void undoInGame() {
 		if (undoCnt > 0) {
+			resetEffects();			
 			undoCnt--;
 			lTank = null;
 			lTank = undoList[undoCnt].clone();
+			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
+				undoCnt--;
+				lTank = null;
+				lTank = undoList[undoCnt].clone();
+			}
 			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
 				lTank = null;
@@ -1072,6 +1260,15 @@ public class PlayScreen extends BaseScreen {
 			}
 		}
 	}
+	
+	private void resetEffects() {
+		lTank.getaTankCur().getTankBullet().setExplodeState(ExplodeState.Off);
+		lTank.getaTankPrev().getTankBullet().setExplodeState(ExplodeState.Off);
+		lTank.getCurTankBullet().setExplodeState(ExplodeState.Off);
+		burnEffect.reset();
+		blastEffect.reset();
+		breakEffect.reset();
+	}
 
 	private void setTouchEnabled(final boolean isEnabled) {
 		if (isEnabled) {
@@ -1111,6 +1308,8 @@ public class PlayScreen extends BaseScreen {
 		pltFrm = null;
 		lTank = null;
 		undoList = null;
+		blastEffect.reset();
+		blastEffect.dispose();
 		System.gc();
 		super.dispose();
 	}
