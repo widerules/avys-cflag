@@ -6,6 +6,7 @@ import java.util.List;
 import com.avy.cflag.base.Point;
 import com.avy.cflag.game.EnumStore.Direction;
 import com.avy.cflag.game.EnumStore.PlayImages;
+import com.avy.cflag.game.MemStore;
 import com.avy.cflag.game.PlayUtils;
 
 public class PathFinder {
@@ -44,8 +45,14 @@ public class PathFinder {
 		final GridCell strtCell = navGrid.getCell(strtPos.x, strtPos.y);
 		final GridCell dstCell = navGrid.getCell(dstPos.x, dstPos.y);
 
-		if (finder.findPath(strtCell, dstCell, navGrid)) {
-			outPut = backtrace(strtCell, dstCell, strtDirection);
+		try {
+			if (finder.findPath(strtCell, dstCell, navGrid)) {
+				outPut = backtrace(strtCell, dstCell, strtDirection);
+			}
+		} catch (Exception e) {
+			MemStore.acraMAP.put("FindPathStrtCell", strtCell.x + " : " + strtCell.y);
+			MemStore.acraMAP.put("FindPathEndCell", dstCell.x + " : " + dstCell.y);
+			throw new RuntimeException("Error in Path Finder");
 		}
 
 		return (ArrayList<Direction>) outPut;

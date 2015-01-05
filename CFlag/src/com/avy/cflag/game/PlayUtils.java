@@ -7,6 +7,7 @@ import static com.avy.cflag.game.MemStore.pltfrmStartPOS;
 import com.avy.cflag.base.Point;
 import com.avy.cflag.game.EnumStore.Difficulty;
 import com.avy.cflag.game.EnumStore.Direction;
+import com.avy.cflag.game.EnumStore.ExplodeState;
 import com.avy.cflag.game.EnumStore.PlayImages;
 
 public class PlayUtils {
@@ -75,6 +76,25 @@ public class PlayUtils {
 		return null;
 	}
 
+	public static ExplodeState getExplodeStateFromDirection(Direction drc){
+		ExplodeState out=ExplodeState.Off;
+		switch (drc) {
+			case Up:
+				out= ExplodeState.BlastUp;
+				break;
+			case Right:
+				out= ExplodeState.BlastRight;
+				break;
+			case Down:
+				out= ExplodeState.BlastDown;
+				break;
+			case Left:
+				out= ExplodeState.BlastLeft;
+				break;
+		}
+		return out;
+	}
+	
 	public static PlayImages turnTank(final Direction inDirection) {
 		PlayImages outTank = PlayImages.Hero_U;
 		switch (inDirection) {
@@ -223,13 +243,6 @@ public class PlayUtils {
 
 	public static void printMatrix(final PlayImages[][] input) {
 		final int len = 10;
-		// for (PlayImages[] playImages : input) {
-		// for (PlayImages playImages2 : playImages) {
-		// if(playImages2.name().length()>len)
-		// len=playImages2.name().length();
-		// }
-		// }
-
 		System.out.println("------------------------------");
 		String hdr = "                     ".substring(0, len) + " | ";
 

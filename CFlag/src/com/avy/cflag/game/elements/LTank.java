@@ -10,6 +10,7 @@ import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.EnumStore.AntiTankState;
 import com.avy.cflag.game.EnumStore.BulletState;
 import com.avy.cflag.game.EnumStore.Direction;
+import com.avy.cflag.game.EnumStore.ExplodeState;
 import com.avy.cflag.game.EnumStore.FirePathState;
 import com.avy.cflag.game.EnumStore.PlayImages;
 import com.avy.cflag.game.EnumStore.TankState;
@@ -177,6 +178,9 @@ public class LTank {
 							}
 						} else if (nxtPosObj == PlayImages.Water) {
 							tankStateTime = 0;
+							curTankBullet.setExplodeState(ExplodeState.DrownDieOn);
+							curTankBullet.setExplodePos(PlayUtils.getCenterPixPos(nxtTankPos));
+							lvlPlayField[nxtTankPos.x][nxtTankPos.y] = nxtPosObj;
 							nxtTankState = TankState.OnWater;
 							stateChangedForUndo = true;
 						} else if (nxtPosObj == PlayImages.Flag) {
@@ -461,6 +465,8 @@ public class LTank {
 									lvlBaseField[nxtBltPos.x][nxtBltPos.y] = PlayImages.Bridge;
 									lvlPlayField[nxtBltPos.x][nxtBltPos.y] = PlayImages.Bridge;
 								}
+								curTankBullet.setExplodeState(ExplodeState.DrownOn);
+								curTankBullet.setExplodePos(PlayUtils.getCenterPixPos(nxtBltPos));
 								curTankBullet.setCurBulletState(BulletState.Exploded);
 								isMoved = true;
 								break;
@@ -483,6 +489,10 @@ public class LTank {
 								break;
 						}
 						if (isMoved) {
+							if(nxtPosObj!=PlayImages.Water) {
+								curTankBullet.setExplodeState(ExplodeState.BlastMoveOn);
+								curTankBullet.setExplodePos(PlayUtils.getCenterPixPos(curBltPos));
+							}
 							stateChanged = true;
 							if (curPosObj == curPosBaseObj) {
 								lvlBaseField[curBltPos.x][curBltPos.y] = PlayImages.Grass;
@@ -534,6 +544,8 @@ public class LTank {
 							case Hero_D:
 							case Hero_L:
 							case Hero_R:
+								curTankBullet.setExplodeState(ExplodeState.DieOn);
+								curTankBullet.setExplodePos(PlayUtils.getCenterPixPos(nxtBltPos));
 								curTankBullet.setCurBulletState(BulletState.Exploded);
 								curTankState = TankState.ShotDead;
 								break;
