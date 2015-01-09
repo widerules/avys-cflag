@@ -862,6 +862,7 @@ public class PlayScreen extends BaseScreen {
 
 	private void updateWon() {
 		autoMoveActive = false;
+		pltFrm.animateHero();
 		if (!wonMenu.isVisible()) {
 			fontAlpha = 0.4f;
 			wonMenu.addAction(sequence(visible(true), fadeIn(0.2f)));

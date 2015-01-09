@@ -1,8 +1,12 @@
 package com.avy.cflag.game.elements;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.hide;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.rotateBy;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.show;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -38,6 +42,7 @@ public class Platform {
 	private AnimActor[][] topActor;
 
 	private boolean firstRun;
+	private AnimActor heroActor;
 
 	private int villainCount;
 	private int mmirrorCount;
@@ -78,6 +83,7 @@ public class Platform {
 		curDelayCount = 0;
 		firstRun = true;
 		heroReady = false;
+		heroActor = null;
 	}
 
 	public Platform(final Point pltfrmStrt, final Point pltfrmLen) {
@@ -208,14 +214,16 @@ public class Platform {
 				} else {
 					curPos.x = curPos.x + playImageOrigLen.x;
 				}
-				if (((topImage == PlayImages.Hero_U) || (topImage == PlayImages.Hero_R) || (topImage == PlayImages.Hero_D) || (topImage == PlayImages.Hero_L)) && firstRun) {
-					topActor[i][j].setOrigin(topActor[i][j].getWidth() / 2, topActor[i][j].getHeight() / 2);
-					final float x = topActor[i][j].getX();
-					final float y = topActor[i][j].getY();
+				if (((topImage == PlayImages.Hero_U) || (topImage == PlayImages.Hero_R) || (topImage == PlayImages.Hero_D) || (topImage == PlayImages.Hero_L))) {
+					heroActor = topActor[i][j];
+					if(firstRun) {
+						heroActor.setOrigin(heroActor.getWidth() / 2, heroActor.getHeight() / 2);
+					final float x = heroActor.getX();
+					final float y = heroActor.getY();
 
 					final SequenceAction sequence = new SequenceAction();
-					sequence.addAction(rotateBy(350 - ((((x + topActor[i][j].getWidth()) / 5) * 10) % 360)));
-					for (int k = -(int) topActor[i][j].getWidth(); k < (x + 5); k = k + 5) {
+					sequence.addAction(rotateBy(350 - ((((x + heroActor.getWidth()) / 5) * 10) % 360)));
+					for (int k = -(int) heroActor.getWidth(); k < (x + 5); k = k + 5) {
 						sequence.addAction(parallel(moveTo(k, y), rotateBy(10)));
 					}
 					sequence.addAction(new Action() {
@@ -225,9 +233,12 @@ public class Platform {
 							return false;
 						}
 					});
-					topActor[i][j].addAction(sequence);
+					heroActor.addAction(sequence);
 					firstRun = false;
+					} 
 				}
+				
+			
 			}
 			if (playImageOrigLen != PlayImageScaledLen) {
 				curPos.x = 0;
@@ -255,5 +266,9 @@ public class Platform {
 			curPos.x = pltfrmStrt.x;
 			curPos.y = curPos.y + PlayImageScaledLen.y;
 		}
+	}
+	
+	public void animateHero(){
+		heroActor.addAction(forever(sequence(hide(),delay(0.2f),show())));
 	}
 }
