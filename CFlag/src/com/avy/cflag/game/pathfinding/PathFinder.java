@@ -27,7 +27,7 @@ public class PathFinder {
 		for (int i = 0; i < lvlPlayField[0].length; i++) {
 			for (int j = 0; j < lvlPlayField.length; j++) {
 				boolean isWalkable = false;
-				if ((lvlPlayField[i][j] == PlayImages.Grass) || lvlPlayField[i][j].name().startsWith("Hero")) {
+				if ((lvlPlayField[i][j] == PlayImages.Grass) || lvlPlayField[i][j].name().startsWith("Hero")||(lvlPlayField[i][j] == PlayImages.Bridge)||(lvlPlayField[i][j] == PlayImages.Flag)) {
 					isWalkable = true;
 				}
 				final GridCell cell = new GridCell(i, j, isWalkable);
