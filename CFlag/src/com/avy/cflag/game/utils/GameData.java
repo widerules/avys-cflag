@@ -2,7 +2,7 @@ package com.avy.cflag.game.utils;
 
 import com.avy.cflag.game.EnumStore.Difficulty;
 import com.avy.cflag.game.EnumStore.GameState;
-import com.avy.cflag.game.elements.LTank;
+import com.avy.cflag.game.elements.Hero;
 import com.avy.cflag.game.elements.Level;
 
 public class GameData {
@@ -10,8 +10,8 @@ public class GameData {
 	private int currentLevel;
 	private GameState gameState;
 	private Level lvl;
-	private LTank ltank;
-	private LTank undoList[];
+	private Hero ltank;
+	private UnDoData undoList[];
 	private int undoCnt;
 	private boolean hintUsed;
 	private boolean stateChanged;
@@ -48,19 +48,19 @@ public class GameData {
 		this.lvl = lvl;
 	}
 
-	public LTank getLtank() {
+	public Hero getLtank() {
 		return ltank;
 	}
 
-	public void setLtank(final LTank ltank) {
+	public void setLtank(final Hero ltank) {
 		this.ltank = ltank;
 	}
 
-	public LTank[] getUndoList() {
+	public UnDoData[] getUndoList() {
 		return undoList;
 	}
 
-	public void setUndoList(final LTank[] undoList) {
+	public void setUndoList(final UnDoData[] undoList) {
 		this.undoList = undoList;
 	}
 

@@ -155,7 +155,7 @@ public class Platform {
 		curDelayCount++;
 	}
 
-	public void paintPlatform(final LTank lTank) {
+	public void paintPlatform(final Hero lTank) {
 		villainCount = 0;
 		mmirrorCount = 0;
 		rmirrorCount = 0;
@@ -250,7 +250,7 @@ public class Platform {
 		}
 	}
 
-	public void paintThumbnailPlatform(final Graphics g, final PixelMap dstPixMap, final PixelMap srcPixMap, final LTank lTank) {
+	public void paintThumbnailPlatform(final Graphics g, final PixelMap dstPixMap, final PixelMap srcPixMap, final Hero lTank) {
 		final PlayImages lvlPlayField[][] = lTank.getLvlPlayField();
 		final Point curPos = new Point(pltfrmStrt.x, pltfrmStrt.y);
 		for (int i = 0; i < MemStore.lvlFieldLEN.x; i++) {
