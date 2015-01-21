@@ -30,7 +30,7 @@ public class Bullet {
 		final Bullet newBullet = new Bullet();
 		newBullet.curBulletDirection = curBulletDirection;
 		newBullet.curBulletPos = curBulletPos;
-		newBullet.curBulletRect = curBulletRect;
+//		newBullet.curBulletRect = curBulletRect;
 		newBullet.curBulletState = curBulletState;
 		newBullet.explodePos = explodePos;
 		newBullet.explodeState = ExplodeState.Off;

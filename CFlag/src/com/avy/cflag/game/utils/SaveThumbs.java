@@ -5,7 +5,7 @@ import com.avy.cflag.base.PixelMap;
 import com.avy.cflag.base.Point;
 import com.avy.cflag.game.CFlagGame;
 import com.avy.cflag.game.EnumStore.Difficulty;
-import com.avy.cflag.game.elements.LTank;
+import com.avy.cflag.game.elements.Hero;
 import com.avy.cflag.game.elements.Level;
 import com.avy.cflag.game.elements.Platform;
 import com.badlogic.gdx.Gdx;
@@ -72,7 +72,7 @@ public class SaveThumbs implements Runnable {
 			dstPixMap.drawPixmap(srcPixMap, new Point(grass.getRegionX(), grass.getRegionY()), new Point(grass.getRegionWidth(), grass.getRegionHeight()), new Point(2, 2), new Point(96, 96));
 			final Level lvl = new Level();
 			lvl.loadLevel(levelDclty, levelNo);
-			final LTank lTank = new LTank(lvl);
+			final Hero lTank = new Hero(lvl);
 			final Platform pf = new Platform(new Point(2, 2), new Point(96, 96));
 			pf.paintThumbnailPlatform(g, dstPixMap, srcPixMap, lTank);
 			PixmapIO.writeCIM(Gdx.files.external("Android/data/" + CFlagGame.packageName + "/thumbs/" + levelDclty.name() + levelNo + ".png"), dstPixMap);

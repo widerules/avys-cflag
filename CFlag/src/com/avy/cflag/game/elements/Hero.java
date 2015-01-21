@@ -16,20 +16,16 @@ import com.avy.cflag.game.EnumStore.PlayImages;
 import com.avy.cflag.game.EnumStore.TankState;
 import com.avy.cflag.game.PlayUtils;
 
-public class LTank {
+public class Hero{
 
 	private Point curTankPos;
 	private Direction curTankDirection;
-	private Bullet curTankBullet;
-	private PlayImages[][] lvlBaseField;
-	private PlayImages[][] lvlPlayField;
+	private String lvlBaseFieldStr;
+	private String lvlPlayFieldStr;
 
 	private TankState curTankState;
 	private TankState storedTankState;
 	private int tankStateTime;
-
-	private ATank aTankPrev;
-	private ATank aTankCur;
 
 	private int tankMoves;
 	private int tankShots;
@@ -39,10 +35,31 @@ public class LTank {
 	private int undoChangeCount;
 	private boolean uiStateChanged;
 
-	public LTank() {
+	private Villain aTankPrev;
+	private Villain aTankCur;
+	private Bullet curTankBullet;
+	private PlayImages[][] lvlBaseField;
+	private PlayImages[][] lvlPlayField;
+
+	public Hero() {
+		lvlPlayField = null;
+		lvlBaseField = null;
+		curTankPos = new Point(0,0);
+		curTankDirection = Direction.Up;
+		curTankState = TankState.Moving;
+		tankStateTime = 0;
+		curTankBullet = new Bullet();
+		aTankPrev = new Villain();
+		aTankCur = new Villain();
+		storedTankState = TankState.Moving;
+		tankMoves = 0;
+		tankShots = 0;
+		curPosOnIce = new Point(0, 0);
+		undoChangeCount = 0;
+		uiStateChanged = false;
 	};
 
-	public LTank(final Level inLvl) {
+	public Hero(final Level inLvl) {
 		lvlPlayField = inLvl.getLvlPlayField();
 		lvlBaseField = inLvl.getLvlBaseField();
 		curTankPos = inLvl.getTankOrigPos();
@@ -50,8 +67,8 @@ public class LTank {
 		curTankState = TankState.Moving;
 		tankStateTime = 0;
 		curTankBullet = new Bullet();
-		aTankPrev = new ATank();
-		aTankCur = new ATank();
+		aTankPrev = new Villain();
+		aTankCur = new Villain();
 		storedTankState = TankState.Moving;
 		tankMoves = 0;
 		tankShots = 0;
@@ -59,35 +76,7 @@ public class LTank {
 		undoChangeCount = 0;
 		uiStateChanged = false;
 	}
-
-	@Override
-	public LTank clone() {
-		final LTank newLTank = new LTank();
-		newLTank.curTankDirection = curTankDirection;
-		newLTank.curTankPos = curTankPos;
-		newLTank.curTankState = curTankState;
-
-		newLTank.lvlBaseField = new PlayImages[lvlFieldLEN.x][lvlFieldLEN.y];
-		newLTank.lvlPlayField = new PlayImages[lvlFieldLEN.x][lvlFieldLEN.y];
-
-		for (int x = 0; x < lvlFieldLEN.x; x++) {
-			for (int y = 0; y < lvlFieldLEN.y; y++) {
-				newLTank.lvlBaseField[x][y] = lvlBaseField[x][y];
-				newLTank.lvlPlayField[x][y] = lvlPlayField[x][y];
-			}
-		}
-
-		newLTank.storedTankState = storedTankState;
-		newLTank.tankMoves = tankMoves;
-		newLTank.tankShots = tankShots;
-		newLTank.curPosOnIce = curPosOnIce;
-		newLTank.tankStateTime = tankStateTime;
-		newLTank.aTankCur = aTankCur.clone();
-		newLTank.aTankPrev = aTankPrev.clone();
-		newLTank.curTankBullet = curTankBullet.clone();
-		return newLTank;
-	}
-
+	
 	public boolean turnTank(final Direction turnDirection) {
 		boolean turnTank = false;
 		final PlayImages curTankObj = lvlPlayField[curTankPos.x][curTankPos.y];
@@ -707,7 +696,7 @@ public class LTank {
 		return nxtPoint;
 	}
 
-	public boolean isPosOnFire(final ATank aTank, final Point curPos) {
+	public boolean isPosOnFire(final Villain aTank, final Point curPos) {
 		boolean onFire = false;
 		int tankRightLen = 100;
 		int tankLeftLen = 100;
@@ -961,19 +950,19 @@ public class LTank {
 		this.curTankBullet = curTankBullet;
 	}
 
-	public ATank getaTankPrev() {
+	public Villain getaTankPrev() {
 		return aTankPrev;
 	}
 
-	public void setaTankPrev(final ATank aTankPrev) {
+	public void setaTankPrev(final Villain aTankPrev) {
 		this.aTankPrev = aTankPrev;
 	}
 
-	public ATank getaTankCur() {
+	public Villain getaTankCur() {
 		return aTankCur;
 	}
 
-	public void setaTankCur(final ATank aTankCur) {
+	public void setaTankCur(final Villain aTankCur) {
 		this.aTankCur = aTankCur;
 	}
 
@@ -1003,5 +992,49 @@ public class LTank {
 
 	public void setCurPosOnIce(final Point curPosOnIce) {
 		this.curPosOnIce = curPosOnIce;
+	}
+	
+	public void setTankStateTime(int tankStateTime) {
+		this.tankStateTime = tankStateTime;
+	}
+
+	public void setStoredTankState(TankState storedTankState) {
+		this.storedTankState = storedTankState;
+	}
+	
+	public void setUndoChangeCount(int undoChangeCount) {
+		this.undoChangeCount = undoChangeCount;
+	}
+
+	public String getLvlBaseFieldStr() {
+		return lvlBaseFieldStr;
+	}
+
+	public void setLvlBaseFieldStr(String lvlBaseFieldStr) {
+		this.lvlBaseFieldStr = lvlBaseFieldStr;
+	}
+
+	public String getLvlPlayFieldStr() {
+		return lvlPlayFieldStr;
+	}
+
+	public void setLvlPlayFieldStr(String lvlPlayFieldStr) {
+		this.lvlPlayFieldStr = lvlPlayFieldStr;
+	}
+
+	public TankState getStoredTankState() {
+		return storedTankState;
+	}
+
+	public int getTankStateTime() {
+		return tankStateTime;
+	}
+
+	public Point getCurPosOnIce() {
+		return curPosOnIce;
+	}
+
+	public int getUndoChangeCount() {
+		return undoChangeCount;
 	}
 }

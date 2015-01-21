@@ -28,7 +28,7 @@ import com.avy.cflag.game.EnumStore.TankState;
 import com.avy.cflag.game.GameUtils;
 import com.avy.cflag.game.PlayUtils;
 import com.avy.cflag.game.elements.Bullet;
-import com.avy.cflag.game.elements.LTank;
+import com.avy.cflag.game.elements.Hero;
 import com.avy.cflag.game.elements.Level;
 import com.avy.cflag.game.elements.Platform;
 import com.avy.cflag.game.graphics.HintMenu;
@@ -37,6 +37,7 @@ import com.avy.cflag.game.pathfinding.PathFinder;
 import com.avy.cflag.game.utils.GameData;
 import com.avy.cflag.game.utils.SaveGame;
 import com.avy.cflag.game.utils.SaveThumbs;
+import com.avy.cflag.game.utils.UnDoData;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
@@ -67,8 +68,8 @@ public class PlayScreen extends BaseScreen {
 	private GameState gameState;
 	private Level lVl;
 	private Platform pltFrm;
-	private LTank lTank;
-	private LTank undoList[];
+	private Hero hero;
+	private UnDoData undoList[];
 	private int undoCnt;
 
 	boolean hintUsed;
@@ -154,7 +155,7 @@ public class PlayScreen extends BaseScreen {
 			currentLevel = savedGame.getCurrentLevel();
 			gameState = GameState.Ready;
 			lVl = savedGame.getLvl();
-			lTank = savedGame.getLtank();
+			hero = savedGame.getLtank();
 			undoCnt = savedGame.getUndoCnt();
 			undoList = savedGame.getUndoList();
 			hintUsed = savedGame.isHintUsed();
@@ -197,11 +198,12 @@ public class PlayScreen extends BaseScreen {
 		lVl = new Level();
 		lVl.loadLevel(currentDclty, currentLevel);
 
-		lTank = new LTank(lVl);
+		hero = new Hero(lVl);
 
 		undoCnt = 0;
-		undoList = new LTank[undoCnt + 1];
-		undoList[undoCnt] = lTank.clone();
+		undoList = new UnDoData[undoCnt + 1];
+		undoList[undoCnt]=new UnDoData();
+		undoList[undoCnt].shrinkData(hero);
 
 		hintUsed = false;
 		stateChanged = false;
@@ -326,7 +328,7 @@ public class PlayScreen extends BaseScreen {
 		splashEffect.start();
 		
 		pltFrm = new Platform(midPanel);
-		pltFrm.paintPlatform(lTank);
+		pltFrm.paintPlatform(hero);
 
 		argbFull.addAction(sequence(fadeOut(1f), visible(false), new Action() {
 			@Override
@@ -634,7 +636,7 @@ public class PlayScreen extends BaseScreen {
 			update(delta);
 		}
 		if (stateChanged || aTankStateChanged) {
-			pltFrm.paintPlatform(lTank);
+			pltFrm.paintPlatform(hero);
 			stateChanged = false;
 			aTankStateChanged = false;
 		}
@@ -642,7 +644,7 @@ public class PlayScreen extends BaseScreen {
 			pltFrm.randomizeAnims();
 		}
 
-		if (lTank != null) {
+		if (hero != null) {
 			drawGameUI(delta);
 		}
 	}
@@ -690,24 +692,24 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void updateRunning() {
-		final int stateChangeCount = lTank.getStateChangeCount();
+		final int stateChangeCount = hero.getStateChangeCount();
 
-		switch (lTank.getCurTankState()) {
+		switch (hero.getCurTankState()) {
 			case PrevATankFired:
-				aTankStateChanged = lTank.fireATankPrev();
+				aTankStateChanged = hero.fireATankPrev();
 				break;
 			case CurATankFired:
 				undoInProgress = true;
-				aTankStateChanged = lTank.fireATankCur();
+				aTankStateChanged = hero.fireATankCur();
 				break;
 			case BothATankFired:
 				undoInProgress = true;
-				aTankStateChanged = lTank.fireBothATanks();
+				aTankStateChanged = hero.fireBothATanks();
 				break;
 			case OnStream:
 				setTouchEnabled(false);
 				undoButton.setTouchable(Touchable.enabled);
-				lTank.moveTank(lTank.getCurTankDirection());
+				hero.moveTank(hero.getCurTankDirection());
 				stateChanged = true;
 				if (pressedButton == GameButtons.UnDo) {
 					undoInGame();
@@ -717,16 +719,16 @@ public class PlayScreen extends BaseScreen {
 				break;
 			case OnIce:
 				setTouchEnabled(false);
-				lTank.moveTank(lTank.getCurTankDirection());
+				hero.moveTank(hero.getCurTankDirection());
 				stateChanged = true;
 				break;
 			case ObjOnIce:
 				setTouchEnabled(false);
-				lTank.slideObjOnIce();
+				hero.slideObjOnIce();
 				stateChanged = true;
 				break;
 			case OnTunnel:
-				lTank.moveTank(lTank.getCurTankDirection());
+				hero.moveTank(hero.getCurTankDirection());
 				stateChanged = true;
 				break;
 			case OnWater:
@@ -741,7 +743,7 @@ public class PlayScreen extends BaseScreen {
 				gameState = GameState.Won;
 				break;
 			case Firing:
-				lTank.fireTank();
+				hero.fireTank();
 				break;
 			case Moving:
 			case Blocked:
@@ -815,11 +817,12 @@ public class PlayScreen extends BaseScreen {
 				break;
 		}
 
-		if (lTank.getStateChangeCount() > stateChangeCount) {
+		if (hero.getStateChangeCount() > stateChangeCount) {
 			stateChanged = true;
 			undoCnt++;
-			undoList = (LTank[]) PlayUtils.resizeArray(undoList, undoCnt + 1);
-			undoList[undoCnt] = lTank.clone();
+			undoList = (UnDoData[]) PlayUtils.resizeArray(undoList, undoCnt + 1);
+			undoList[undoCnt]=new UnDoData();
+			undoList[undoCnt].shrinkData(hero);
 		}
 	}
 
@@ -932,26 +935,26 @@ public class PlayScreen extends BaseScreen {
 			g.drawString(Integer.toString(currentLevel), 82, 72, Color.GREEN, fontAlpha);
 			g.drawStringWrapped(lvlNmeFont, lVl.getLvlName(), 82, 241, Color.GREEN, fontAlpha);
 			g.drawString(lvlNmeFont, lVl.getLvlDclty().toString(), 80, 157, Color.GREEN, fontAlpha);
-			g.drawString(Integer.toString(lTank.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
-			g.drawString(Integer.toString(lTank.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
+			g.drawString(Integer.toString(hero.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
+			g.drawString(Integer.toString(hero.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
 			if ((gameState == GameState.Hint) && (hintMenu.getColor().a >= 0.7f)) {
 				g.drawStringWrapped(lvlNmeFont, lVl.getLvlHint(), 198, 234, 404, Color.GREEN, 1f);
 			}
 			// Rect bulletRect = ltank.getCurTankBullet().getCurBulletRect();
 			// batch.draw(bullet, bulletRect.left, bulletRect.top);
 			
-			drawExplosions(delta, lTank.getCurTankBullet());
-			drawExplosions(delta, lTank.getaTankPrev().getTankBullet());
-			drawExplosions(delta, lTank.getaTankCur().getTankBullet());
+			drawExplosions(delta, hero.getCurTankBullet());
+			drawExplosions(delta, hero.getaTankPrev().getTankBullet());
+			drawExplosions(delta, hero.getaTankCur().getTankBullet());
 			batch.end();
 		}
 
 		g.setSr(sr);
 		sr.begin(ShapeType.Filled);
 
-		g.drawRectWithBorder(lTank.getCurTankBullet().getCurBulletRect(), Color.GREEN);
-		g.drawRectWithBorder(lTank.getaTankPrev().getTankBullet().getCurBulletRect(), Color.RED);
-		g.drawRectWithBorder(lTank.getaTankCur().getTankBullet().getCurBulletRect(), Color.RED);
+		g.drawRectWithBorder(hero.getCurTankBullet().getCurBulletRect(), Color.GREEN);
+		g.drawRectWithBorder(hero.getaTankPrev().getTankBullet().getCurBulletRect(), Color.RED);
+		g.drawRectWithBorder(hero.getaTankCur().getTankBullet().getCurBulletRect(), Color.RED);
 		sr.end();
 
 	}
@@ -1095,17 +1098,17 @@ public class PlayScreen extends BaseScreen {
 		if (undoCnt > 0) {
 			resetEffects();			
 			undoCnt--;
-			lTank = null;
-			lTank = undoList[undoCnt].clone();
-			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
+			hero = null;
+			hero = undoList[undoCnt].expandData();
+			if ((hero.getCurTankState() == TankState.OnTunnel) || (hero.getCurTankState() == TankState.OnStream) || (hero.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
-				lTank = null;
-				lTank = undoList[undoCnt].clone();
+				hero = null;
+				hero = undoList[undoCnt].expandData();
 			}
-			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
+			if ((hero.getCurTankState() == TankState.OnTunnel) || (hero.getCurTankState() == TankState.OnStream) || (hero.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
-				lTank = null;
-				lTank = undoList[undoCnt].clone();
+				hero = null;
+				hero = undoList[undoCnt].expandData();
 			}
 		}
 
@@ -1126,17 +1129,17 @@ public class PlayScreen extends BaseScreen {
 		if (undoCnt > 0) {
 			resetEffects();			
 			undoCnt--;
-			lTank = null;
-			lTank = undoList[undoCnt].clone();
-			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
+			hero = null;
+			hero = undoList[undoCnt].expandData();
+			if ((hero.getCurTankState() == TankState.OnTunnel) || (hero.getCurTankState() == TankState.OnStream) || (hero.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
-				lTank = null;
-				lTank = undoList[undoCnt].clone();
+				hero = null;
+				hero = undoList[undoCnt].expandData();
 			}
-			if ((lTank.getCurTankState() == TankState.OnTunnel) || (lTank.getCurTankState() == TankState.OnStream) || (lTank.getCurTankState() == TankState.OnIce)) {
+			if ((hero.getCurTankState() == TankState.OnTunnel) || (hero.getCurTankState() == TankState.OnStream) || (hero.getCurTankState() == TankState.OnIce)) {
 				undoCnt--;
-				lTank = null;
-				lTank = undoList[undoCnt].clone();
+				hero = null;
+				hero = undoList[undoCnt].expandData();
 			}
 		} else {
 			longPressButton = GameButtons.None;
@@ -1144,14 +1147,14 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void fireHero() {
-		lTank.fireTank();
+		hero.fireTank();
 		Sounds.shoot.play();
-		lTank.incrementTankShots();
+		hero.incrementTankShots();
 	}
 
 	public void moveHero(final Direction drc) {
-		if (lTank.moveTank(drc)) {
-			lTank.incrementTankMoves();
+		if (hero.moveTank(drc)) {
+			hero.incrementTankMoves();
 		}
 	}
 
@@ -1204,7 +1207,7 @@ public class PlayScreen extends BaseScreen {
 
 	public boolean initAutoMove(final Point clickPos) {
 		final Point dstPoint = PlayUtils.convertPixToPoint(clickPos);
-		autoMovePath = pathFinder.findPath(lTank.getLvlPlayField(), lTank.getCurTankDirection(), lTank.getCurTankPos(), dstPoint);
+		autoMovePath = pathFinder.findPath(hero.getLvlPlayField(), hero.getCurTankDirection(), hero.getCurTankPos(), dstPoint);
 		if (autoMovePath.size() > 0) {
 			autoMoveCounter = 0;
 			setTouchEnabled(false);
@@ -1228,7 +1231,7 @@ public class PlayScreen extends BaseScreen {
 		gData.setCurrentLevel(currentLevel);
 		gData.setGameState(gameState);
 		gData.setHintUsed(hintUsed);
-		gData.setLtank(lTank);
+		gData.setLtank(hero);
 		gData.setLvl(lVl);
 		gData.setStateChanged(stateChanged);
 		gData.setUndoCnt(undoCnt);
@@ -1243,7 +1246,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void saveScores() {
-		GameUtils.saveUserScores(currentDclty, currentLevel, lTank.getTankMoves(), lTank.getTankShots(), hintUsed);
+		GameUtils.saveUserScores(currentDclty, currentLevel, hero.getTankMoves(), hero.getTankShots(), hintUsed);
 		if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
 			if ((currentLevel + 1) <= lvlCntPerDCLTY[currentDclty.ordinal()]) {
 				GameUtils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, false);
@@ -1263,9 +1266,9 @@ public class PlayScreen extends BaseScreen {
 	}
 	
 	private void resetEffects() {
-		lTank.getaTankCur().getTankBullet().setExplodeState(ExplodeState.Off);
-		lTank.getaTankPrev().getTankBullet().setExplodeState(ExplodeState.Off);
-		lTank.getCurTankBullet().setExplodeState(ExplodeState.Off);
+		hero.getaTankCur().getTankBullet().setExplodeState(ExplodeState.Off);
+		hero.getaTankPrev().getTankBullet().setExplodeState(ExplodeState.Off);
+		hero.getCurTankBullet().setExplodeState(ExplodeState.Off);
 		burnEffect.reset();
 		blastEffect.reset();
 		breakEffect.reset();
@@ -1307,7 +1310,7 @@ public class PlayScreen extends BaseScreen {
 		}
 		lVl = null;
 		pltFrm = null;
-		lTank = null;
+		hero = null;
 		undoList = null;
 		blastEffect.reset();
 		blastEffect.dispose();

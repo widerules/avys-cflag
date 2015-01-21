@@ -9,7 +9,7 @@ import com.avy.cflag.game.EnumStore.ExplodeState;
 import com.avy.cflag.game.EnumStore.PlayImages;
 import com.avy.cflag.game.PlayUtils;
 
-public class ATank {
+public class Villain {
 
 	private Bullet tankBullet;
 	private Point tankPos;
@@ -19,7 +19,7 @@ public class ATank {
 	private Point curPosOnIce;
 	private Direction curOnIceDrc;
 
-	public ATank() {
+	public Villain() {
 		tankBullet = new Bullet();
 		tankPos = new Point(0, 0);
 		tankDirection = Direction.Up;
@@ -30,8 +30,8 @@ public class ATank {
 	}
 
 	@Override
-	public ATank clone() {
-		final ATank newATank = new ATank();
+	public Villain clone() {
+		final Villain newATank = new Villain();
 		newATank.tankBullet = tankBullet;
 		newATank.tankPos = tankPos;
 		newATank.tankDirection = tankDirection;
@@ -42,7 +42,7 @@ public class ATank {
 		return newATank;
 	}
 
-	public boolean fireTank(final LTank lTank) {
+	public boolean fireTank(final Hero lTank) {
 		boolean stateChanged = false;
 		if (tankStateTime > 0) {
 			tankStateTime--;
@@ -328,7 +328,7 @@ public class ATank {
 		return stateChanged;
 	}
 
-	public boolean slideObjOnIce(final LTank lTank) {
+	public boolean slideObjOnIce(final Hero lTank) {
 		boolean isMoved = false;
 		if (tankStateTime > 0) {
 			tankStateTime--;

@@ -197,7 +197,7 @@ public class GameUtils {
 		final Json jsn = new Json();
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SAVE_GAME_FILE_NAME);
 		long initTime = System.currentTimeMillis();
-		final String jSnStr = jsn.toJson(gData);
+		final String jSnStr = jsn.prettyPrint(jsn.toJson(gData));
 		long timeTaken = System.currentTimeMillis() - initTime;
 		Gdx.app.log("com.avy.cflag.game", "To JSon Took : " + timeTaken + "ms");
 		initTime = System.currentTimeMillis();
