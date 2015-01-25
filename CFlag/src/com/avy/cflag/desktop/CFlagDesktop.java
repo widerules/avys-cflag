@@ -11,13 +11,13 @@ public class CFlagDesktop {
 	public static void main(final String[] args) {
 		try {
 			// final FileInputStream fi1 = new FileInputStream("D:/PersonalWork/Andriod/KeyStore/ReleaseCerts/encodedCert.bin");
-			final FileInputStream fi1 = new FileInputStream("D:/PersonalWork/Andriod/KeyStore/DebugCerts/encodedCert.bin");
+			final FileInputStream fi1 = new FileInputStream("D:/PersonalWork/Android/KeyStore/DebugCerts/encodedCert.bin");
 			final byte encodedCert[] = new byte[32];
 			fi1.read(encodedCert);
 			fi1.close();
 
 			// final FileInputStream fi2 = new FileInputStream("D:/PersonalWork/Andriod/KeyStore/ReleaseCerts/certSignature.bin");
-			final FileInputStream fi2 = new FileInputStream("D:/PersonalWork/Andriod/KeyStore/DebugCerts/certSignature.bin");
+			final FileInputStream fi2 = new FileInputStream("D:/PersonalWork/Android/KeyStore/DebugCerts/certSignature.bin");
 			final byte certSignature[] = new byte[16];
 			fi2.read(certSignature);
 			fi2.close();
