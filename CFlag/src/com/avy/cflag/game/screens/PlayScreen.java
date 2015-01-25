@@ -15,6 +15,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 import java.util.ArrayList;
 
 import com.avy.cflag.base.BaseScreen;
+import com.avy.cflag.base.ImageString;
 import com.avy.cflag.base.Point;
 import com.avy.cflag.base.Sounds;
 import com.avy.cflag.base.TouchListener;
@@ -87,6 +88,12 @@ public class PlayScreen extends BaseScreen {
 	private Group midPanel;
 	private Image rightPanel;
 
+	private ImageString lvlNoStr;
+	private ImageString lvlNameStr;
+	private ImageString lvlDcltyStr;
+	private ImageString lvlMovesStr;
+	private ImageString lvlShotsStr;
+	
 	private Group arrowButton_Left;
 	private Image arrowButton_Left_Up;
 	private Image arrowButton_Left_Down;
@@ -126,8 +133,6 @@ public class PlayScreen extends BaseScreen {
 	private ParticleEffect burnEffect;
 	private ParticleEffect splashEffect;
 	private Point effectStrtPos = new Point(0,0);
-
-	private float fontAlpha = 0.3f;
 
 	private boolean updateInProgress = false;
 	private GameButtons pressedButton = GameButtons.None;
@@ -298,6 +303,21 @@ public class PlayScreen extends BaseScreen {
 		midPanel.setSize(480, 480);
 		midPanel.setPosition(leftPanel.getWidth(), 0);
 		rightPanel.setPosition(leftPanel.getWidth() + midPanel.getWidth(), 0);
+		
+		lvlNoStr = new ImageString(""+currentLevel, dfltFont, Color.GREEN);
+		lvlNoStr.setPosition(82, 72);
+
+		lvlNameStr = new ImageString(lVl.getLvlName(), lvlNmeFont, Color.GREEN, ImageString.PrintFormat.Wrapped);
+		lvlNameStr.setPosition(82, 241);
+
+		lvlDcltyStr = new ImageString(lVl.getLvlDclty().toString(), lvlNmeFont, Color.GREEN);
+		lvlDcltyStr.setPosition(80, 157);
+		
+		lvlMovesStr = new ImageString(""+hero.getTankMoves(), dfltFont, Color.GREEN);
+		lvlMovesStr.setPosition(720, 72);
+		
+		lvlShotsStr = new ImageString(""+hero.getTankShots(), dfltFont, Color.GREEN);
+		lvlShotsStr.setPosition(720, 158);
 
 		arrowButton_Up.setPosition(49, 293);
 		arrowButton_Right.setPosition(86, 348);
@@ -333,7 +353,6 @@ public class PlayScreen extends BaseScreen {
 		argbFull.addAction(sequence(fadeOut(1f), visible(false), new Action() {
 			@Override
 			public boolean act(final float delta) {
-				fontAlpha = 1f;
 				return true;
 			}
 		}));
@@ -341,6 +360,11 @@ public class PlayScreen extends BaseScreen {
 		stage.addActor(leftPanel);
 		stage.addActor(midPanel);
 		stage.addActor(rightPanel);
+		stage.addActor(lvlNoStr);
+		stage.addActor(lvlNameStr);
+		stage.addActor(lvlDcltyStr);
+		stage.addActor(lvlMovesStr);
+		stage.addActor(lvlShotsStr);
 		stage.addActor(arrowButton_Up);
 		stage.addActor(arrowButton_Right);
 		stage.addActor(arrowButton_Down);
@@ -829,7 +853,6 @@ public class PlayScreen extends BaseScreen {
 	private void updatePaused() {
 		autoMoveActive = false;
 		if (!pausedMenu.isVisible()) {
-			fontAlpha = 0.4f;
 			pausedMenu.addAction(sequence(visible(true), parallel(new Action() {
 				@Override
 				public boolean act(final float delta) {
@@ -844,7 +867,6 @@ public class PlayScreen extends BaseScreen {
 	private void updateDrowned() {
 		autoMoveActive = false;
 		if (!drownedMenu.isVisible()) {
-			fontAlpha = 0.4f;
 			Sounds.drown.play();
 			drownedMenu.addAction(sequence(visible(true), fadeIn(0.1f)));
 			undoInProgress = true;
@@ -855,7 +877,6 @@ public class PlayScreen extends BaseScreen {
 	private void updateDead() {
 		autoMoveActive = false;
 		if (!deadMenu.isVisible()) {
-			fontAlpha = 0.4f;
 			Sounds.dead.play();
 			deadMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 			undoInProgress = true;
@@ -867,7 +888,6 @@ public class PlayScreen extends BaseScreen {
 		autoMoveActive = false;
 		pltFrm.animateHero();
 		if (!wonMenu.isVisible()) {
-			fontAlpha = 0.4f;
 			wonMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 			deleteSave();
 			saveScores();
@@ -878,7 +898,6 @@ public class PlayScreen extends BaseScreen {
 	private void updateHint() {
 		autoMoveActive = false;
 		if (!hintMenu.isVisible()) {
-			fontAlpha = 0.4f;
 			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 			hintUsed = true;
 			GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintUsed);
@@ -932,13 +951,14 @@ public class PlayScreen extends BaseScreen {
 	public void drawGameUI(final float delta) {
 		if (!fadeOutActive) {
 			batch.begin();
-			g.drawString(Integer.toString(currentLevel), 82, 72, Color.GREEN, fontAlpha);
-			g.drawStringWrapped(lvlNmeFont, lVl.getLvlName(), 82, 241, Color.GREEN, fontAlpha);
-			g.drawString(lvlNmeFont, lVl.getLvlDclty().toString(), 80, 157, Color.GREEN, fontAlpha);
-			g.drawString(Integer.toString(hero.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
-			g.drawString(Integer.toString(hero.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
+//			g.drawString(Integer.toString(currentLevel), 82, 72, Color.GREEN, fontAlpha);
+//			g.drawStringWrapped(lvlNmeFont, lVl.getLvlName(), 82, 241, Color.GREEN, fontAlpha);
+//			g.drawString(lvlNmeFont, lVl.getLvlDclty().toString(), 80, 157, Color.GREEN, fontAlpha);
+//			g.drawString(Integer.toString(hero.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
+//			g.drawString(Integer.toString(hero.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
+			
 			if ((gameState == GameState.Hint) && (hintMenu.getColor().a >= 0.7f)) {
-				g.drawStringWrapped(lvlNmeFont, lVl.getLvlHint(), 198, 234, 404, Color.GREEN, 1f);
+				g.drawStringWrapped(lvlNmeFont, lVl.getLvlHint()[0], 198, 234, 404, Color.GREEN, 1f);
 			}
 			// Rect bulletRect = ltank.getCurTankBullet().getCurBulletRect();
 			// batch.draw(bullet, bulletRect.left, bulletRect.top);
@@ -951,7 +971,6 @@ public class PlayScreen extends BaseScreen {
 
 		g.setSr(sr);
 		sr.begin(ShapeType.Filled);
-
 		g.drawRectWithBorder(hero.getCurTankBullet().getCurBulletRect(), Color.GREEN);
 		g.drawRectWithBorder(hero.getaTankPrev().getTankBullet().getCurBulletRect(), Color.RED);
 		g.drawRectWithBorder(hero.getaTankCur().getTankBullet().getCurBulletRect(), Color.RED);
@@ -1058,7 +1077,6 @@ public class PlayScreen extends BaseScreen {
 			case DrownOn:
 				splashEffect.reset();
 				effectStrtPos = bullet.getExplodePos();
-				System.out.println("DrownOn");
 				splashEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
 				splashEffect.getEmitters().get(0).setContinuous(false);
 				bullet.setExplodeState(ExplodeState.Drown);
@@ -1073,7 +1091,6 @@ public class PlayScreen extends BaseScreen {
 			case DrownDieOn:
 				splashEffect.reset();
 				effectStrtPos = bullet.getExplodePos();
-				System.out.println("DrownDieOn");
 				splashEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
 				splashEffect.getEmitters().get(0).setContinuous(true);
 				if(effectStrtPos.x>menuBase.getX() && effectStrtPos.x<menuBase.getX()+menuBase.getWidth() && 
@@ -1110,13 +1127,13 @@ public class PlayScreen extends BaseScreen {
 				hero = null;
 				hero = undoList[undoCnt].expandData();
 			}
+			lvlShotsStr.setPrintStr(""+hero.getTankShots());
+			lvlMovesStr.setPrintStr(""+hero.getTankMoves());
 		}
 
 		if (gameState == GameState.Dead) {
-			fontAlpha = 1f;
 			deadMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 		} else if (gameState == GameState.Drowned) {
-			fontAlpha = 1f;
 			drownedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 		}
 		gameState = GameState.Running;
@@ -1141,6 +1158,8 @@ public class PlayScreen extends BaseScreen {
 				hero = null;
 				hero = undoList[undoCnt].expandData();
 			}
+			lvlShotsStr.setPrintStr(""+hero.getTankShots());
+			lvlMovesStr.setPrintStr(""+hero.getTankMoves());
 		} else {
 			longPressButton = GameButtons.None;
 		}
@@ -1150,11 +1169,13 @@ public class PlayScreen extends BaseScreen {
 		hero.fireTank();
 		Sounds.shoot.play();
 		hero.incrementTankShots();
+		lvlShotsStr.setPrintStr(""+hero.getTankShots());
 	}
 
 	public void moveHero(final Direction drc) {
 		if (hero.moveTank(drc)) {
 			hero.incrementTankMoves();
+			lvlMovesStr.setPrintStr(""+hero.getTankMoves());
 		}
 	}
 
@@ -1183,13 +1204,11 @@ public class PlayScreen extends BaseScreen {
 	public void resumeme() {
 		if (gameState == GameState.Paused) {
 			if (pausedMenu.isVisible()) {
-				fontAlpha = 1f;
 				pausedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			}
 			gameState = GameState.Running;
 		} else if (gameState == GameState.Hint) {
 			if (hintMenu.isVisible()) {
-				fontAlpha = 1f;
 				hintMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			}
 			gameState = GameState.Running;
@@ -1198,7 +1217,6 @@ public class PlayScreen extends BaseScreen {
 
 	@Override
 	public void pause() {
-		fontAlpha = 0.4f;
 		pausedMenu.getColor().a = 1f;
 		gameState = GameState.Paused;
 		pausedMenu.setVisible(true);

@@ -53,7 +53,8 @@ public class GameUtils {
 			fi.read(fileData);
 			fi.close();
 
-			final byte inData[] = decryptDate(fileData);
+//			final byte inData[] = decryptDate(fileData);
+			final byte inData[] = fileData;
 
 			final String lvlDataPerDclty[] = new String[Difficulty.length()];
 

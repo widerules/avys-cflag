@@ -22,7 +22,7 @@ public class Level {
 	private PlayImages[][] lvlBaseField;
 	private PlayImages[][] lvlPlayField;
 	private String lvlName;
-	private String lvlHint;
+	private String lvlHint[];
 	private String lvlAuthor;
 	private Difficulty lvlDclty;
 
@@ -33,6 +33,7 @@ public class Level {
 		lvlData = new byte[lvlLEN];
 		lvlBaseField = new PlayImages[lvlFieldLEN.x][lvlFieldLEN.y];
 		lvlPlayField = new PlayImages[lvlFieldLEN.x][lvlFieldLEN.y];
+		lvlHint = new String[3];
 		lvlDclty = Difficulty.Easy;
 	}
 
@@ -107,7 +108,7 @@ public class Level {
 
 		lvlName = (new String(tmpLvlName)).trim();
 		lvlAuthor = (new String(tmpLvlAuthor)).trim();
-		lvlHint = (new String(tmpLvlHint)).trim();
+		lvlHint[0] = (new String(tmpLvlHint)).trim();
 		lvlDclty = PlayUtils.getDifficultyByVal(Integer.parseInt(tmpLvlDclty[0] + "" + tmpLvlDclty[1]));
 
 	}
@@ -135,12 +136,12 @@ public class Level {
 	public void setLvlName(final String lvlName) {
 		this.lvlName = lvlName;
 	}
-
-	public String getLvlHint() {
+	
+	public String[] getLvlHint() {
 		return lvlHint;
 	}
 
-	public void setLvlHint(final String lvlHint) {
+	public void setLvlHint(String[] lvlHint) {
 		this.lvlHint = lvlHint;
 	}
 
