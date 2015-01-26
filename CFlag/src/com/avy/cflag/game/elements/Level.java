@@ -16,7 +16,7 @@ import com.avy.cflag.game.PlayUtils;
 
 public class Level {
 
-	private byte[] lvlData;
+	private byte[] lvlDataPerDclty;
 
 	private int lvlNum;
 	private PlayImages[][] lvlBaseField;
@@ -25,23 +25,27 @@ public class Level {
 	private String lvlHint[];
 	private String lvlAuthor;
 	private Difficulty lvlDclty;
+	private int lvlMaxMoves;
+	private int lvlMaxShots;
 
 	private Point tankOrigPos;
 
 	public Level() {
 		lvlNum = 1;
-		lvlData = new byte[lvlLEN];
+		lvlDataPerDclty = new byte[lvlLEN];
 		lvlBaseField = new PlayImages[lvlFieldLEN.x][lvlFieldLEN.y];
 		lvlPlayField = new PlayImages[lvlFieldLEN.x][lvlFieldLEN.y];
 		lvlHint = new String[3];
 		lvlDclty = Difficulty.Easy;
+		lvlMaxMoves = 0;
+		lvlMaxShots = 0;
 	}
 
 	public void loadLevel(final Difficulty inLvlDclty, final int inLvlNum) {
 
 		lvlNum = inLvlNum;
 		lvlDclty = inLvlDclty;
-		lvlData = lvlDataPerDCLTY[inLvlDclty.ordinal()];
+		lvlDataPerDclty = lvlDataPerDCLTY[inLvlDclty.ordinal()];
 
 		final char[] tmpLvlName = new char[lvlNameLEN];
 		final char[] tmpLvlAuthor = new char[lvlAuthorLEN];
@@ -65,7 +69,7 @@ public class Level {
 					r++;
 					c = 0;
 				}
-				final PlayImages po = PlayUtils.getPlayImage(lvlData[i]);
+				final PlayImages po = PlayUtils.getPlayImage(lvlDataPerDclty[i]);
 				switch (po) {
 					case Villain_D:
 					case Villain_L:
@@ -96,13 +100,13 @@ public class Level {
 				}
 				c++;
 			} else if ((i >= lvlNameStrt) && (i < lvlNameEnd)) {
-				tmpLvlName[i - lvlNameStrt] = (char) lvlData[i];
+				tmpLvlName[i - lvlNameStrt] = (char) lvlDataPerDclty[i];
 			} else if ((i >= lvlHintStrt) && (i < lvlHintEnd)) {
-				tmpLvlHint[i - lvlHintStrt] = (char) lvlData[i];
+				tmpLvlHint[i - lvlHintStrt] = (char) lvlDataPerDclty[i];
 			} else if ((i >= lvlAuthorStrt) && (i < lvlAuthorEnd)) {
-				tmpLvlAuthor[i - lvlAuthorStrt] = (char) lvlData[i];
+				tmpLvlAuthor[i - lvlAuthorStrt] = (char) lvlDataPerDclty[i];
 			} else if ((i >= lvlDcltyStrt) && (i < lvlDcltyEnd)) {
-				tmpLvlDclty[i - lvlDcltyStrt] = lvlData[i];
+				tmpLvlDclty[i - lvlDcltyStrt] = lvlDataPerDclty[i];
 			}
 		}
 
@@ -110,7 +114,8 @@ public class Level {
 		lvlAuthor = (new String(tmpLvlAuthor)).trim();
 		lvlHint[0] = (new String(tmpLvlHint)).trim();
 		lvlDclty = PlayUtils.getDifficultyByVal(Integer.parseInt(tmpLvlDclty[0] + "" + tmpLvlDclty[1]));
-
+		lvlMaxMoves = 100;
+		lvlMaxShots = 100;
 	}
 
 	public PlayImages[][] getLvlBaseField() {
@@ -167,5 +172,21 @@ public class Level {
 
 	public void setTankOrigPos(final Point tankOrigPos) {
 		this.tankOrigPos = tankOrigPos;
+	}
+
+	public int getLvlMaxMoves() {
+		return lvlMaxMoves;
+	}
+
+	public void setLvlMaxMoves(int lvlMaxMoves) {
+		this.lvlMaxMoves = lvlMaxMoves;
+	}
+
+	public int getLvlMaxShots() {
+		return lvlMaxShots;
+	}
+
+	public void setLvlMaxShots(int lvlMaxShots) {
+		this.lvlMaxShots = lvlMaxShots;
 	}
 }
