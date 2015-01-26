@@ -1127,8 +1127,8 @@ public class PlayScreen extends BaseScreen {
 				hero = null;
 				hero = undoList[undoCnt].expandData();
 			}
-			lvlShotsStr.setPrintStr(""+hero.getTankShots());
-			lvlMovesStr.setPrintStr(""+hero.getTankMoves());
+			lvlShotsStr.setPrintStr(""+hero.getTankShots() + "/" + lVl.getLvlMaxShots());
+			lvlMovesStr.setPrintStr(""+hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
 		}
 
 		if (gameState == GameState.Dead) {
@@ -1158,8 +1158,8 @@ public class PlayScreen extends BaseScreen {
 				hero = null;
 				hero = undoList[undoCnt].expandData();
 			}
-			lvlShotsStr.setPrintStr(""+hero.getTankShots());
-			lvlMovesStr.setPrintStr(""+hero.getTankMoves());
+			lvlShotsStr.setPrintStr(""+hero.getTankShots() + "/" + lVl.getLvlMaxShots());
+			lvlMovesStr.setPrintStr(""+hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
 		} else {
 			longPressButton = GameButtons.None;
 		}
@@ -1169,13 +1169,13 @@ public class PlayScreen extends BaseScreen {
 		hero.fireTank();
 		Sounds.shoot.play();
 		hero.incrementTankShots();
-		lvlShotsStr.setPrintStr(""+hero.getTankShots());
+		lvlShotsStr.setPrintStr(""+hero.getTankShots() + "/" + lVl.getLvlMaxShots());
 	}
 
 	public void moveHero(final Direction drc) {
 		if (hero.moveTank(drc)) {
 			hero.incrementTankMoves();
-			lvlMovesStr.setPrintStr(""+hero.getTankMoves());
+			lvlMovesStr.setPrintStr(""+hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
 		}
 	}
 
