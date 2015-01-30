@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import com.avy.cflag.base.BaseScreen;
 import com.avy.cflag.base.ImageString;
+import com.avy.cflag.base.ImageString.PrintFormat;
 import com.avy.cflag.base.Point;
 import com.avy.cflag.base.Sounds;
 import com.avy.cflag.base.TouchListener;
@@ -233,7 +234,7 @@ public class PlayScreen extends BaseScreen {
 		wonMenu = new ShortMenu(g, this, "youwon", "nextlevel", "restart", "mainmenu");
 		wonMenu.setVisible(false);
 		wonMenu.getColor().a = 0;
-		hintMenu = new HintMenu(g, this, "gamehint");
+		hintMenu = new HintMenu(g, this, lvlNmeFont, lVl.getLvlHint());
 		hintMenu.setVisible(false);
 		hintMenu.getColor().a = 0;
 
@@ -307,8 +308,8 @@ public class PlayScreen extends BaseScreen {
 		lvlNoStr = new ImageString(""+currentLevel, dfltFont, Color.GREEN);
 		lvlNoStr.setPosition(82, 72);
 
-		lvlNameStr = new ImageString(lVl.getLvlName(), lvlNmeFont, Color.GREEN, ImageString.PrintFormat.Wrapped);
-		lvlNameStr.setPosition(82, 241);
+		lvlNameStr = new ImageString(lVl.getLvlName(), lvlNmeFont, Color.GREEN, PrintFormat.Wrapped);
+		lvlNameStr.setPosition(0, 0);
 
 		lvlDcltyStr = new ImageString(lVl.getLvlDclty().toString(), lvlNmeFont, Color.GREEN);
 		lvlDcltyStr.setPosition(80, 157);
@@ -957,9 +958,9 @@ public class PlayScreen extends BaseScreen {
 //			g.drawString(Integer.toString(hero.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
 //			g.drawString(Integer.toString(hero.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
 			
-			if ((gameState == GameState.Hint) && (hintMenu.getColor().a >= 0.7f)) {
-				g.drawStringWrapped(lvlNmeFont, lVl.getLvlHint()[0], 198, 234, 404, Color.GREEN, 1f);
-			}
+//			if ((gameState == GameState.Hint) && (hintMenu.getColor().a >= 0.7f)) {
+//				g.drawStringWrapped(lvlNmeFont, lVl.getLvlHint()[0], 198, 234, 404, Color.GREEN, 1f);
+//			}
 			// Rect bulletRect = ltank.getCurTankBullet().getCurBulletRect();
 			// batch.draw(bullet, bulletRect.left, bulletRect.top);
 			
