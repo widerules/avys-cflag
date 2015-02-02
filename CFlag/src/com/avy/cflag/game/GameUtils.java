@@ -164,8 +164,8 @@ public class GameUtils {
 		pr.flush();
 	}
 
-	public static void saveUserScores(final Difficulty dclty, final int levelNo, final int movesPlayed, final int shotsTriggered, final boolean hintUsed) {
-		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintUsed);
+	public static void saveUserScores(final Difficulty dclty, final int levelNo, final int movesPlayed, final int shotsTriggered, final int hintsUsed) {
+		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintsUsed);
 		if (levelNo <= curUserSCORE.getMaxPlayedLevel(dclty)) {
 			curUserSCORE.updateScores(dclty, currentScore);
 		} else {

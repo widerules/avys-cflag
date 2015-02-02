@@ -580,7 +580,7 @@ public class LevelScreen extends BackScreen {
 					if ((maxUnlockedLevel + 1) <= lvlCntPerDCLTY[selectedDclty.ordinal()]) {
 						curUserOPTS.setlastDclty(selectedDclty);
 						GameUtils.saveGameOptions();
-						GameUtils.saveUserScores(selectedDclty, maxUnlockedLevel + 1, 0, 0, false);
+						GameUtils.saveUserScores(selectedDclty, maxUnlockedLevel + 1, 0, 0, 0);
 						final SaveThumbs st2 = new SaveThumbs(g, selectedDclty, maxUnlockedLevel + 1);
 						st2.setPlayAtlas();
 						st2.run();
@@ -613,7 +613,7 @@ public class LevelScreen extends BackScreen {
 			String scoreDetailsRight = "0\n0\nNo";
 			if (gScore != null) {
 				scoreDetailsLeft = "Moves Played : \nShots Fired    : \nHint Used       : ";
-				scoreDetailsRight = gScore.getMoves() + "\n" + gScore.getShots() + "\n" + (gScore.isHintUsed() ? "Yes" : "No");
+				scoreDetailsRight = gScore.getMoves() + "\n" + gScore.getShots() + "\n" + gScore.getHintsUsed();
 			}
 			g.drawMultiLineString(lvlDetailsLeft, 100, 433, Color.YELLOW);
 			g.drawMultiLineString(lvlDetailsRight, 200, 433, Color.WHITE);

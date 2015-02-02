@@ -21,7 +21,6 @@ public class ImageString extends Actor{
 		printFont=inFont;
 		printFormat = PrintFormat.Normal;
 		setColor(inColor);
-		setWidth(100);
 	}
 	
 	public ImageString(String inStr, BitmapFont inFont, Color inColor, PrintFormat inFormat) {
@@ -29,9 +28,15 @@ public class ImageString extends Actor{
 		printFont=inFont;
 		printFormat = inFormat;
 		setColor(inColor);
-		setWidth(100);
 	}
 
+	public void setBounds(float x, float y, float width, float height) {
+		setX(x);
+		setY(y);
+		setWidth(width);
+		setHeight(height);
+	}
+	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		
@@ -41,14 +46,15 @@ public class ImageString extends Actor{
 		float x = getX();
 		float y = getY();
 		float width = getWidth();
-		final TextBounds tb = printFont.getBounds(printStr);
+		float height = getHeight();
+		final TextBounds tb = printFont.getWrappedBounds(printStr, width);
 		switch (printFormat) {
 			case Normal:
 				printFont.draw(batch, printStr, x - (tb.width / 2), y - (tb.height / 2));
 				break;
 			case Wrapped:
-				final float h = tb.height * (int) (tb.width / width);
-				printFont.drawWrapped(batch, printStr, x - 50, y - (h / 2), width, HAlignment.CENTER);
+				y = y+(height-tb.height)/2;
+				printFont.drawWrapped(batch, printStr, x, y, width, HAlignment.CENTER);
 				break;
 			case MultiLine:
 				final String lines[] = printStr.split("\n");

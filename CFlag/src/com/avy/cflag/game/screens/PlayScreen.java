@@ -74,7 +74,7 @@ public class PlayScreen extends BaseScreen {
 	private UnDoData undoList[];
 	private int undoCnt;
 
-	boolean hintUsed;
+	private int hintsUsed;
 	boolean stateChanged;
 	boolean aTankStateChanged;
 
@@ -164,7 +164,7 @@ public class PlayScreen extends BaseScreen {
 			hero = savedGame.getLtank();
 			undoCnt = savedGame.getUndoCnt();
 			undoList = savedGame.getUndoList();
-			hintUsed = savedGame.isHintUsed();
+			hintsUsed = savedGame.getHintsUsed();
 			stateChanged = savedGame.isStateChanged();
 			acraMAP.put("LoadFromSave", "Yes");
 			acraMAP.put("LevelInPlay", currentDclty.name() + " : " + currentLevel);
@@ -211,7 +211,7 @@ public class PlayScreen extends BaseScreen {
 		undoList[undoCnt]=new UnDoData();
 		undoList[undoCnt].shrinkData(hero);
 
-		hintUsed = false;
+		hintsUsed = 0;
 		stateChanged = false;
 		aTankStateChanged = false;
 		swipeSensitivity = 120 - curUserOPTS.getSwipeSensitivity();
@@ -234,9 +234,9 @@ public class PlayScreen extends BaseScreen {
 		wonMenu = new ShortMenu(g, this, "youwon", "nextlevel", "restart", "mainmenu");
 		wonMenu.setVisible(false);
 		wonMenu.getColor().a = 0;
-		hintMenu = new HintMenu(g, this, lvlNmeFont, lVl.getLvlHint());
+		hintMenu = new HintMenu(g, this, lvlNmeFont, lVl.getLvlHint(), hintsUsed);
 		hintMenu.setVisible(false);
-		hintMenu.getColor().a = 0;
+		hintMenu.getColor().a = 0; 
 
 		argbFull = new Image(g.getFlipTexRegion("argbblack"));
 		leftPanel = new Image(g.getFlipTexRegion("leftpanel"));
@@ -306,19 +306,19 @@ public class PlayScreen extends BaseScreen {
 		rightPanel.setPosition(leftPanel.getWidth() + midPanel.getWidth(), 0);
 		
 		lvlNoStr = new ImageString(""+currentLevel, dfltFont, Color.GREEN);
-		lvlNoStr.setPosition(82, 72);
+		lvlNoStr.setBounds(82, 72,90,20);
 
 		lvlNameStr = new ImageString(lVl.getLvlName(), lvlNmeFont, Color.GREEN, PrintFormat.Wrapped);
-		lvlNameStr.setPosition(0, 0);
+		lvlNameStr.setBounds(35, 232,90,30);
 
 		lvlDcltyStr = new ImageString(lVl.getLvlDclty().toString(), lvlNmeFont, Color.GREEN);
-		lvlDcltyStr.setPosition(80, 157);
+		lvlDcltyStr.setBounds(80, 157,90,20);
 		
 		lvlMovesStr = new ImageString(""+hero.getTankMoves(), dfltFont, Color.GREEN);
-		lvlMovesStr.setPosition(720, 72);
+		lvlMovesStr.setBounds(720, 72,90,20);
 		
 		lvlShotsStr = new ImageString(""+hero.getTankShots(), dfltFont, Color.GREEN);
-		lvlShotsStr.setPosition(720, 158);
+		lvlShotsStr.setBounds(720, 158,90,20);
 
 		arrowButton_Up.setPosition(49, 293);
 		arrowButton_Right.setPosition(86, 348);
@@ -581,7 +581,7 @@ public class PlayScreen extends BaseScreen {
 		dragListener = new DragListener() {
 			@Override
 			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
-				if (gameState == GameState.Hint) {
+				if (gameState == GameState.Hint && !PlayUtils.inBoundsRect(new Point((int)x,(int)y), (int)hintMenu.getX(), (int)hintMenu.getY(), (int)hintMenu.getWidth(), (int)hintMenu.getHeight())) {
 					resumeme();
 				}
 				return super.touchDown(event, x, y, pointer, button);
@@ -899,12 +899,11 @@ public class PlayScreen extends BaseScreen {
 	private void updateHint() {
 		autoMoveActive = false;
 		if (!hintMenu.isVisible()) {
+			incrementHint(1);
 			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
-			hintUsed = true;
-			GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintUsed);
 		}
 	}
-
+	
 	private void updateFadeOut() {
 		if (!fadeOutActive) {
 			switch (gameState) {
@@ -952,18 +951,8 @@ public class PlayScreen extends BaseScreen {
 	public void drawGameUI(final float delta) {
 		if (!fadeOutActive) {
 			batch.begin();
-//			g.drawString(Integer.toString(currentLevel), 82, 72, Color.GREEN, fontAlpha);
-//			g.drawStringWrapped(lvlNmeFont, lVl.getLvlName(), 82, 241, Color.GREEN, fontAlpha);
-//			g.drawString(lvlNmeFont, lVl.getLvlDclty().toString(), 80, 157, Color.GREEN, fontAlpha);
-//			g.drawString(Integer.toString(hero.getTankMoves()), 720, 72, Color.GREEN, fontAlpha);
-//			g.drawString(Integer.toString(hero.getTankShots()), 720, 158, Color.GREEN, fontAlpha);
-			
-//			if ((gameState == GameState.Hint) && (hintMenu.getColor().a >= 0.7f)) {
-//				g.drawStringWrapped(lvlNmeFont, lVl.getLvlHint()[0], 198, 234, 404, Color.GREEN, 1f);
-//			}
 			// Rect bulletRect = ltank.getCurTankBullet().getCurBulletRect();
 			// batch.draw(bullet, bulletRect.left, bulletRect.top);
-			
 			drawExplosions(delta, hero.getCurTankBullet());
 			drawExplosions(delta, hero.getaTankPrev().getTankBullet());
 			drawExplosions(delta, hero.getaTankCur().getTankBullet());
@@ -1219,9 +1208,17 @@ public class PlayScreen extends BaseScreen {
 	@Override
 	public void pause() {
 		pausedMenu.getColor().a = 1f;
+		hintMenu.setVisible(false);
 		gameState = GameState.Paused;
 		pausedMenu.setVisible(true);
 		saveGame();
+	}
+	
+	public void incrementHint(int inHintsUsed){
+		if(inHintsUsed>hintsUsed) {
+			hintsUsed=inHintsUsed;
+			GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintsUsed);
+		}
 	}
 
 	public boolean initAutoMove(final Point clickPos) {
@@ -1249,7 +1246,7 @@ public class PlayScreen extends BaseScreen {
 		gData.setCurrentDclty(currentDclty);
 		gData.setCurrentLevel(currentLevel);
 		gData.setGameState(gameState);
-		gData.setHintUsed(hintUsed);
+		gData.setHintsUsed(hintsUsed);
 		gData.setLtank(hero);
 		gData.setLvl(lVl);
 		gData.setStateChanged(stateChanged);
@@ -1265,16 +1262,16 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void saveScores() {
-		GameUtils.saveUserScores(currentDclty, currentLevel, hero.getTankMoves(), hero.getTankShots(), hintUsed);
+		GameUtils.saveUserScores(currentDclty, currentLevel, hero.getTankMoves(), hero.getTankShots(), hintsUsed);
 		if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
 			if ((currentLevel + 1) <= lvlCntPerDCLTY[currentDclty.ordinal()]) {
-				GameUtils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, false);
+				GameUtils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, 0);
 				final SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel + 1);
 				st2.run();
 			} else {
 				final Difficulty nxtDifficulty = PlayUtils.getDifficultyByIdx(currentDclty.ordinal() + 1);
 				if (nxtDifficulty != null) {
-					GameUtils.saveUserScores(nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty), 0, 0, false);
+					GameUtils.saveUserScores(nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty), 0, 0, 0);
 					final SaveThumbs st2 = new SaveThumbs(g, nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty));
 					st2.run();
 					curUserOPTS.setlastDclty(nxtDifficulty);
