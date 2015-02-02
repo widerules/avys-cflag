@@ -113,6 +113,8 @@ public class Level {
 		lvlName = (new String(tmpLvlName)).trim();
 		lvlAuthor = (new String(tmpLvlAuthor)).trim();
 		lvlHint[0] = (new String(tmpLvlHint)).trim();
+		lvlHint[1] = "No Hint Found";
+		lvlHint[2] = "No Hint Found";
 		lvlDclty = PlayUtils.getDifficultyByVal(Integer.parseInt(tmpLvlDclty[0] + "" + tmpLvlDclty[1]));
 		lvlMaxMoves = 100;
 		lvlMaxShots = 100;
@@ -127,7 +129,7 @@ public class Level {
 	}
 
 	public PlayImages[][] getLvlPlayField() {
-		return lvlPlayField;
+		return lvlPlayField; 
 	}
 
 	public void setLvlPlayField(final PlayImages[][] lvlPlayField) {

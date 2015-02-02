@@ -13,7 +13,7 @@ public class GameData {
 	private Hero ltank;
 	private UnDoData undoList[];
 	private int undoCnt;
-	private boolean hintUsed;
+	private int hintsUsed;
 	private boolean stateChanged;
 
 	public Difficulty getCurrentDclty() {
@@ -72,12 +72,12 @@ public class GameData {
 		this.undoCnt = undoCnt;
 	}
 
-	public boolean isHintUsed() {
-		return hintUsed;
+	public int getHintsUsed() {
+		return hintsUsed;
 	}
 
-	public void setHintUsed(final boolean hintUsed) {
-		this.hintUsed = hintUsed;
+	public void setHintsUsed(int hintsUsed) {
+		this.hintsUsed = hintsUsed;
 	}
 
 	public boolean isStateChanged() {

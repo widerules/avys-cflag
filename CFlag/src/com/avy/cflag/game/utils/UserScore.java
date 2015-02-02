@@ -15,7 +15,7 @@ public class UserScore {
 		for (int i = 0; i < maxPlayedLevel.length; i++) {
 			maxPlayedLevel[i] = 1;
 			scores[i] = new ArrayList<LevelScore>();
-			scores[i].add(new LevelScore(1, 0, 0, false));
+			scores[i].add(new LevelScore(1, 0, 0, 0));
 		}
 	}
 
@@ -39,8 +39,8 @@ public class UserScore {
 		if (score.getShots() < existingScore.getShots()) {
 			score.setShots(existingScore.getShots());
 		}
-		if (!score.isHintUsed() && existingScore.isHintUsed()) {
-			score.setHintUsed(true);
+		if (score.getHintsUsed() < existingScore.getHintsUsed()) {
+			score.setHintsUsed(existingScore.getHintsUsed());
 		}
 		scores[dclty.ordinal()].set(score.getLevelNo() - 1, score);
 	}
