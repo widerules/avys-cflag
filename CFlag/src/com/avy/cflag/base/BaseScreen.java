@@ -33,7 +33,6 @@ public abstract class BaseScreen implements Screen {
 		if (graphicsOn && spritesOn) {
 			batch = new SpriteBatch();
 			batch.setProjectionMatrix(game.getCamera().combined);
-			g.setBatch(batch);
 		}
 		if (graphicsOn && shapesOn) {
 			sr = new ShapeRenderer();

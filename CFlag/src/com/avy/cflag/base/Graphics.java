@@ -9,9 +9,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -26,15 +23,11 @@ import com.badlogic.gdx.utils.Array;
 
 public class Graphics {
 	private TextureAtlas imageAtlas;
-	private SpriteBatch batch;
 	private ShapeRenderer sr;
-	private BitmapFont font;
 
 	public Graphics() {
 		imageAtlas = null;
-		batch = null;
 		sr = null;
-		font = null;
 	}
 
 	public TextureAtlas createImageAtlas(final String texturePackName) {
@@ -58,14 +51,6 @@ public class Graphics {
 
 	public TextureAtlas getImageAtlas() {
 		return imageAtlas;
-	}
-
-	public void setFont(final BitmapFont fnt) {
-		font = fnt;
-	}
-
-	public void setBatch(final SpriteBatch batch) {
-		this.batch = batch;
 	}
 
 	public void setSr(final ShapeRenderer sr) {
@@ -99,53 +84,6 @@ public class Graphics {
 		final TextureRegion textureRegion = new TextureRegion(new Texture(PixmapIO.readCIM(fh)), 100, 100);
 		textureRegion.flip(false, true);
 		return textureRegion;
-	}
-
-	public void drawString(final String txt, final int x, final int y, final Color color, final float alpha) {
-		font.setColor(color.r, color.g, color.b, alpha);
-		final TextBounds tb = font.getBounds(txt);
-		font.draw(batch, txt, x - (tb.width / 2), y - (tb.height / 2));
-	}
-
-	public void drawString(final BitmapFont font, final String txt, final int x, final int y, final Color color, final float alpha) {
-		font.setColor(color.r, color.g, color.b, alpha);
-		final TextBounds tb = font.getBounds(txt);
-		font.draw(batch, txt, x - (tb.width / 2), y - (tb.height / 2));
-	}
-
-	public void drawStringWrapped(final String txt, final int x, final int y, final Color color) {
-		font.setColor(color);
-		final TextBounds tb = font.getBounds(txt);
-		final float h = tb.height * (int) (tb.width / 100);
-		font.drawWrapped(batch, txt, x - 50, y - (h / 2), 100, HAlignment.CENTER);
-	}
-
-	public void drawStringWrapped(final BitmapFont font, final String txt, final int x, final int y, final Color color, final float alpha) {
-		final TextBounds tb = font.getBounds(txt);
-		final float h = tb.height * (int) (tb.width / 100);
-		font.setColor(color.r, color.g, color.b, alpha);
-		font.drawWrapped(batch, txt, x - 50, y - (h / 2), 100, HAlignment.CENTER);
-	}
-
-	public void drawStringWrapped(final BitmapFont font, final String txt, final float x, final float y, final float width, final Color color, final float alpha) {
-		font.setColor(color.r, color.g, color.b, alpha);
-		font.drawWrapped(batch, txt, x, y, width, HAlignment.CENTER);
-	}
-
-	public void drawMultiLineString(final String txt, final float x, final float y, final Color color) {
-		final String lines[] = txt.split("\n");
-		final TextBounds tb = new TextBounds();
-		tb.width = 0;
-		tb.height = 0;
-		for (final String lineStr : lines) {
-			final TextBounds tmp = font.getBounds(lineStr);
-			if (tmp.width > tb.width) {
-				tb.width = tmp.width;
-			}
-			tb.height = tb.height + tmp.height;
-		}
-		font.setColor(color);
-		font.drawMultiLine(batch, txt, x - (tb.width / 2), y - (tb.height / 2));
 	}
 
 	public CheckBoxStyle getCheckBoxStyle(final String fontName, final int fontSize) {
