@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class ImageString extends Actor{
 	public static enum PrintFormat {
-		Normal, Wrapped, MultiLine
+		Normal_Left, Normal_Center, Wrapped_Left, Wrapped_Center, MultiLine
 	}
 	
 	private String printStr;
@@ -19,7 +19,7 @@ public class ImageString extends Actor{
 	public ImageString(String inStr, BitmapFont inFont, Color inColor) {
 		printStr=inStr;
 		printFont=inFont;
-		printFormat = PrintFormat.Normal;
+		printFormat = PrintFormat.Normal_Center;
 		setColor(inColor);
 	}
 	
@@ -49,10 +49,17 @@ public class ImageString extends Actor{
 		float height = getHeight();
 		final TextBounds tb = printFont.getWrappedBounds(printStr, width);
 		switch (printFormat) {
-			case Normal:
+			case Normal_Left:
+				printFont.draw(batch, printStr, x, y);
+				break;
+			case Normal_Center:
 				printFont.draw(batch, printStr, x - (tb.width / 2), y - (tb.height / 2));
 				break;
-			case Wrapped:
+			case Wrapped_Left:
+				y = y+(height-tb.height)/2;
+				printFont.drawWrapped(batch, printStr, x, y, width, HAlignment.LEFT);
+				break;
+			case Wrapped_Center:
 				y = y+(height-tb.height)/2;
 				printFont.drawWrapped(batch, printStr, x, y, width, HAlignment.CENTER);
 				break;

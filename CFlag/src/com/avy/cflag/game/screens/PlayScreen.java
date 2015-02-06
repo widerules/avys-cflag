@@ -185,8 +185,6 @@ public class PlayScreen extends BaseScreen {
 		pressedButton = GameButtons.None;
 
 		dfltFont = g.createFont("salsa", 20, true);
-		g.setFont(dfltFont);
-
 		lvlNmeFont = g.createFont("salsa", 13, true);
 		fadeOutActive = false;
 	}
@@ -308,7 +306,7 @@ public class PlayScreen extends BaseScreen {
 		lvlNoStr = new ImageString(""+currentLevel, dfltFont, Color.GREEN);
 		lvlNoStr.setBounds(82, 72,90,20);
 
-		lvlNameStr = new ImageString(lVl.getLvlName(), lvlNmeFont, Color.GREEN, PrintFormat.Wrapped);
+		lvlNameStr = new ImageString(lVl.getLvlName(), lvlNmeFont, Color.GREEN, PrintFormat.Wrapped_Center);
 		lvlNameStr.setBounds(35, 232,90,30);
 
 		lvlDcltyStr = new ImageString(lVl.getLvlDclty().toString(), lvlNmeFont, Color.GREEN);
@@ -899,7 +897,6 @@ public class PlayScreen extends BaseScreen {
 	private void updateHint() {
 		autoMoveActive = false;
 		if (!hintMenu.isVisible()) {
-			incrementHint(1);
 			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 		}
 	}

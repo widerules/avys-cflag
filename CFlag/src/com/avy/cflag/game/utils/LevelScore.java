@@ -1,11 +1,14 @@
 package com.avy.cflag.game.utils;
 
+import com.avy.cflag.game.EnumStore.Medals;
+
 public class LevelScore {
 	private int levelNo;
 	private int moves;
 	private int shots;
 	private int hintsUsed;
-
+	private Medals medalWon;
+	
 	public LevelScore() {
 		levelNo = 0;
 		moves = 0;
@@ -52,4 +55,12 @@ public class LevelScore {
 		this.hintsUsed = hintsUsed;
 	}
 
+	public Medals getMedalWon() {
+		return medalWon;
+	}
+
+	public void setMedalWon(Medals medalWon) {
+		this.medalWon = medalWon;
+	}
+	
 }

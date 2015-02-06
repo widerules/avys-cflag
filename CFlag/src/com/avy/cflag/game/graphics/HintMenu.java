@@ -37,7 +37,10 @@ public class HintMenu extends Group {
 	private int curHint=0;
 	private int totHints;
 	
-	public HintMenu(final Graphics g, final PlayScreen pScreen, BitmapFont inFont, String[] inHints, int inCurHint) {
+	private PlayScreen pScreen;
+	
+	public HintMenu(final Graphics g, final PlayScreen inPScreen, BitmapFont inFont, String[] inHints, int inCurHint) {
+		pScreen = inPScreen;
 		hints=inHints;
 		curHint = inCurHint>0?inCurHint-1:0;
 		totHints = inHints.length+1;
@@ -61,7 +64,7 @@ public class HintMenu extends Group {
 			hintsGroup[i] = new Group();
 			
 			if(i<totHints-1) {
-				ImageString hintStr = new ImageString(hints[i], inFont, Color.GREEN, PrintFormat.Wrapped);
+				ImageString hintStr = new ImageString(hints[i], inFont, Color.GREEN, PrintFormat.Wrapped_Center);
 				hintStr.setBounds(menuBase.getX()+15,menuBase.getY()+50, menuBase.getWidth()-30, 40);
 				hintsGroup[i].addActor(hintStr);
 			} else {
@@ -169,7 +172,6 @@ public class HintMenu extends Group {
 				if(curHint<totHints-1) {
 					hintsGroup[curHint].setVisible(false);
 					curHint++;
-					pScreen.incrementHint(curHint+1);
 					hintsGroup[curHint].setVisible(true);
 					leftArrow.setVisible(true);
 					if(curHint==totHints-1)
@@ -199,4 +201,9 @@ public class HintMenu extends Group {
 		return menuBase.getWidth();
 	}
 	
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		pScreen.incrementHint(curHint+1);
+	}
 }

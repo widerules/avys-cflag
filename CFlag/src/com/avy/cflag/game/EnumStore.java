@@ -100,5 +100,8 @@ public class EnumStore {
 	public static List<PlayImages> StreamObjects = Arrays.asList(PlayImages.Stream_U, PlayImages.Stream_R, PlayImages.Stream_D, PlayImages.Stream_L);
 	public static List<PlayImages> TunnelObjects = Arrays.asList(PlayImages.Tunnel_0, PlayImages.Tunnel_1, PlayImages.Tunnel_2, PlayImages.Tunnel_3, PlayImages.Tunnel_4, PlayImages.Tunnel_5,
 			PlayImages.Tunnel_6, PlayImages.Tunnel_7);
-
+	
+	public static enum Medals {
+		Gold, Silver, Bronze, None
+	}
 }

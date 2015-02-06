@@ -22,6 +22,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sizeTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
+import com.avy.cflag.base.ImageString;
+import com.avy.cflag.base.ImageString.PrintFormat;
 import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
 import com.avy.cflag.game.EnumStore.Difficulty;
@@ -94,19 +96,34 @@ public class LevelScreen extends BackScreen {
 	private Difficulty selectedDclty;
 	private int curPage;
 	private int selectedLevel;
-	private String selectedLevelName;
 
 	private boolean isDragged;
 	private float dragStartX;
 	private float dragEndX;
 	private boolean dragInProgress;
 
-	private boolean printLevelData;
 	private boolean touchEnabled;
 
 	private Image thumbnail;
 	private Image clickedNumButton;
 	private final boolean unlockAnimate;
+	
+	private Group printData;
+	
+	private ImageString levelNoStr;
+	private ImageString levelNameStr;
+	private ImageString levelDcltyStr;
+	private ImageString movesPlayedStr;
+	private ImageString shotsFiredStr;
+	private ImageString hintsUsedStr;
+
+	private ImageString levelNoData;
+	private ImageString levelNameData;
+	private ImageString levelDcltyData;
+	private ImageString movesPlayedData;
+	private ImageString shotsFiredData;
+	private ImageString hintsUsedData;
+
 
 	public LevelScreen(final CFlagGame game, final boolean unlockAnimate) {
 		super(game, true, true, false);
@@ -121,9 +138,7 @@ public class LevelScreen extends BackScreen {
 
 		selectedDclty = curUserOPTS.getLastDifficulty();
 		curPage = curUserSCORE.getMaxPlayedLevel(selectedDclty) / perPageLvlCnt;
-		selectedLevelName = "";
 
-		printLevelData = false;
 		isDragged = false;
 		dragStartX = 0;
 		dragEndX = 0;
@@ -137,7 +152,6 @@ public class LevelScreen extends BackScreen {
 		super.show();
 
 		g.setImageAtlas(commonAtlas);
-		g.setFont(scoreFont);
 
 		midButtonUp = new Image(g.getFlipTexRegion("1_rectbuttonup"));
 		midButtonUp.setPosition((bottomBar.getWidth() - midButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - midButtonUp.getHeight()) / 2));
@@ -217,7 +231,52 @@ public class LevelScreen extends BackScreen {
 		stage.addActor(midButtonGroup);
 		stage.addActor(leftButtonGroup);
 		stage.addActor(rightButtonGroup);
-
+		
+		levelNoStr = new ImageString    ("Level No      : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		levelNameStr = new ImageString  ("Level Name : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		levelDcltyStr = new ImageString ("Difficulty    : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		levelNoData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
+		levelNameData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
+		levelDcltyData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
+		
+		movesPlayedStr = new ImageString("Moves Played : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		shotsFiredStr = new ImageString ("Shots Fired    : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		hintsUsedStr = new ImageString  ("Hint Used       : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		movesPlayedData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
+		shotsFiredData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
+		hintsUsedData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
+		
+		levelNoStr.setPosition(60,420);
+		levelNameStr.setPosition(60,420+15); 
+		levelDcltyStr.setPosition(60,420+30); 
+		levelNoData.setPosition(60+90,420); 
+		levelNameData.setPosition(60+90,420+15); 
+		levelDcltyData.setPosition(60+90,420+30); 
+		
+		movesPlayedStr.setPosition(560,420); 
+		shotsFiredStr.setPosition(560,420+15); 
+		hintsUsedStr.setPosition(560,420+30); 
+		movesPlayedData.setPosition(560+100,420); 
+		shotsFiredData.setPosition(560+100,420+15); 
+		hintsUsedData.setPosition(560+100,420+30); 
+		
+		printData = new Group();
+		printData.addActor(levelNoStr);
+		printData.addActor(levelNameStr);
+		printData.addActor(levelDcltyStr);
+		printData.addActor(levelNoData);
+		printData.addActor(levelNameData);
+		printData.addActor(levelDcltyData);
+		printData.addActor(movesPlayedStr);
+		printData.addActor(shotsFiredStr);
+		printData.addActor(hintsUsedStr);
+		printData.addActor(movesPlayedData);
+		printData.addActor(shotsFiredData);
+		printData.addActor(hintsUsedData);
+		printData.setVisible(false);
+		
+		stage.addActor(printData);
+		
 		dcltyButtonGroup = new Group();
 
 		int idx = 0;
@@ -460,7 +519,6 @@ public class LevelScreen extends BackScreen {
 					}, new Action() {
 						@Override
 						public boolean act(final float delta) {
-							printLevelData = false;
 							thumbnail.clearActions();
 							thumbnail.remove();
 							return true;
@@ -547,7 +605,7 @@ public class LevelScreen extends BackScreen {
 					buyMsg.addAction(sequence(fadeOut(0.5f), visible(false)));
 					dcltyNumGroup[selectedDclty.ordinal()].addAction(alpha(1f));
 				}
-				if (printLevelData) {
+				if (printData.isVisible()) {
 					if (!((event.getTarget().getName() != null) && (event.getTarget().getName().equalsIgnoreCase("thumbnail") || event.getTarget().getName().equalsIgnoreCase("midbutton")))) {
 						swingInThumbnail();
 					}
@@ -558,7 +616,7 @@ public class LevelScreen extends BackScreen {
 			@Override
 			public boolean keyDown(final InputEvent event, final int keycode) {
 				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {
-					if (!printLevelData) {
+					if (!printData.isVisible()) {
 						argbFull.addAction(sequence(visible(true), fadeIn(1f), run(new Runnable() {
 							@Override
 							public void run() {
@@ -604,25 +662,25 @@ public class LevelScreen extends BackScreen {
 	@Override
 	public void render(final float delta) {
 		super.render(delta);
-		if (printLevelData) {
-			final LevelScore gScore = MemStore.curUserSCORE.getScores(selectedDclty, selectedLevel);
-			batch.begin();
-			final String lvlDetailsLeft = "Level No      : \nLevel Name : \nDifficulty    : ";
-			final String lvlDetailsRight = selectedLevel + "\n" + selectedLevelName + "\n" + selectedDclty.name();
-			String scoreDetailsLeft = "Moves Played : \nShots Fired    : \nHint Used       : ";
-			String scoreDetailsRight = "0\n0\nNo";
-			if (gScore != null) {
-				scoreDetailsLeft = "Moves Played : \nShots Fired    : \nHint Used       : ";
-				scoreDetailsRight = gScore.getMoves() + "\n" + gScore.getShots() + "\n" + gScore.getHintsUsed();
-			}
-			g.drawMultiLineString(lvlDetailsLeft, 100, 433, Color.YELLOW);
-			g.drawMultiLineString(lvlDetailsRight, 200, 433, Color.WHITE);
-
-			g.drawMultiLineString(scoreDetailsLeft, 600, 433, Color.YELLOW);
-			g.drawMultiLineString(scoreDetailsRight, 670, 433, Color.WHITE);
-
-			batch.end();
-		}
+//		if (printLevelData) {
+//			final LevelScore gScore = MemStore.curUserSCORE.getScores(selectedDclty, selectedLevel);
+//			batch.begin();
+//			final String lvlDetailsLeft = "Level No      : \nLevel Name : \nDifficulty    : ";
+//			final String lvlDetailsRight = selectedLevel + "\n" + selectedLevelName + "\n" + selectedDclty.name();
+//			String scoreDetailsLeft = "Moves Played : \nShots Fired    : \nHint Used       : ";
+//			String scoreDetailsRight = "0\n0\nNo";
+//			if (gScore != null) {
+//				scoreDetailsLeft = "Moves Played : \nShots Fired    : \nHint Used       : ";
+//				scoreDetailsRight = gScore.getMoves() + "\n" + gScore.getShots() + "\n" + gScore.getHintsUsed();
+//			}
+//			g.drawMultiLineString(lvlDetailsLeft, 100, 433, Color.YELLOW);
+//			g.drawMultiLineString(lvlDetailsRight, 200, 433, Color.WHITE);
+//
+//			g.drawMultiLineString(scoreDetailsLeft, 600, 433, Color.YELLOW);
+//			g.drawMultiLineString(scoreDetailsRight, 670, 433, Color.WHITE);
+//
+//			batch.end();
+//		}
 	}
 
 	@Override
@@ -703,7 +761,6 @@ public class LevelScreen extends BackScreen {
 
 		final Level lvl = new Level();
 		lvl.loadLevel(selectedDclty, selectedLevel);
-		selectedLevelName = lvl.getLvlName();
 		thumbnail = new Image(g.getThumbTexRegion(selectedDclty, selectedLevel));
 		thumbnail.setPosition(clickedNumButton.getX(), clickedNumButton.getY());
 		thumbnail.setOrigin(thumbnail.getWidth() / 2, thumbnail.getHeight() / 2);
@@ -736,7 +793,6 @@ public class LevelScreen extends BackScreen {
 					}, new Action() {
 						@Override
 						public boolean act(final float delta) {
-							printLevelData = false;
 							thumbnail.clearActions();
 							thumbnail.remove();
 							return true;
@@ -764,7 +820,7 @@ public class LevelScreen extends BackScreen {
 			playStr.addAction(visible(true));
 			playAgainStr.addAction(visible(false));
 		}
-		printLevelData = true;
+		printLevelData(selectedDclty, selectedLevel, lvl.getLvlName());
 	}
 
 	public void swingInThumbnail() {
@@ -787,7 +843,7 @@ public class LevelScreen extends BackScreen {
 		playStr.addAction(visible(false));
 		playAgainStr.addAction(visible(false));
 		backStr.addAction(visible(true));
-		printLevelData = false;
+		printData.setVisible(false);
 	}
 
 	private void setTouchEnabled(final boolean isEnabled) {
@@ -805,5 +861,16 @@ public class LevelScreen extends BackScreen {
 			leftButtonGroup.setTouchable(Touchable.disabled);
 			rightButtonGroup.setTouchable(Touchable.disabled);
 		}
+	}
+	
+	private void printLevelData(Difficulty selectedDclty, int selectedLevel, String levelName){
+		LevelScore gScore = MemStore.curUserSCORE.getScores(selectedDclty, selectedLevel);
+		levelNoData.setPrintStr(""+selectedLevel);
+		levelNameData.setPrintStr(levelName);
+		levelDcltyData.setPrintStr(selectedDclty.name());
+		movesPlayedData.setPrintStr("" + gScore.getMoves());
+		shotsFiredData.setPrintStr("" + gScore.getShots());
+		hintsUsedData.setPrintStr("" + gScore.getHintsUsed());
+		printData.setVisible(true);
 	}
 }
