@@ -5,12 +5,8 @@ import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
 import static com.avy.cflag.game.MemStore.savedGame;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.math.Interpolation.*;
 
 import java.util.ArrayList;
 
@@ -25,6 +21,7 @@ import com.avy.cflag.game.EnumStore.Difficulty;
 import com.avy.cflag.game.EnumStore.Direction;
 import com.avy.cflag.game.EnumStore.ExplodeState;
 import com.avy.cflag.game.EnumStore.GameState;
+import com.avy.cflag.game.EnumStore.Medals;
 import com.avy.cflag.game.EnumStore.PlayImages;
 import com.avy.cflag.game.EnumStore.TankState;
 import com.avy.cflag.game.GameUtils;
@@ -48,15 +45,18 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Interpolation.BounceIn;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class PlayScreen extends BaseScreen {
 
@@ -134,6 +134,15 @@ public class PlayScreen extends BaseScreen {
 	private ParticleEffect burnEffect;
 	private ParticleEffect splashEffect;
 	private Point effectStrtPos = new Point(0,0);
+	
+	private Image awardArgb;
+	private Image awardTitle1;
+	private ImageString awardMovesStr;
+	private ImageString awardShotsStr;
+	private ImageString awardHintsUsedStr;
+	private Image awardTitle2;
+	private Image awardShield;
+	private Group awardMenu;
 
 	private boolean updateInProgress = false;
 	private GameButtons pressedButton = GameButtons.None;
@@ -149,7 +158,12 @@ public class PlayScreen extends BaseScreen {
 	private ArrayList<Direction> autoMovePath = new ArrayList<Direction>();;
 	private int autoMoveCounter = 0;
 	private boolean autoMoveActive = false;
+	private int movesCounter = 0;
+	private int shotsCounter = 0;
+	private int hintsCounter = 0;
 
+	private float deltaCounter=0;
+	
 	public PlayScreen(final CFlagGame game) {
 		super(game, true, true, true);
 		initImages();
@@ -304,19 +318,19 @@ public class PlayScreen extends BaseScreen {
 		rightPanel.setPosition(leftPanel.getWidth() + midPanel.getWidth(), 0);
 		
 		lvlNoStr = new ImageString(""+currentLevel, dfltFont, Color.GREEN);
-		lvlNoStr.setBounds(82, 72,90,20);
+		lvlNoStr.setBounds(35, 62,90,20);
 
 		lvlNameStr = new ImageString(lVl.getLvlName(), lvlNmeFont, Color.GREEN, PrintFormat.Wrapped_Center);
 		lvlNameStr.setBounds(35, 232,90,30);
 
 		lvlDcltyStr = new ImageString(lVl.getLvlDclty().toString(), lvlNmeFont, Color.GREEN);
-		lvlDcltyStr.setBounds(80, 157,90,20);
+		lvlDcltyStr.setBounds(35, 148,90,20);
 		
-		lvlMovesStr = new ImageString(""+hero.getTankMoves(), dfltFont, Color.GREEN);
-		lvlMovesStr.setBounds(720, 72,90,20);
+		lvlMovesStr = new ImageString(""+hero.getTankMoves()+"/" + lVl.getLvlMaxMoves(), dfltFont, Color.GREEN);
+		lvlMovesStr.setBounds(678, 62,90,20);
 		
-		lvlShotsStr = new ImageString(""+hero.getTankShots(), dfltFont, Color.GREEN);
-		lvlShotsStr.setBounds(720, 158,90,20);
+		lvlShotsStr = new ImageString(""+hero.getTankShots()+"/" + lVl.getLvlMaxShots(), dfltFont, Color.GREEN);
+		lvlShotsStr.setBounds(678, 148,90,20);
 
 		arrowButton_Up.setPosition(49, 293);
 		arrowButton_Right.setPosition(86, 348);
@@ -348,14 +362,50 @@ public class PlayScreen extends BaseScreen {
 		
 		pltFrm = new Platform(midPanel);
 		pltFrm.paintPlatform(hero);
+		
+		awardArgb = new Image(g.getFlipTexRegion("argbblack"));
+		awardArgb.setPosition(0, 0);
+		awardArgb.setSize(game.getSrcWidth(), game.getSrcHeight());
+		awardArgb.getColor().a = 0.5f;
+		
+		awardTitle1 = new Image(g.getFlipTexRegion("1_awardtitle"));
+		awardTitle1.setPosition((game.getSrcWidth()-awardTitle1.getWidth())/2, 30);
+		
+		awardMovesStr = new ImageString("0/" + lVl.getLvlMaxMoves() , dfltFont, Color.GREEN);
+		awardMovesStr.setBounds(218, 160, 65, 20);
 
-		argbFull.addAction(sequence(fadeOut(1f), visible(false), new Action() {
-			@Override
-			public boolean act(final float delta) {
-				return true;
-			}
-		}));
+		awardShotsStr = new ImageString("0/" + lVl.getLvlMaxShots(), dfltFont, Color.GREEN);
+		awardShotsStr.setBounds(372, 160, 65, 20);
+		
+		awardHintsUsedStr = new ImageString("0/4", dfltFont, Color.GREEN);
+		awardHintsUsedStr.setBounds(530, 160, 65, 20);
+
+		awardTitle2 = new Image(g.getFlipTexRegion("2_awardtitle"));
+		awardTitle2.setPosition((game.getSrcWidth()-awardTitle2.getWidth())/2, 220);
+		awardTitle2.setVisible(false);
+//		awardTitle2.getColor().a=0f;
+		
+		awardShield = new Image(g.getFlipTexRegion("medal_gold"));
+		awardShield.setPosition((game.getSrcWidth()-awardShield.getWidth())/2, 270);
+		awardShield.setVisible(false);
+		awardShield.setOrigin(awardShield.getWidth()/2, awardShield.getHeight()/2);
+//		awardShield.getColor().a=0f;
+		
+		awardMenu = new Group();
+		awardMenu.setVisible(false);
+		awardMenu.getColor().a=0f;
+		
+		awardMenu.addActor(awardArgb);
+		awardMenu.addActor(awardTitle1);
+		awardMenu.addActor(awardMovesStr);
+		awardMenu.addActor(awardShotsStr);
+		awardMenu.addActor(awardHintsUsedStr);
+		awardMenu.addActor(awardTitle2);
+		awardMenu.addActor(awardShield);
+		
+		argbFull.addAction(sequence(fadeOut(1f), visible(false)));
 		argbFull.setName("Test");
+		
 		stage.addActor(leftPanel);
 		stage.addActor(midPanel);
 		stage.addActor(rightPanel);
@@ -371,6 +421,7 @@ public class PlayScreen extends BaseScreen {
 		stage.addActor(hintButton);
 		stage.addActor(undoButton);
 		stage.addActor(fireButton);
+		stage.addActor(awardMenu);
 		stage.addActor(pausedMenu);
 		stage.addActor(drownedMenu);
 		stage.addActor(deadMenu);
@@ -637,17 +688,19 @@ public class PlayScreen extends BaseScreen {
 			}
 		};
 
-		final ClickListener hackListener = new ClickListener(Buttons.LEFT) {
+		final ClickListener clickListener = new ClickListener(Buttons.LEFT) {
 			@Override
 			public void clicked(final InputEvent event, final float x, final float y) {
-				if (inTapSquare(780, 20) && (getTapCount() == 3)) {
-					gameState = GameState.Won;
+				if(gameState==GameState.AwardEnd)
+					gameState=GameState.Won;
+				else if (inTapSquare(780, 20) && (getTapCount() == 3)) {
+					gameState = GameState.AwardStart;
 				}
 				super.clicked(event, x, y);
 			}
 		};
-		hackListener.setTapSquareSize(20);
-		stage.addListener(hackListener);
+		clickListener.setTapSquareSize(20);
+		stage.addListener(clickListener);
 		stage.addListener(dragListener);
 		setTouchEnabled(false);
 	}
@@ -689,6 +742,9 @@ public class PlayScreen extends BaseScreen {
 				break;
 			case Dead:
 				updateDead();
+				break;
+			case AwardStart:
+				updateAward(delta);
 				break;
 			case Won:
 				updateWon();
@@ -763,7 +819,7 @@ public class PlayScreen extends BaseScreen {
 				gameState = GameState.Dead;
 				break;
 			case ReachedFlag:
-				gameState = GameState.Won;
+				gameState = GameState.AwardStart;
 				break;
 			case Firing:
 				hero.fireTank();
@@ -882,15 +938,73 @@ public class PlayScreen extends BaseScreen {
 			longPressButton = GameButtons.None;
 		}
 	}
+	
+	private void updateAward(final float delta) {
+		if(deltaCounter>0.01) {
+			deltaCounter=0;
+		if(movesCounter==0 && shotsCounter==0) {
+			setTouchEnabled(false);
+			autoMoveActive = false;
+			pltFrm.animateHero();
 
-	private void updateWon() {
-		autoMoveActive = false;
-		pltFrm.animateHero();
-		if (!wonMenu.isVisible()) {
-			wonMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
+			if(movesCounter<=hero.getTankMoves())
+				movesCounter++;
+			if(shotsCounter<=hero.getTankShots())
+				shotsCounter++;
+			if(hintsCounter<=hintsUsed)
+				hintsCounter++;
+			
+			awardMovesStr.setPrintStr(movesCounter + "/" + lVl.getLvlMaxMoves());
+			awardShotsStr.setPrintStr(shotsCounter + "/" + lVl.getLvlMaxShots());
+			awardHintsUsedStr.setPrintStr(hintsCounter + "/4");
+			awardMenu.addAction(sequence(visible(true),fadeIn(1f)));
+			
 			deleteSave();
 			saveScores();
-			Sounds.won.play();
+			
+		} else if(movesCounter>=hero.getTankMoves() && shotsCounter>=hero.getTankShots()){
+			deltaCounter=0;
+			gameState=GameState.AwardEnd;
+			awardTitle2.addAction(sequence(visible(true),fadeIn(1f),new Action() {
+				@Override
+				public boolean act(float delta) {
+					awardShield.addAction(sequence(scaleBy(1,1),visible(true),new Action(){
+						@Override
+						public boolean act(float delta) {
+							Sounds.won.play();
+							return true;
+						}
+					},scaleBy(-1, -1,0.1f),new Action() {
+						@Override
+						public boolean act(float delta) {
+							setTouchEnabled(true);
+							return true;
+						}
+					}));
+					return true;
+				}
+			}));
+		} else {
+			if(movesCounter<hero.getTankMoves())
+				movesCounter++;
+			if(shotsCounter<hero.getTankShots())
+				shotsCounter++;
+			if(hintsCounter<hintsUsed)
+				hintsCounter++;
+			
+			awardMovesStr.setPrintStr(movesCounter + "/" + lVl.getLvlMaxMoves());
+			awardShotsStr.setPrintStr(shotsCounter + "/" + lVl.getLvlMaxShots());
+			awardHintsUsedStr.setPrintStr(hintsCounter + "/4");
+		}
+		awardMenu.setVisible(true);
+		} else {
+			deltaCounter = deltaCounter + delta;
+		}
+	}
+
+	private void updateWon() {
+		if (!wonMenu.isVisible()) {
+			wonMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 		}
 	}
 
@@ -962,7 +1076,6 @@ public class PlayScreen extends BaseScreen {
 		g.drawRectWithBorder(hero.getaTankPrev().getTankBullet().getCurBulletRect(), Color.RED);
 		g.drawRectWithBorder(hero.getaTankCur().getTankBullet().getCurBulletRect(), Color.RED);
 		sr.end();
-
 	}
 
 	public void drawExplosions(final float delta, Bullet bullet){
@@ -1214,7 +1327,7 @@ public class PlayScreen extends BaseScreen {
 	public void incrementHint(int inHintsUsed){
 		if(inHintsUsed>hintsUsed) {
 			hintsUsed=inHintsUsed;
-			GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintsUsed);
+			GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintsUsed, Medals.None);
 		}
 	}
 
@@ -1259,16 +1372,18 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void saveScores() {
-		GameUtils.saveUserScores(currentDclty, currentLevel, hero.getTankMoves(), hero.getTankShots(), hintsUsed);
+		Medals medalWon = PlayUtils.calculateAward(hintsUsed,hero.getTankMoves(), hero.getTankShots(), lVl.getLvlMaxMoves(), lVl.getLvlMaxShots());
+		awardShield.setDrawable(new TextureRegionDrawable(g.getFlipTexRegion("medal_"+medalWon.name().toLowerCase())));
+		GameUtils.saveUserScores(currentDclty, currentLevel, hero.getTankMoves(), hero.getTankShots(), hintsUsed, medalWon);
 		if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
 			if ((currentLevel + 1) <= lvlCntPerDCLTY[currentDclty.ordinal()]) {
-				GameUtils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, 0);
+				GameUtils.saveUserScores(currentDclty, currentLevel + 1, 0, 0, 0, Medals.None);
 				final SaveThumbs st2 = new SaveThumbs(g, currentDclty, currentLevel + 1);
 				st2.run();
 			} else {
 				final Difficulty nxtDifficulty = PlayUtils.getDifficultyByIdx(currentDclty.ordinal() + 1);
 				if (nxtDifficulty != null) {
-					GameUtils.saveUserScores(nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty), 0, 0, 0);
+					GameUtils.saveUserScores(nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty), 0, 0, 0, Medals.None);
 					final SaveThumbs st2 = new SaveThumbs(g, nxtDifficulty, curUserSCORE.getMaxPlayedLevel(nxtDifficulty));
 					st2.run();
 					curUserOPTS.setlastDclty(nxtDifficulty);

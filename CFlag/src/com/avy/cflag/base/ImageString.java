@@ -47,13 +47,14 @@ public class ImageString extends Actor{
 		float y = getY();
 		float width = getWidth();
 		float height = getHeight();
-		final TextBounds tb = printFont.getWrappedBounds(printStr, width);
+		TextBounds tb = printFont.getWrappedBounds(printStr, width);
 		switch (printFormat) {
 			case Normal_Left:
 				printFont.draw(batch, printStr, x, y);
 				break;
 			case Normal_Center:
-				printFont.draw(batch, printStr, x - (tb.width / 2), y - (tb.height / 2));
+				tb = printFont.getBounds(printStr);
+				printFont.draw(batch, printStr, x + (width - tb.width) / 2, y + (height - tb.height) / 2);
 				break;
 			case Wrapped_Left:
 				y = y+(height-tb.height)/2;
