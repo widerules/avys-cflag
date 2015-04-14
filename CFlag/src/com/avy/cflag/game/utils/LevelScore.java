@@ -14,13 +14,15 @@ public class LevelScore {
 		moves = 0;
 		shots = 0;
 		hintsUsed = 0;
+		medalWon = Medals.None;
 	}
 
-	public LevelScore(final int levelNo, final int moves, final int shots, final int hintsUsed) {
+	public LevelScore(final int levelNo, final int moves, final int shots, final int hintsUsed, final Medals medalWon) {
 		this.levelNo = levelNo;
 		this.moves = moves;
 		this.shots = shots;
 		this.hintsUsed = hintsUsed;
+		this.medalWon=medalWon;
 	}
 
 	public int getLevelNo() {
@@ -62,5 +64,4 @@ public class LevelScore {
 	public void setMedalWon(Medals medalWon) {
 		this.medalWon = medalWon;
 	}
-	
 }

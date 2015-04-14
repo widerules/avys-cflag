@@ -34,6 +34,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.avy.cflag.base.Musics;
 import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.EnumStore.Difficulty;
+import com.avy.cflag.game.EnumStore.Medals;
 import com.avy.cflag.game.utils.GameData;
 import com.avy.cflag.game.utils.LevelScore;
 import com.avy.cflag.game.utils.SaveThumbs;
@@ -54,7 +55,7 @@ public class GameUtils {
 			fi.close();
 
 			final byte inData[] = decryptDate(fileData);
-//			final byte inData[] = fileData;
+			// final byte inData[] = fileData;
 
 			final String lvlDataPerDclty[] = new String[Difficulty.length()];
 
@@ -164,8 +165,8 @@ public class GameUtils {
 		pr.flush();
 	}
 
-	public static void saveUserScores(final Difficulty dclty, final int levelNo, final int movesPlayed, final int shotsTriggered, final int hintsUsed) {
-		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintsUsed);
+	public static void saveUserScores(final Difficulty dclty, final int levelNo, final int movesPlayed, final int shotsTriggered, final int hintsUsed, final Medals medalWon) {
+		final LevelScore currentScore = new LevelScore(levelNo, movesPlayed, shotsTriggered, hintsUsed, medalWon);
 		if (levelNo <= curUserSCORE.getMaxPlayedLevel(dclty)) {
 			curUserSCORE.updateScores(dclty, currentScore);
 		} else {
@@ -208,4 +209,5 @@ public class GameUtils {
 		Gdx.app.log("com.avy.cflag.game", "Save Game Took : " + timeTaken + "ms");
 		curUserOPTS.setGameSaved(true);
 	}
+
 }

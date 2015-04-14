@@ -8,6 +8,7 @@ import com.avy.cflag.base.Point;
 import com.avy.cflag.game.EnumStore.Difficulty;
 import com.avy.cflag.game.EnumStore.Direction;
 import com.avy.cflag.game.EnumStore.ExplodeState;
+import com.avy.cflag.game.EnumStore.Medals;
 import com.avy.cflag.game.EnumStore.PlayImages;
 
 public class PlayUtils {
@@ -259,5 +260,61 @@ public class PlayUtils {
 			System.out.println(line);
 		}
 		System.out.println("------------------------------");
+	}
+	
+	public static Medals calculateAward(int hintsUsed, int curMoves, int curShots, int maxMoves, int maxShots) {
+		Medals result = Medals.None;
+		if (hintsUsed < 4) {
+			int movessRatio = (curMoves - maxMoves) / maxMoves * 100;
+			int shotsRatio = (curShots - maxShots) / maxShots * 100;
+			int combinedRatio = movessRatio + shotsRatio;
+
+			switch (hintsUsed) {
+				case 0:
+					if ((movessRatio <= 0 && shotsRatio <= 0) || (combinedRatio <= 0)) {
+						result = Medals.Gold;
+					} else if (combinedRatio <= 25) {
+						result = Medals.Silver;
+					} else {
+						result = Medals.Bronze;
+					}
+					break;
+				case 1:
+					if ((movessRatio <= -5 && shotsRatio <= -5) || (combinedRatio <= -10)) {
+						result = Medals.Gold;
+					} else if (combinedRatio <= 20) {
+						result = Medals.Silver;
+					} else {
+						result = Medals.Bronze;
+					}
+					break;
+				case 2:
+					if ((movessRatio <= -10 && shotsRatio <= -10) || (combinedRatio <= -20)) {
+						result = Medals.Gold;
+					} else if (combinedRatio <= 15) {
+						result = Medals.Silver;
+					} else {
+						result = Medals.Bronze;
+					}
+					break;
+				case 3:
+					if ((movessRatio <= -15 && shotsRatio <= -15) || (combinedRatio <= -30)) {
+						result = Medals.Gold;
+					} else if (combinedRatio <= 10) {
+						result = Medals.Silver;
+					} else {
+						if ((movessRatio <= -10 && shotsRatio <= -10) || (combinedRatio <= -20)) {
+							result = Medals.Gold;
+						} else if (combinedRatio <= 15) {
+							result = Medals.Silver;
+						} else {
+							result = Medals.Bronze;
+						}
+					}
+					break;
+			}
+
+		}
+		return result;
 	}
 }

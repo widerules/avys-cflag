@@ -70,7 +70,7 @@ public class EnumStore {
 	};
 
 	public static enum GameState {
-		FadeIn, FadeOut, Ready, Running, Paused, Dead, Drowned, Won, Menu, Hint, Restart, NextLevel, Quit
+		FadeIn, FadeOut, Ready, Running, Paused, Dead, Drowned, AwardStart, AwardEnd, Won, Menu, Hint, Restart, NextLevel, Quit
 	}
 
 	public static enum BulletState {
@@ -102,6 +102,6 @@ public class EnumStore {
 			PlayImages.Tunnel_6, PlayImages.Tunnel_7);
 	
 	public static enum Medals {
-		Gold, Silver, Bronze, None
+		None, Bronze, Silver, Gold
 	}
 }

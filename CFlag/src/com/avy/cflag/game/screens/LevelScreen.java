@@ -27,6 +27,7 @@ import com.avy.cflag.base.ImageString.PrintFormat;
 import com.avy.cflag.base.TouchListener;
 import com.avy.cflag.game.CFlagGame;
 import com.avy.cflag.game.EnumStore.Difficulty;
+import com.avy.cflag.game.EnumStore.Medals;
 import com.avy.cflag.game.GameUtils;
 import com.avy.cflag.game.MemStore;
 import com.avy.cflag.game.PlayUtils;
@@ -638,7 +639,7 @@ public class LevelScreen extends BackScreen {
 					if ((maxUnlockedLevel + 1) <= lvlCntPerDCLTY[selectedDclty.ordinal()]) {
 						curUserOPTS.setlastDclty(selectedDclty);
 						GameUtils.saveGameOptions();
-						GameUtils.saveUserScores(selectedDclty, maxUnlockedLevel + 1, 0, 0, 0);
+						GameUtils.saveUserScores(selectedDclty, maxUnlockedLevel + 1, 0, 0, 0, Medals.None);
 						final SaveThumbs st2 = new SaveThumbs(g, selectedDclty, maxUnlockedLevel + 1);
 						st2.setPlayAtlas();
 						st2.run();
