@@ -28,11 +28,11 @@ public class SplashScreen extends BaseScreen {
 	public void show() {
 		super.show();
 		g.setImageAtlas(imageAtlas);
-		splashImage = new Image(g.getFlipTexRegion("background"));
+		splashImage = new Image(g.getFlipYTexRegion("background"));
 		splashImage.rotateBy(90);
 		splashImage.setScaleY(game.getSrcWidth());
 		splashImage.setPosition(game.getSrcWidth(), 0);
-		titleImage = new Image(g.getFlipTexRegion("title"));
+		titleImage = new Image(g.getFlipYTexRegion("title"));
 		titleImage.setPosition((game.getSrcWidth() - titleImage.getWidth()) / 2, (game.getSrcHeight() - titleImage.getHeight()) / 2);
 
 		stage.addActor(splashImage);

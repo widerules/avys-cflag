@@ -5,8 +5,13 @@ import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
 import static com.avy.cflag.game.MemStore.savedGame;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-import static com.badlogic.gdx.math.Interpolation.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleBy;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
 import java.util.ArrayList;
 
@@ -45,13 +50,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Interpolation.BounceIn;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -144,6 +147,14 @@ public class PlayScreen extends BaseScreen {
 	private Image awardShield;
 	private Group awardMenu;
 
+	private Image helpRect;
+	private Image helpArrow_d_l;
+	private Image helpArrow_d_r;
+	private Image helpArrow_u_l;
+	private Image helpArrow_u_r;
+	private ImageString helpStr;
+	private Group helpBox;
+	
 	private boolean updateInProgress = false;
 	private GameButtons pressedButton = GameButtons.None;
 	private GameButtons longPressButton = GameButtons.None;
@@ -250,22 +261,22 @@ public class PlayScreen extends BaseScreen {
 		hintMenu.setVisible(false);
 		hintMenu.getColor().a = 0; 
 
-		argbFull = new Image(g.getFlipTexRegion("argbblack"));
-		leftPanel = new Image(g.getFlipTexRegion("leftpanel"));
+		argbFull = new Image(g.getFlipYTexRegion("argbblack"));
+		leftPanel = new Image(g.getFlipYTexRegion("leftpanel"));
 		midPanel = new Group();
-		rightPanel = new Image(g.getFlipTexRegion("rightpanel"));
+		rightPanel = new Image(g.getFlipYTexRegion("rightpanel"));
 
-		arrowButton_Left_Up = new Image(g.getFlipTexRegion("arrow_l_up"));
-		arrowButton_Left_Down = new Image(g.getFlipTexRegion("arrow_l_down"));
+		arrowButton_Left_Up = new Image(g.getFlipYTexRegion("arrow_l_up"));
+		arrowButton_Left_Down = new Image(g.getFlipYTexRegion("arrow_l_down"));
 		arrowButton_Left_Down.setVisible(false);
 		arrowButton_Left = new Group();
 		arrowButton_Left.addActor(arrowButton_Left_Up);
 		arrowButton_Left.addActor(arrowButton_Left_Down);
 		arrowButton_Left.setName("Left");
 
-		arrowButton_Up_Up = new Image(g.getFlipTexRegion("arrow_u_up"));
+		arrowButton_Up_Up = new Image(g.getFlipYTexRegion("arrow_u_up"));
 		arrowButton_Up_Up.setName("UpUp");
-		arrowButton_Up_Down = new Image(g.getFlipTexRegion("arrow_u_down"));
+		arrowButton_Up_Down = new Image(g.getFlipYTexRegion("arrow_u_down"));
 		arrowButton_Up_Down.setVisible(false);
 		arrowButton_Up_Down.setName("UpDown");
 		arrowButton_Up = new Group();
@@ -273,38 +284,38 @@ public class PlayScreen extends BaseScreen {
 		arrowButton_Up.addActor(arrowButton_Up_Down);
 		arrowButton_Up.setName("Up");
 
-		arrowButton_Right_Up = new Image(g.getFlipTexRegion("arrow_r_up"));
-		arrowButton_Right_Down = new Image(g.getFlipTexRegion("arrow_r_down"));
+		arrowButton_Right_Up = new Image(g.getFlipYTexRegion("arrow_r_up"));
+		arrowButton_Right_Down = new Image(g.getFlipYTexRegion("arrow_r_down"));
 		arrowButton_Right_Down.setVisible(false);
 		arrowButton_Right = new Group();
 		arrowButton_Right.addActor(arrowButton_Right_Up);
 		arrowButton_Right.addActor(arrowButton_Right_Down);
 		arrowButton_Right.setName("Right");
 
-		arrowButton_Down_Up = new Image(g.getFlipTexRegion("arrow_d_up"));
-		arrowButton_Down_Down = new Image(g.getFlipTexRegion("arrow_d_down"));
+		arrowButton_Down_Up = new Image(g.getFlipYTexRegion("arrow_d_up"));
+		arrowButton_Down_Down = new Image(g.getFlipYTexRegion("arrow_d_down"));
 		arrowButton_Down_Down.setVisible(false);
 		arrowButton_Down = new Group();
 		arrowButton_Down.addActor(arrowButton_Down_Up);
 		arrowButton_Down.addActor(arrowButton_Down_Down);
 		arrowButton_Down.setName("Down");
 
-		hintButton_Up = new Image(g.getFlipTexRegion("hint_up"));
-		hintButton_Down = new Image(g.getFlipTexRegion("hint_down"));
+		hintButton_Up = new Image(g.getFlipYTexRegion("hint_up"));
+		hintButton_Down = new Image(g.getFlipYTexRegion("hint_down"));
 		hintButton_Down.setVisible(false);
 		hintButton = new Group();
 		hintButton.addActor(hintButton_Up);
 		hintButton.addActor(hintButton_Down);
 
-		undoButton_Up = new Image(g.getFlipTexRegion("undo_up"));
-		undoButton_Down = new Image(g.getFlipTexRegion("undo_down"));
+		undoButton_Up = new Image(g.getFlipYTexRegion("undo_up"));
+		undoButton_Down = new Image(g.getFlipYTexRegion("undo_down"));
 		undoButton_Down.setVisible(false);
 		undoButton = new Group();
 		undoButton.addActor(undoButton_Up);
 		undoButton.addActor(undoButton_Down);
 
-		fireButton_Up = new Image(g.getFlipTexRegion("fire_up"));
-		fireButton_Down = new Image(g.getFlipTexRegion("fire_down"));
+		fireButton_Up = new Image(g.getFlipYTexRegion("fire_up"));
+		fireButton_Down = new Image(g.getFlipYTexRegion("fire_down"));
 		fireButton_Down.setVisible(false);
 		fireButton = new Group();
 		fireButton.addActor(fireButton_Up);
@@ -363,12 +374,12 @@ public class PlayScreen extends BaseScreen {
 		pltFrm = new Platform(midPanel);
 		pltFrm.paintPlatform(hero);
 		
-		awardArgb = new Image(g.getFlipTexRegion("argbblack"));
+		awardArgb = new Image(g.getFlipYTexRegion("argbblack"));
 		awardArgb.setPosition(0, 0);
 		awardArgb.setSize(game.getSrcWidth(), game.getSrcHeight());
-		awardArgb.getColor().a = 0.5f;
+		awardArgb.getColor().a = 0.8f;
 		
-		awardTitle1 = new Image(g.getFlipTexRegion("1_awardtitle"));
+		awardTitle1 = new Image(g.getFlipYTexRegion("1_awardtitle"));
 		awardTitle1.setPosition((game.getSrcWidth()-awardTitle1.getWidth())/2, 30);
 		
 		awardMovesStr = new ImageString("0/" + lVl.getLvlMaxMoves() , dfltFont, Color.GREEN);
@@ -380,12 +391,12 @@ public class PlayScreen extends BaseScreen {
 		awardHintsUsedStr = new ImageString("0/4", dfltFont, Color.GREEN);
 		awardHintsUsedStr.setBounds(530, 160, 65, 20);
 
-		awardTitle2 = new Image(g.getFlipTexRegion("2_awardtitle"));
+		awardTitle2 = new Image(g.getFlipYTexRegion("2_awardtitle"));
 		awardTitle2.setPosition((game.getSrcWidth()-awardTitle2.getWidth())/2, 220);
 		awardTitle2.setVisible(false);
 //		awardTitle2.getColor().a=0f;
 		
-		awardShield = new Image(g.getFlipTexRegion("medal_gold"));
+		awardShield = new Image(g.getFlipYTexRegion("medal_none"));
 		awardShield.setPosition((game.getSrcWidth()-awardShield.getWidth())/2, 270);
 		awardShield.setVisible(false);
 		awardShield.setOrigin(awardShield.getWidth()/2, awardShield.getHeight()/2);
@@ -403,8 +414,23 @@ public class PlayScreen extends BaseScreen {
 		awardMenu.addActor(awardTitle2);
 		awardMenu.addActor(awardShield);
 		
+		helpRect = new Image(g.getFlipYTexRegion("help_rect"));
+		helpArrow_d_l = new Image(g.getFlipYTexRegion("help_arrow"));
+		helpArrow_u_l = new Image(g.getTexRegion("help_arrow"));
+		helpArrow_u_r = new Image(g.getFlipXTexRegion("help_arrow"));
+		helpArrow_d_r = new Image(g.getFlipXYTexRegion("help_arrow"));
+		helpStr = new ImageString("" , lvlNmeFont, Color.RED, PrintFormat.Wrapped_Center);
+		
+		
+		helpBox = new Group();
+		helpBox.addActor(helpRect);
+		helpBox.addActor(helpArrow_d_r);
+		helpBox.addActor(helpArrow_d_l);
+		helpBox.addActor(helpArrow_u_l);
+		helpBox.addActor(helpArrow_u_r);
+		helpBox.addActor(helpStr);
+		
 		argbFull.addAction(sequence(fadeOut(1f), visible(false)));
-		argbFull.setName("Test");
 		
 		stage.addActor(leftPanel);
 		stage.addActor(midPanel);
@@ -427,6 +453,7 @@ public class PlayScreen extends BaseScreen {
 		stage.addActor(deadMenu);
 		stage.addActor(wonMenu);
 		stage.addActor(hintMenu);
+		stage.addActor(helpBox);
 		stage.addActor(argbFull);
 
 		arrowButton_Up.addListener(new TouchListener() {
@@ -732,6 +759,7 @@ public class PlayScreen extends BaseScreen {
 				updateReady();
 				break;
 			case Running:
+				showHelpBox(1, 1, "This is a test message that needs to be displayed for the right object at the right position as per the input specified");
 				updateRunning();
 				break;
 			case Paused:
@@ -1373,7 +1401,7 @@ public class PlayScreen extends BaseScreen {
 
 	private void saveScores() {
 		Medals medalWon = PlayUtils.calculateAward(hintsUsed,hero.getTankMoves(), hero.getTankShots(), lVl.getLvlMaxMoves(), lVl.getLvlMaxShots());
-		awardShield.setDrawable(new TextureRegionDrawable(g.getFlipTexRegion("medal_"+medalWon.name().toLowerCase())));
+		awardShield.setDrawable(new TextureRegionDrawable(g.getFlipYTexRegion("medal_"+medalWon.name().toLowerCase())));
 		GameUtils.saveUserScores(currentDclty, currentLevel, hero.getTankMoves(), hero.getTankShots(), hintsUsed, medalWon);
 		if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
 			if ((currentLevel + 1) <= lvlCntPerDCLTY[currentDclty.ordinal()]) {
@@ -1423,6 +1451,33 @@ public class PlayScreen extends BaseScreen {
 			undoButton.setTouchable(Touchable.disabled);
 			fireButton.setTouchable(Touchable.disabled);
 		}
+	}
+	
+	public void showHelpBox(int row, int col, String helpText) {
+		Point helpObjPos = PlayUtils.getCenterPixPos(new Point(col, row));
+		helpStr.setPrintStr(helpText);
+		
+		if(row<=7 && col<=7) {
+			helpArrow_u_l.setVisible(true);
+			helpArrow_u_l.setPosition(helpObjPos.x-7, helpObjPos.y-7);
+			helpArrow_u_r.setVisible(false);
+			helpArrow_d_l.setVisible(false);
+			helpArrow_d_r.setVisible(false);
+			helpRect.setVisible(true);
+			helpRect.setPosition((game.getSrcWidth()-helpRect.getWidth())/2,helpObjPos.y+173);
+			helpStr.setBounds(helpRect.getX()+25, helpRect.getY()+20, 380, 40);
+			helpStr.setPrintStr(helpText);
+			helpBox.setVisible(true);
+		} else if(row<=7 && col>7) {
+			
+		} else if(row>7 && col<=7) {
+			
+		} else if(row>7 && col>7){
+			
+		} else {
+			helpBox.setVisible(false);
+		}
+		
 	}
 
 	@Override

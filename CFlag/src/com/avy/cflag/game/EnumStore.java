@@ -54,7 +54,7 @@ public class EnumStore {
 
 		public static void load(final Graphics g) {
 			for (final PlayImages playObject : PlayImages.values()) {
-				playObject.texRegions = g.getFlipTexRegions(playObject.name().toLowerCase());
+				playObject.texRegions = g.getFlipYTexRegions(playObject.name().toLowerCase());
 			}
 		}
 

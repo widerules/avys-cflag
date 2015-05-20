@@ -91,14 +91,14 @@ public class AboutScreen implements Screen {
 
 		g.setImageAtlas(commonAtlas);
 
-		argbFull = new Image(g.getFlipTexRegion("argbblack"));
+		argbFull = new Image(g.getFlipYTexRegion("argbblack"));
 		argbFull.setPosition(0, 0);
 		argbFull.setSize(game.getSrcWidth(), game.getSrcHeight());
 
-		topBar = new Image(g.getFlipTexRegion("topbar"));
-		midBar = new Image(g.getFlipTexRegion("midbar"));
-		argbMid = new Image(g.getFlipTexRegion("argbblack"));
-		bottomBar = new Image(g.getFlipTexRegion("bottombar"));
+		topBar = new Image(g.getFlipYTexRegion("topbar"));
+		midBar = new Image(g.getFlipYTexRegion("midbar"));
+		argbMid = new Image(g.getFlipYTexRegion("argbblack"));
+		bottomBar = new Image(g.getFlipYTexRegion("bottombar"));
 
 		topBar.setPosition(0, 0);
 		argbMid.setPosition(0, topBar.getHeight());
@@ -107,10 +107,10 @@ public class AboutScreen implements Screen {
 		bottomBar.setPosition(0, game.getSrcHeight() - bottomBar.getHeight());
 		midBar.setPosition(0, bottomBar.getY() - midBar.getHeight());
 
-		cloudImage1 = new Image(g.getFlipTexRegion("cloud"));
+		cloudImage1 = new Image(g.getFlipYTexRegion("cloud"));
 		cloudImage1.setPosition(0, cloudPosY);
 
-		cloudImage2 = new Image(g.getFlipTexRegion("cloud"));
+		cloudImage2 = new Image(g.getFlipYTexRegion("cloud"));
 		cloudImage2.setPosition(cloudImage1.getWidth(), cloudPosY);
 
 		argbFull.addAction(sequence(fadeOut(1f), visible(false)));
@@ -118,13 +118,13 @@ public class AboutScreen implements Screen {
 		cloudImage1.addAction(new Cloud(cloudImage1, cloudAnimDirection));
 		cloudImage2.addAction(new Cloud(cloudImage2, cloudAnimDirection));
 
-		backButtonUp = new Image(g.getFlipTexRegion("1_rectbuttonup"));
-		backButtonDown = new Image(g.getFlipTexRegion("1_rectbuttondown"));
+		backButtonUp = new Image(g.getFlipYTexRegion("1_rectbuttonup"));
+		backButtonDown = new Image(g.getFlipYTexRegion("1_rectbuttondown"));
 
 		g.setImageAtlas(aboutAtlas);
-		titleStr = new Image(g.getFlipTexRegion("title"));
+		titleStr = new Image(g.getFlipYTexRegion("title"));
 		titleStr.setPosition((topBar.getWidth() - titleStr.getWidth()) / 2, (topBar.getHeight() - titleStr.getHeight()) / 2);
-		backStr = new Image(g.getFlipTexRegion("back"));
+		backStr = new Image(g.getFlipYTexRegion("back"));
 
 		backButtonUp.setPosition((bottomBar.getWidth() - backButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - backButtonUp.getHeight()) / 2));
 		backButtonDown.setPosition(backButtonUp.getX(), backButtonUp.getY());
@@ -135,8 +135,8 @@ public class AboutScreen implements Screen {
 		backButtonGroup.addActor(backButtonUp);
 		backButtonGroup.addActor(backButtonDown);
 		backButtonGroup.addActor(backStr);
-		writeUs = new Image(g.getFlipTexRegion("writeus"));
-		twitUs = new Image(g.getFlipTexRegion("twitus"));
+		writeUs = new Image(g.getFlipYTexRegion("writeus"));
+		twitUs = new Image(g.getFlipYTexRegion("twitus"));
 		writeUs.setPosition(25, bottomBar.getY() + ((bottomBar.getHeight() - writeUs.getHeight()) / 2));
 		twitUs.setPosition(775 - twitUs.getWidth(), writeUs.getY());
 

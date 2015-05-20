@@ -47,6 +47,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class LevelScreen extends BackScreen {
 
@@ -111,20 +112,21 @@ public class LevelScreen extends BackScreen {
 	
 	private Group printData;
 	
+	private Image titleLeftStr;
 	private ImageString levelNoStr;
 	private ImageString levelNameStr;
 	private ImageString levelDcltyStr;
 	private ImageString movesPlayedStr;
 	private ImageString shotsFiredStr;
 	private ImageString hintsUsedStr;
-
 	private ImageString levelNoData;
 	private ImageString levelNameData;
 	private ImageString levelDcltyData;
 	private ImageString movesPlayedData;
 	private ImageString shotsFiredData;
 	private ImageString hintsUsedData;
-
+	private Image titleRightStr;
+	private Image awardShield;
 
 	public LevelScreen(final CFlagGame game, final boolean unlockAnimate) {
 		super(game, true, true, false);
@@ -154,45 +156,45 @@ public class LevelScreen extends BackScreen {
 
 		g.setImageAtlas(commonAtlas);
 
-		midButtonUp = new Image(g.getFlipTexRegion("1_rectbuttonup"));
+		midButtonUp = new Image(g.getFlipYTexRegion("1_rectbuttonup"));
 		midButtonUp.setPosition((bottomBar.getWidth() - midButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - midButtonUp.getHeight()) / 2));
-		midButtonDown = new Image(g.getFlipTexRegion("1_rectbuttondown"));
+		midButtonDown = new Image(g.getFlipYTexRegion("1_rectbuttondown"));
 		midButtonDown.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		midButtonDown.setVisible(false);
 
 		final int sideButtonMargin = 18;
-		leftButtonUp = new Image(g.getFlipTexRegion("lefttributtonup"));
+		leftButtonUp = new Image(g.getFlipYTexRegion("lefttributtonup"));
 		leftButtonUp.setPosition(sideButtonMargin, bottomBar.getY() + ((bottomBar.getHeight() - leftButtonUp.getHeight()) / 2));
-		leftButtonDown = new Image(g.getFlipTexRegion("lefttributtondown"));
+		leftButtonDown = new Image(g.getFlipYTexRegion("lefttributtondown"));
 		leftButtonDown.setPosition(leftButtonUp.getX(), leftButtonUp.getY());
 		leftButtonDown.setVisible(false);
 
-		rightButtonUp = new Image(g.getFlipTexRegion("righttributtonup"));
+		rightButtonUp = new Image(g.getFlipYTexRegion("righttributtonup"));
 		rightButtonUp.setPosition(bottomBar.getWidth() - rightButtonUp.getWidth() - sideButtonMargin, bottomBar.getY() + ((bottomBar.getHeight() - rightButtonUp.getHeight()) / 2));
-		rightButtonDown = new Image(g.getFlipTexRegion("righttributtondown"));
+		rightButtonDown = new Image(g.getFlipYTexRegion("righttributtondown"));
 		rightButtonDown.setPosition(rightButtonUp.getX(), rightButtonUp.getY());
 		rightButtonDown.setVisible(false);
 
 		g.setImageAtlas(levelAtlas);
 
-		titleStr = new Image(g.getFlipTexRegion("titlestr"));
+		titleStr = new Image(g.getFlipYTexRegion("titlestr"));
 		titleStr.setPosition((topBar.getWidth() - titleStr.getWidth()) / 2, (topBar.getHeight() - titleStr.getHeight()) / 2);
-		playStr = new Image(g.getFlipTexRegion("playstr"));
+		playStr = new Image(g.getFlipYTexRegion("playstr"));
 		playStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
-		playAgainStr = new Image(g.getFlipTexRegion("playagainstr"));
+		playAgainStr = new Image(g.getFlipYTexRegion("playagainstr"));
 		playAgainStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
-		backStr = new Image(g.getFlipTexRegion("backstr"));
+		backStr = new Image(g.getFlipYTexRegion("backstr"));
 		backStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		playStr.setVisible(false);
 		playAgainStr.setVisible(false);
 		backStr.setVisible(true);
 
-		unlockMsg = new Image(g.getFlipTexRegion("unlockmsg"));
+		unlockMsg = new Image(g.getFlipYTexRegion("unlockmsg"));
 		unlockMsg.setPosition((game.getSrcWidth() - unlockMsg.getWidth()) / 2, (game.getSrcHeight() - unlockMsg.getHeight()) / 2);
 		unlockMsg.setVisible(false);
 		unlockMsg.getColor().a = 0f;
 
-		buyMsg = new Image(g.getFlipTexRegion("buymsg"));
+		buyMsg = new Image(g.getFlipYTexRegion("buymsg"));
 		buyMsg.setPosition((game.getSrcWidth() - buyMsg.getWidth()) / 2, (game.getSrcHeight() - buyMsg.getHeight()) / 2);
 		buyMsg.setVisible(false);
 		buyMsg.getColor().a = 0f;
@@ -233,35 +235,42 @@ public class LevelScreen extends BackScreen {
 		stage.addActor(leftButtonGroup);
 		stage.addActor(rightButtonGroup);
 		
-		levelNoStr = new ImageString    ("Level No      : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
-		levelNameStr = new ImageString  ("Level Name : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
-		levelDcltyStr = new ImageString ("Difficulty    : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		titleLeftStr = new Image(g.getFlipYTexRegion("titleleftstr"));
+		levelNoStr = new ImageString    ("Level No          : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		levelNameStr = new ImageString  ("Level Name     : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
+		levelDcltyStr = new ImageString ("Difficulty        : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
 		levelNoData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
 		levelNameData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
 		levelDcltyData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
-		
 		movesPlayedStr = new ImageString("Moves Played : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
 		shotsFiredStr = new ImageString ("Shots Fired    : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
 		hintsUsedStr = new ImageString  ("Hint Used       : ", scoreFont, Color.YELLOW, PrintFormat.Normal_Left);
 		movesPlayedData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
 		shotsFiredData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
 		hintsUsedData = new ImageString("1", scoreFont, Color.WHITE, PrintFormat.Normal_Left);
+		titleRightStr = new Image(g.getFlipYTexRegion("titlerightstr"));
+		awardShield = new Image(g.getFlipYTexRegion("medal_none"));
+
+		titleLeftStr.setPosition(110, 170);
+		levelNoStr.setPosition(80,220);
+		levelNameStr.setPosition(80,220+20); 
+		levelDcltyStr.setPosition(80,220+40); 
+		movesPlayedStr.setPosition(80,220+60); 
+		shotsFiredStr.setPosition(80,220+80); 
+		hintsUsedStr.setPosition(80,220+100); 
 		
-		levelNoStr.setPosition(60,420);
-		levelNameStr.setPosition(60,420+15); 
-		levelDcltyStr.setPosition(60,420+30); 
-		levelNoData.setPosition(60+90,420); 
-		levelNameData.setPosition(60+90,420+15); 
-		levelDcltyData.setPosition(60+90,420+30); 
+		levelNoData.setPosition(80+100,220); 
+		levelNameData.setPosition(80+100,220+20); 
+		levelDcltyData.setPosition(80+100,220+40); 
+		movesPlayedData.setPosition(80+100,220+60); 
+		shotsFiredData.setPosition(80+100,220+80); 
+		hintsUsedData.setPosition(80+100,220+100); 
 		
-		movesPlayedStr.setPosition(560,420); 
-		shotsFiredStr.setPosition(560,420+15); 
-		hintsUsedStr.setPosition(560,420+30); 
-		movesPlayedData.setPosition(560+100,420); 
-		shotsFiredData.setPosition(560+100,420+15); 
-		hintsUsedData.setPosition(560+100,420+30); 
+		titleRightStr.setPosition(550, 170);
+		awardShield.setPosition(560, 220);
 		
 		printData = new Group();
+		printData.addActor(titleLeftStr);
 		printData.addActor(levelNoStr);
 		printData.addActor(levelNameStr);
 		printData.addActor(levelDcltyStr);
@@ -274,9 +283,9 @@ public class LevelScreen extends BackScreen {
 		printData.addActor(movesPlayedData);
 		printData.addActor(shotsFiredData);
 		printData.addActor(hintsUsedData);
+		printData.addActor(titleRightStr);
+		printData.addActor(awardShield);
 		printData.setVisible(false);
-		
-		stage.addActor(printData);
 		
 		dcltyButtonGroup = new Group();
 
@@ -285,7 +294,7 @@ public class LevelScreen extends BackScreen {
 
 			final Difficulty dclty = PlayUtils.getDifficultyByIdx(idx);
 			if (dummyLvlCntPerDCLTY[dcltyNo] > 0) {
-				dcltyButtonUp[idx] = new Image(g.getFlipTexRegion("buttonup"));
+				dcltyButtonUp[idx] = new Image(g.getFlipYTexRegion("buttonup"));
 
 				if (idx == 0) {
 					dcltyButtonUp[idx].setPosition((topBar.getWidth() - (dcltyButtonUp[idx].getWidth() * 5)) / 2, topBar.getHeight() + 20);
@@ -293,13 +302,13 @@ public class LevelScreen extends BackScreen {
 					dcltyButtonUp[idx].setPosition((dcltyButtonUp[idx - 1].getX() + dcltyButtonUp[idx - 1].getWidth()) - 1, dcltyButtonUp[idx - 1].getY());
 				}
 
-				dcltyButtonDown[idx] = new Image(g.getFlipTexRegion(dclty.name().toLowerCase() + "buttondown"));
+				dcltyButtonDown[idx] = new Image(g.getFlipYTexRegion(dclty.name().toLowerCase() + "buttondown"));
 				dcltyButtonDown[idx].setPosition(dcltyButtonUp[idx].getX(), dcltyButtonUp[idx].getY());
 				dcltyButtonDown[idx].setVisible(false);
 
-				dcltyStr[idx] = new Image(g.getFlipTexRegion(dclty.name().toLowerCase() + "str"));
+				dcltyStr[idx] = new Image(g.getFlipYTexRegion(dclty.name().toLowerCase() + "str"));
 				dcltyStr[idx].setPosition(dcltyButtonUp[idx].getX(), dcltyButtonUp[idx].getY());
-				dcltyPageFrame[idx] = new Image(g.getFlipTexRegion(dclty.name().toLowerCase() + "frame"));
+				dcltyPageFrame[idx] = new Image(g.getFlipYTexRegion(dclty.name().toLowerCase() + "frame"));
 				dcltyPageFrame[idx].setPosition(20, dcltyButtonUp[idx].getY() + dcltyButtonUp[idx].getHeight());
 				dcltyPageFrame[idx].setSize(topBar.getWidth() - 40, bottomBar.getY() - dcltyPageFrame[idx].getY() - 20);
 				dcltyPageFrame[idx].getColor().a = 0.5f;
@@ -358,12 +367,12 @@ public class LevelScreen extends BackScreen {
 						for (int k = 0; k < colCnt; k++) {
 							if (l <= dummyLvlCntPerDCLTY[idx]) {
 								final Group numButtonGroup = new Group();
-								final Image numButtonUp = new Image(g.getFlipTexRegion("numbuttonup"));
+								final Image numButtonUp = new Image(g.getFlipYTexRegion("numbuttonup"));
 								numButtonUp.setPosition(dcltyPageFrame[idx].getX() + colGap + (k * (numButtonUp.getWidth() + colGap)),
 										dcltyPageFrame[idx].getY() + rowGap + (j * (numButtonUp.getHeight() + rowGap)));
 								numButtonUp.setName("buttonUp");
 
-								final Image numButtonDown = new Image(g.getFlipTexRegion("numbuttondown"));
+								final Image numButtonDown = new Image(g.getFlipYTexRegion("numbuttondown"));
 								numButtonDown.setPosition(numButtonUp.getX(), numButtonUp.getY());
 								numButtonDown.setVisible(false);
 								numButtonDown.setName("buttonDown");
@@ -379,15 +388,15 @@ public class LevelScreen extends BackScreen {
 								float numStrLen = 0;
 
 								if (numStr.length > 0) {
-									numStr1 = new Image(g.getFlipTexRegion("" + numStr[0]));
+									numStr1 = new Image(g.getFlipYTexRegion("" + numStr[0]));
 									numStrLen = numStr1.getWidth();
 								}
 								if (numStr.length > 1) {
-									numStr2 = new Image(g.getFlipTexRegion("" + numStr[1]));
+									numStr2 = new Image(g.getFlipYTexRegion("" + numStr[1]));
 									numStrLen = numStrLen + numStr2.getWidth();
 								}
 								if (numStr.length > 2) {
-									numStr3 = new Image(g.getFlipTexRegion("" + numStr[2]));
+									numStr3 = new Image(g.getFlipYTexRegion("" + numStr[2]));
 									numStrLen = numStrLen + numStr3.getWidth();
 								}
 
@@ -405,7 +414,7 @@ public class LevelScreen extends BackScreen {
 								}
 								numButtonGroup.addActor(numStrGroup);
 
-								final Image lockStr = new Image(g.getFlipTexRegion("lock"));
+								final Image lockStr = new Image(g.getFlipYTexRegion("lock"));
 								lockStr.setPosition(numButtonUp.getX(), numButtonUp.getY());
 								numButtonGroup.addActor(lockStr);
 
@@ -489,6 +498,7 @@ public class LevelScreen extends BackScreen {
 			}
 		}
 		stage.addActor(dcltyButtonGroup);
+		stage.addActor(printData);
 		stage.addActor(unlockMsg);
 		stage.addActor(buyMsg);
 		stage.addActor(argbFull);
@@ -771,7 +781,7 @@ public class LevelScreen extends BackScreen {
 		thumbnail.setSize(clickedNumButton.getWidth(), clickedNumButton.getHeight());
 		stage.addActor(thumbnail);
 		thumbnail.clearActions();
-		thumbnail.addAction(parallel(forever(rotateBy(1f)), sizeTo(tempWidth, tempHeight, 1f), moveTo((topBar.getWidth() - tempWidth) / 2, (480 - tempHeight) / 2, 1f, swingOut)));
+		thumbnail.addAction(parallel(forever(rotateBy(1f)), sizeTo(tempWidth, tempHeight, 1f), moveTo((topBar.getWidth() - tempWidth) / 2, (480 - tempHeight) / 2 + 20, 1f, swingOut)));
 
 		thumbnail.addListener(new TouchListener() {
 			@Override
@@ -872,6 +882,7 @@ public class LevelScreen extends BackScreen {
 		movesPlayedData.setPrintStr("" + gScore.getMoves());
 		shotsFiredData.setPrintStr("" + gScore.getShots());
 		hintsUsedData.setPrintStr("" + gScore.getHintsUsed());
+		awardShield.setDrawable(new TextureRegionDrawable(g.getFlipYTexRegion("medal_"+gScore.getMedalWon().name().toLowerCase())));
 		printData.setVisible(true);
 	}
 }

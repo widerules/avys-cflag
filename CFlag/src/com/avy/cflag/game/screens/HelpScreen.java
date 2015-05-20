@@ -90,35 +90,35 @@ public class HelpScreen extends BackScreen {
 
 		g.setImageAtlas(commonAtlas);
 
-		midButtonUp = new Image(g.getFlipTexRegion("0_rectbuttonup"));
+		midButtonUp = new Image(g.getFlipYTexRegion("0_rectbuttonup"));
 		midButtonUp.setPosition((bottomBar.getWidth() - midButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - midButtonUp.getHeight()) / 2));
-		midButtonDown = new Image(g.getFlipTexRegion("0_rectbuttondown"));
+		midButtonDown = new Image(g.getFlipYTexRegion("0_rectbuttondown"));
 		midButtonDown.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		midButtonDown.setVisible(false);
 
 		final int sideButtonMargin = 18;
-		leftButtonUp = new Image(g.getFlipTexRegion("lefttributtonup"));
+		leftButtonUp = new Image(g.getFlipYTexRegion("lefttributtonup"));
 		leftButtonUp.setPosition(sideButtonMargin, bottomBar.getY() + ((bottomBar.getHeight() - leftButtonUp.getHeight()) / 2));
-		leftButtonDown = new Image(g.getFlipTexRegion("lefttributtondown"));
+		leftButtonDown = new Image(g.getFlipYTexRegion("lefttributtondown"));
 		leftButtonDown.setPosition(leftButtonUp.getX(), leftButtonUp.getY());
 		leftButtonDown.setVisible(false);
 
-		rightButtonUp = new Image(g.getFlipTexRegion("righttributtonup"));
+		rightButtonUp = new Image(g.getFlipYTexRegion("righttributtonup"));
 		rightButtonUp.setPosition(bottomBar.getWidth() - rightButtonUp.getWidth() - sideButtonMargin, bottomBar.getY() + ((bottomBar.getHeight() - rightButtonUp.getHeight()) / 2));
-		rightButtonDown = new Image(g.getFlipTexRegion("righttributtondown"));
+		rightButtonDown = new Image(g.getFlipYTexRegion("righttributtondown"));
 		rightButtonDown.setPosition(rightButtonUp.getX(), rightButtonUp.getY());
 		rightButtonDown.setVisible(false);
 
 		g.setImageAtlas(helpAtlas);
-		title2Str = new Image(g.getFlipTexRegion("title"));
+		title2Str = new Image(g.getFlipYTexRegion("title"));
 		title2Str.setPosition((topBar.getWidth() - title2Str.getWidth()) / 2, (topBar.getHeight() - title2Str.getHeight()) / 2);
-		backStr = new Image(g.getFlipTexRegion("back"));
+		backStr = new Image(g.getFlipYTexRegion("back"));
 		backStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		backStr.setVisible(false);
-		skipStr = new Image(g.getFlipTexRegion("skip"));
+		skipStr = new Image(g.getFlipYTexRegion("skip"));
 		skipStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		skipStr.setVisible(false);
-		playStr = new Image(g.getFlipTexRegion("play"));
+		playStr = new Image(g.getFlipYTexRegion("play"));
 		playStr.setPosition(midButtonUp.getX(), midButtonUp.getY());
 		playStr.setVisible(false);
 
@@ -142,9 +142,9 @@ public class HelpScreen extends BackScreen {
 		helpPageGroup = new Group();
 		for (int i = 0; i < totalHelpPages; i++) {
 			if ((context.equalsIgnoreCase("newgame") || context.equalsIgnoreCase("levelselect")) && MemStore.curUserOPTS.isFirstRun()) {
-				helpPages[i] = new Image(g.getFlipTexRegion("page" + i));
+				helpPages[i] = new Image(g.getFlipYTexRegion("page" + i));
 			} else {
-				helpPages[i] = new Image(g.getFlipTexRegion("page" + (i + 1)));
+				helpPages[i] = new Image(g.getFlipYTexRegion("page" + (i + 1)));
 			}
 			helpPages[i].setPosition((game.getSrcWidth() - helpPages[i].getWidth()) / 2, (game.getSrcHeight() - helpPages[i].getHeight()) / 2);
 			if (i != 0) {
@@ -157,8 +157,8 @@ public class HelpScreen extends BackScreen {
 		helpPageGroup.addActor(leftButtonGroup);
 		helpPageGroup.addActor(rightButtonGroup);
 
-		title1Str = new Image(g.getFlipTexRegion("ctf"));
-		enterNameStr = new Image(g.getFlipTexRegion("entername"));
+		title1Str = new Image(g.getFlipYTexRegion("ctf"));
+		enterNameStr = new Image(g.getFlipYTexRegion("entername"));
 		nameField = new TextField("", g.getTextBoxStyle("salsa", 23));
 		newnameResult = new Label("", g.getLabelStyle("salsa", 12));
 

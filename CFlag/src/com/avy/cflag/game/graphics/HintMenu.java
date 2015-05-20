@@ -46,15 +46,15 @@ public class HintMenu extends Group {
 		totHints = inHints.length+1;
 		hintsGroup = new Group[totHints];
 		
-		menuArgb = new Image(g.getFlipTexRegion("argbblack"));
+		menuArgb = new Image(g.getFlipYTexRegion("argbblack"));
 		menuArgb.setPosition(0, 0);
 		menuArgb.setSize(pScreen.game.getSrcWidth(), pScreen.game.getSrcHeight());
 		menuArgb.getColor().a = 0.5f;
 
-		menuBase = new Image(g.getFlipTexRegion("hintpanel"));
+		menuBase = new Image(g.getFlipYTexRegion("hintpanel"));
 		menuBase.setPosition((pScreen.game.getSrcWidth() - menuBase.getWidth()) / 2, (pScreen.game.getSrcHeight() - menuBase.getHeight()) / 2);
 
-		menuHeading = new Image(g.getFlipTexRegion("gamehintstr"));
+		menuHeading = new Image(g.getFlipYTexRegion("gamehintstr"));
 		menuHeading.setPosition(menuBase.getX() + ((menuBase.getWidth() - menuHeading.getWidth()) / 2), menuBase.getY()+5);
 
 		addActor(menuArgb);
@@ -68,10 +68,10 @@ public class HintMenu extends Group {
 				hintStr.setBounds(menuBase.getX()+15,menuBase.getY()+50, menuBase.getWidth()-30, 40);
 				hintsGroup[i].addActor(hintStr);
 			} else {
-				solnButton_Up = new Image(g.getFlipTexRegion("2_rectbuttonup"));
-				solnButton_Down = new Image(g.getFlipTexRegion("2_rectbuttondown"));
+				solnButton_Up = new Image(g.getFlipYTexRegion("2_rectbuttonup"));
+				solnButton_Down = new Image(g.getFlipYTexRegion("2_rectbuttondown"));
 				solnButton_Down.setVisible(false);
-				Image solnButtonStr = new Image(g.getFlipTexRegion("solutionstr"));
+				Image solnButtonStr = new Image(g.getFlipYTexRegion("solutionstr"));
 				
 				Group solnButton = new Group();
 				solnButton.addActor(solnButton_Up);
@@ -94,7 +94,7 @@ public class HintMenu extends Group {
 				hintsGroup[i].addActor(solnButton);
 			}
 
-			Image hintNo = new Image(g.getFlipTexRegion("hintno" + i));
+			Image hintNo = new Image(g.getFlipYTexRegion("hintno" + i));
 			hintNo.setPosition((pScreen.game.getSrcWidth() - hintNo.getWidth()) / 2, menuBase.getY() + 100);
 			hintsGroup[i].addActor(hintNo);
 			
@@ -106,23 +106,23 @@ public class HintMenu extends Group {
 			addActor(hintsGroup[i]);
 		}
 		
-		leftArrow_Down = new Image(g.getFlipTexRegion("leftarrowdown"));
+		leftArrow_Down = new Image(g.getFlipYTexRegion("leftarrowdown"));
 		leftArrow_Down.setPosition(menuBase.getX() + 25,menuBase.getY() + 102);
 		leftArrow_Down.setVisible(false);
 		
 		leftArrow = new Group();
-		leftArrow_Up = new Image(g.getFlipTexRegion("leftarrowup"));
+		leftArrow_Up = new Image(g.getFlipYTexRegion("leftarrowup"));
 		leftArrow_Up.setPosition(leftArrow_Down.getX(), leftArrow_Down.getY());
 
 		leftArrow.addActor(leftArrow_Up);
 		leftArrow.addActor(leftArrow_Down);
 		
-		rightArrow_Down = new Image(g.getFlipTexRegion("rightarrowdown"));
+		rightArrow_Down = new Image(g.getFlipYTexRegion("rightarrowdown"));
 		rightArrow_Down.setPosition(menuBase.getX() + 377,menuBase.getY() + 102);
 		rightArrow_Down.setVisible(false);
 		
 		rightArrow = new Group();
-		rightArrow_Up = new Image(g.getFlipTexRegion("rightarrowup"));
+		rightArrow_Up = new Image(g.getFlipYTexRegion("rightarrowup"));
 		rightArrow_Up.setPosition(rightArrow_Down.getX(), rightArrow_Down.getY());
 		
 		rightArrow.addActor(rightArrow_Up);
