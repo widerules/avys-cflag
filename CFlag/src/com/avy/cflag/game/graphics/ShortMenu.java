@@ -26,15 +26,15 @@ public class ShortMenu extends Group {
 
 	public ShortMenu(final Graphics g, final PlayScreen pScreen, final String menuName, final String... buttonList) {
 
-		menuArgb = new Image(g.getFlipTexRegion("argbblack"));
+		menuArgb = new Image(g.getFlipYTexRegion("argbblack"));
 		menuArgb.setPosition(0, 0);
 		menuArgb.setSize(pScreen.game.getSrcWidth(), pScreen.game.getSrcHeight());
 		menuArgb.getColor().a = 0.5f;
 
-		menuBase = new Image(g.getFlipTexRegion("menupanel"));
+		menuBase = new Image(g.getFlipYTexRegion("menupanel"));
 		menuBase.setPosition((pScreen.game.getSrcWidth() - menuBase.getWidth()) / 2, (pScreen.game.getSrcHeight() - menuBase.getHeight()) / 2);
 
-		menuHeading = new Image(g.getFlipTexRegion(menuName + "str"));
+		menuHeading = new Image(g.getFlipYTexRegion(menuName + "str"));
 		menuHeading.setPosition(menuBase.getX() + ((menuBase.getWidth() - menuHeading.getWidth()) / 2), menuBase.getY() + 20);
 
 		addActor(menuArgb);
@@ -53,10 +53,10 @@ public class ShortMenu extends Group {
 		buttonStr = new Image[buttonList.length];
 
 		for (int i = 0; i < buttonList.length; i++) {
-			buttonUp[i] = new Image(g.getFlipTexRegion(Integer.toString(i) + "_rectbuttonup"));
-			buttonDown[i] = new Image(g.getFlipTexRegion(Integer.toString(i) + "_rectbuttondown"));
+			buttonUp[i] = new Image(g.getFlipYTexRegion(Integer.toString(i) + "_rectbuttonup"));
+			buttonDown[i] = new Image(g.getFlipYTexRegion(Integer.toString(i) + "_rectbuttondown"));
 			buttonDown[i].setVisible(false);
-			buttonStr[i] = new Image(g.getFlipTexRegion(buttonList[i] + "str"));
+			buttonStr[i] = new Image(g.getFlipYTexRegion(buttonList[i] + "str"));
 			buttonStr[i].setName(buttonList[i]);
 
 			buttonGroup[i] = new Group();

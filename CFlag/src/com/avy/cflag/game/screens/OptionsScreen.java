@@ -101,17 +101,17 @@ public class OptionsScreen extends BackScreen {
 
 		g.setImageAtlas(commonAtlas);
 		
-		okButtonUp = new Image(g.getFlipTexRegion("0_rectbuttonup"));
+		okButtonUp = new Image(g.getFlipYTexRegion("0_rectbuttonup"));
 		okButtonUp.setPosition((bottomBar.getWidth() - okButtonUp.getWidth()) / 2, bottomBar.getY() + ((bottomBar.getHeight() - okButtonUp.getHeight()) / 2));
-		okButtonDown = new Image(g.getFlipTexRegion("0_rectbuttondown"));
+		okButtonDown = new Image(g.getFlipYTexRegion("0_rectbuttondown"));
 		okButtonDown.setPosition(okButtonUp.getX(), okButtonUp.getY());
 		okButtonDown.setVisible(false);
 
 		final int spaceFromMid = 20;
-		saveButtonUp = new Image(g.getFlipTexRegion("0_rectbuttonup"));
-		discardButtonUp = new Image(g.getFlipTexRegion("1_rectbuttonup"));
-		saveButtonDown = new Image(g.getFlipTexRegion("0_rectbuttondown"));
-		discardButtonDown = new Image(g.getFlipTexRegion("1_rectbuttondown"));
+		saveButtonUp = new Image(g.getFlipYTexRegion("0_rectbuttonup"));
+		discardButtonUp = new Image(g.getFlipYTexRegion("1_rectbuttonup"));
+		saveButtonDown = new Image(g.getFlipYTexRegion("0_rectbuttondown"));
+		discardButtonDown = new Image(g.getFlipYTexRegion("1_rectbuttondown"));
 
 		saveButtonUp.setPosition((bottomBar.getWidth() / 2) - saveButtonUp.getWidth() - spaceFromMid, bottomBar.getY() + ((bottomBar.getHeight() - saveButtonUp.getHeight()) / 2));
 		saveButtonDown.setPosition(saveButtonUp.getX(), saveButtonUp.getY());
@@ -123,17 +123,17 @@ public class OptionsScreen extends BackScreen {
 
 		g.setImageAtlas(optionsAtlas);
 
-		titleStr = new Image(g.getFlipTexRegion("title"));
-		saveStr = new Image(g.getFlipTexRegion("save"));
-		discardStr = new Image(g.getFlipTexRegion("discard"));
-		okStr = new Image(g.getFlipTexRegion("ok"));
+		titleStr = new Image(g.getFlipYTexRegion("title"));
+		saveStr = new Image(g.getFlipYTexRegion("save"));
+		discardStr = new Image(g.getFlipYTexRegion("discard"));
+		okStr = new Image(g.getFlipYTexRegion("ok"));
 
 		titleStr.setPosition((topBar.getWidth() - titleStr.getWidth()) / 2, (topBar.getHeight() - titleStr.getHeight()) / 2);
 		saveStr.setPosition(saveButtonUp.getX(), saveButtonUp.getY());
 		discardStr.setPosition(discardButtonUp.getX(), discardButtonUp.getY());
 		okStr.setPosition(okButtonUp.getX(), okButtonUp.getY());
 
-		enterNameStr = new Image(g.getFlipTexRegion("entername"));
+		enterNameStr = new Image(g.getFlipYTexRegion("entername"));
 		nameField = new TextField("", g.getTextBoxStyle("salsa", 23));
 		newnameResult = new Label("", g.getLabelStyle("salsa", 12));
 
@@ -156,31 +156,31 @@ public class OptionsScreen extends BackScreen {
 		enterNameGroup.addActor(okButtonGroup);
 		enterNameGroup.setVisible(false);
 
-		profileStr = new Image(g.getFlipTexRegion("userprofile"));
-		profileLeft = new Image(g.getFlipTexRegion("strokeleft"));
+		profileStr = new Image(g.getFlipYTexRegion("userprofile"));
+		profileLeft = new Image(g.getFlipYTexRegion("strokeleft"));
 		profileName = new Label(curUserOPTS.getUserName(), g.getLabelStyle("salsa", 18));
-		profileRight = new Image(g.getFlipTexRegion("strokeright"));
+		profileRight = new Image(g.getFlipYTexRegion("strokeright"));
 
-		newButtonUp = new Image(g.getFlipTexRegion("newbuttonup"));
-		newButtonDown = new Image(g.getFlipTexRegion("newbuttondown"));
+		newButtonUp = new Image(g.getFlipYTexRegion("newbuttonup"));
+		newButtonDown = new Image(g.getFlipYTexRegion("newbuttondown"));
 		newButtonDown.setVisible(false);
 
-		delButtonUp = new Image(g.getFlipTexRegion("delbuttonup"));
-		delButtonDown = new Image(g.getFlipTexRegion("delbuttondown"));
+		delButtonUp = new Image(g.getFlipYTexRegion("delbuttonup"));
+		delButtonDown = new Image(g.getFlipYTexRegion("delbuttondown"));
 		delButtonDown.setVisible(false);
 
-		soundStr = new Image(g.getFlipTexRegion("sound"));
-		soundVolumeStr = new Image(g.getFlipTexRegion("soundvolume"));
-		musicStr = new Image(g.getFlipTexRegion("music"));
-		musicVolumeStr = new Image(g.getFlipTexRegion("musicvolume"));
-		musicTrackStr = new Image(g.getFlipTexRegion("musictrack"));
-		trackLeft = new Image(g.getFlipTexRegion("strokeleft"));
-		trackRight = new Image(g.getFlipTexRegion("strokeright"));
-		swipeSensitivityStr = new Image(g.getFlipTexRegion("swipesensitivity"));
+		soundStr = new Image(g.getFlipYTexRegion("sound"));
+		soundVolumeStr = new Image(g.getFlipYTexRegion("soundvolume"));
+		musicStr = new Image(g.getFlipYTexRegion("music"));
+		musicVolumeStr = new Image(g.getFlipYTexRegion("musicvolume"));
+		musicTrackStr = new Image(g.getFlipYTexRegion("musictrack"));
+		trackLeft = new Image(g.getFlipYTexRegion("strokeleft"));
+		trackRight = new Image(g.getFlipYTexRegion("strokeright"));
+		swipeSensitivityStr = new Image(g.getFlipYTexRegion("swipesensitivity"));
 
 		int trackNo = 0;
 		for (final Musics music : Musics.values()) {
-			trackStr[trackNo] = new Image(g.getFlipTexRegion(music.name()));
+			trackStr[trackNo] = new Image(g.getFlipYTexRegion(music.name()));
 			trackStr[trackNo].setName(music.name());
 			trackStr[trackNo].setVisible(curUserOPTS.getMusicTrack().equals(music));
 			trackStr[trackNo].addListener(new TouchListener() {

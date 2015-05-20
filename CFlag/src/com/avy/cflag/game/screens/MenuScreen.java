@@ -80,21 +80,21 @@ public class MenuScreen extends BackScreen {
 
 		g.setImageAtlas(menuAtlas);
 
-		menuTopBar = new Image(g.getFlipTexRegion("topbar"));
-		flagPole = new Image(g.getFlipTexRegion("flagpole"));
-		avyStudiosStr = new Image(g.getFlipTexRegion("avystudios"));
-		bullet = new Image(g.getFlipTexRegion("bullet"));
-		rateUs = new Image(g.getFlipTexRegion("rateus"));
-		likeUs = new Image(g.getFlipTexRegion("likeus"));
+		menuTopBar = new Image(g.getFlipYTexRegion("topbar"));
+		flagPole = new Image(g.getFlipYTexRegion("flagpole"));
+		avyStudiosStr = new Image(g.getFlipYTexRegion("avystudios"));
+		bullet = new Image(g.getFlipYTexRegion("bullet"));
+		rateUs = new Image(g.getFlipYTexRegion("rateus"));
+		likeUs = new Image(g.getFlipYTexRegion("likeus"));
 
-		newGame = new AnimActor(new AnimDrawable(new Animation(0.24f, g.getFlipTexRegions("newgame"), PlayMode.LOOP_PINGPONG)));
-		resume = new AnimActor(new AnimDrawable(new Animation(0.25f, g.getFlipTexRegions("resume"), PlayMode.LOOP_PINGPONG)));
-		levelselect = new AnimActor(new AnimDrawable(new Animation(0.26f, g.getFlipTexRegions("levelselect"), PlayMode.LOOP_PINGPONG)));
-		options = new AnimActor(new AnimDrawable(new Animation(0.21f, g.getFlipTexRegions("options"), PlayMode.LOOP_PINGPONG)));
-		help = new AnimActor(new AnimDrawable(new Animation(0.22f, g.getFlipTexRegions("help"), PlayMode.LOOP_PINGPONG)));
-		quit = new AnimActor(new AnimDrawable(new Animation(0.23f, g.getFlipTexRegions("quit"), PlayMode.LOOP_PINGPONG)));
-		flag = new AnimActor(new AnimDrawable(new Animation(0.1f, g.getFlipTexRegions("flag"), PlayMode.LOOP)));
-		hero = new AnimActor(new AnimDrawable(new Animation(0.24f, g.getFlipTexRegions("hero"), PlayMode.LOOP)));
+		newGame = new AnimActor(new AnimDrawable(new Animation(0.24f, g.getFlipYTexRegions("newgame"), PlayMode.LOOP_PINGPONG)));
+		resume = new AnimActor(new AnimDrawable(new Animation(0.25f, g.getFlipYTexRegions("resume"), PlayMode.LOOP_PINGPONG)));
+		levelselect = new AnimActor(new AnimDrawable(new Animation(0.26f, g.getFlipYTexRegions("levelselect"), PlayMode.LOOP_PINGPONG)));
+		options = new AnimActor(new AnimDrawable(new Animation(0.21f, g.getFlipYTexRegions("options"), PlayMode.LOOP_PINGPONG)));
+		help = new AnimActor(new AnimDrawable(new Animation(0.22f, g.getFlipYTexRegions("help"), PlayMode.LOOP_PINGPONG)));
+		quit = new AnimActor(new AnimDrawable(new Animation(0.23f, g.getFlipYTexRegions("quit"), PlayMode.LOOP_PINGPONG)));
+		flag = new AnimActor(new AnimDrawable(new Animation(0.1f, g.getFlipYTexRegions("flag"), PlayMode.LOOP)));
+		hero = new AnimActor(new AnimDrawable(new Animation(0.24f, g.getFlipYTexRegions("hero"), PlayMode.LOOP)));
 
 		menuTopBar.setPosition(0, 0);
 		newGame.setPosition(20, 63);

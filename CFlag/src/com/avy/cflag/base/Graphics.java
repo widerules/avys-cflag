@@ -57,23 +57,33 @@ public class Graphics {
 		this.sr = sr;
 	}
 
-	public TextureRegion getFlipTexRegion(final String regionName) {
-		final TextureRegion textureRegion = new ImageRegion(imageAtlas.findRegion(regionName));
-		return textureRegion;
-	}
-
 	public TextureRegion getTexRegion(final String regionName) {
-		final TextureRegion textureRegion = new TextureRegion(imageAtlas.findRegion(regionName));
+		final TextureRegion textureRegion = new ImageRegion(imageAtlas.findRegion(regionName), false, false);
 		return textureRegion;
 	}
 
-	public Array<ImageRegion> getFlipTexRegions(final String regionName) {
+	public Array<ImageRegion> getFlipYTexRegions(final String regionName) {
 		final Array<AtlasRegion> atlasArr = imageAtlas.findRegions(regionName);
 		final Array<ImageRegion> imgArr = new Array<ImageRegion>();
 		for (final AtlasRegion atlasRegion : atlasArr) {
 			imgArr.add(new ImageRegion(atlasRegion));
 		}
 		return imgArr;
+	}
+	
+	public TextureRegion getFlipYTexRegion(final String regionName) {
+		final TextureRegion textureRegion = new ImageRegion(imageAtlas.findRegion(regionName), false, true);
+		return textureRegion;
+	}
+
+	public TextureRegion getFlipXTexRegion(final String regionName) {
+		final TextureRegion textureRegion = new ImageRegion(imageAtlas.findRegion(regionName), true, false);
+		return textureRegion;
+	}
+
+	public TextureRegion getFlipXYTexRegion(final String regionName) {
+		final TextureRegion textureRegion = new ImageRegion(imageAtlas.findRegion(regionName), true, true);
+		return textureRegion;
 	}
 
 	public TextureRegion getThumbTexRegion(final Difficulty dclty, final int levelNo) {
@@ -88,8 +98,8 @@ public class Graphics {
 
 	public CheckBoxStyle getCheckBoxStyle(final String fontName, final int fontSize) {
 		final CheckBoxStyle cs = new CheckBoxStyle();
-		cs.checkboxOff = new TextureRegionDrawable(getFlipTexRegion("checkboxoff"));
-		cs.checkboxOn = new TextureRegionDrawable(getFlipTexRegion("checkboxon"));
+		cs.checkboxOff = new TextureRegionDrawable(getFlipYTexRegion("checkboxoff"));
+		cs.checkboxOn = new TextureRegionDrawable(getFlipYTexRegion("checkboxon"));
 		cs.font = createFont(fontName, fontSize, false);
 		cs.fontColor = Color.RED;
 		return cs;
@@ -97,18 +107,18 @@ public class Graphics {
 
 	public SliderStyle getSliderStyle() {
 		final SliderStyle ss = new SliderStyle();
-		ss.background = new TextureRegionDrawable(getFlipTexRegion("sliderbase"));
-		ss.knob = new TextureRegionDrawable(getFlipTexRegion("sliderknob"));
+		ss.background = new TextureRegionDrawable(getFlipYTexRegion("sliderbase"));
+		ss.knob = new TextureRegionDrawable(getFlipYTexRegion("sliderknob"));
 		return ss;
 	}
 
 	public TextFieldStyle getTextBoxStyle(final String fontName, final int fontSize) {
 		final TextFieldStyle ts = new TextFieldStyle();
-		ts.background = new TextureRegionDrawable(getFlipTexRegion("textfieldbase"));
+		ts.background = new TextureRegionDrawable(getFlipYTexRegion("textfieldbase"));
 		ts.background.setLeftWidth(10);
 		ts.background.setRightWidth(10);
-		ts.cursor = new TextureRegionDrawable(getFlipTexRegion("cursor"));
-		ts.selection = new TextureRegionDrawable(getFlipTexRegion("cursor"));
+		ts.cursor = new TextureRegionDrawable(getFlipYTexRegion("cursor"));
+		ts.selection = new TextureRegionDrawable(getFlipYTexRegion("cursor"));
 		ts.font = createFont(fontName, fontSize, false);
 		ts.fontColor = Color.WHITE;
 		return ts;

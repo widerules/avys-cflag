@@ -41,14 +41,14 @@ public class BackScreen extends BaseScreen {
 
 		g.setImageAtlas(commonAtlas);
 
-		argbFull = new Image(g.getFlipTexRegion("argbblack"));
+		argbFull = new Image(g.getFlipYTexRegion("argbblack"));
 		argbFull.setPosition(0, 0);
 		argbFull.setSize(game.getSrcWidth(), game.getSrcHeight());
 
-		topBar = new Image(g.getFlipTexRegion("topbar"));
-		midBar = new Image(g.getFlipTexRegion("midbar"));
-		argbMid = new Image(g.getFlipTexRegion("argbblack"));
-		bottomBar = new Image(g.getFlipTexRegion("bottombar"));
+		topBar = new Image(g.getFlipYTexRegion("topbar"));
+		midBar = new Image(g.getFlipYTexRegion("midbar"));
+		argbMid = new Image(g.getFlipYTexRegion("argbblack"));
+		bottomBar = new Image(g.getFlipYTexRegion("bottombar"));
 
 		topBar.setPosition(0, 0);
 		argbMid.setPosition(0, topBar.getHeight());
@@ -57,10 +57,10 @@ public class BackScreen extends BaseScreen {
 		bottomBar.setPosition(0, game.getSrcHeight() - bottomBar.getHeight());
 		midBar.setPosition(0, bottomBar.getY() - midBar.getHeight());
 
-		cloudImage1 = new Image(g.getFlipTexRegion("cloud"));
+		cloudImage1 = new Image(g.getFlipYTexRegion("cloud"));
 		cloudImage1.setPosition(0, cloudPosY);
 
-		cloudImage2 = new Image(g.getFlipTexRegion("cloud"));
+		cloudImage2 = new Image(g.getFlipYTexRegion("cloud"));
 		cloudImage2.setPosition(cloudImage1.getWidth(), cloudPosY);
 
 		argbFull.addAction(sequence(fadeOut(1f), visible(false)));

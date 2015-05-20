@@ -10,20 +10,6 @@ buymsg
   orig: 430, 73
   offset: 0, 0
   index: -1
-unlockmsg
-  rotate: false
-  xy: 433, 53
-  size: 430, 73
-  orig: 430, 73
-  offset: 0, 0
-  index: -1
-titlestr
-  rotate: false
-  xy: 865, 70
-  size: 250, 56
-  orig: 250, 56
-  offset: 0, 0
-  index: -1
 backstr
   rotate: false
   xy: 1, 1
@@ -33,239 +19,281 @@ backstr
   index: -1
 playagainstr
   rotate: false
-  xy: 1117, 76
+  xy: 153, 1
   size: 150, 50
   orig: 150, 50
   offset: 0, 0
   index: -1
 playstr
   rotate: false
-  xy: 153, 1
+  xy: 305, 1
   size: 150, 50
   orig: 150, 50
   offset: 0, 0
   index: -1
-deadlystr
+unlockmsg
   rotate: false
-  xy: 1269, 90
-  size: 90, 36
-  orig: 90, 36
+  xy: 433, 53
+  size: 430, 73
+  orig: 430, 73
   offset: 0, 0
   index: -1
-easystr
+clickstr
   rotate: false
-  xy: 305, 15
-  size: 90, 36
-  orig: 90, 36
-  offset: 0, 0
-  index: -1
-hardstr
-  rotate: false
-  xy: 1361, 90
-  size: 90, 36
-  orig: 90, 36
-  offset: 0, 0
-  index: -1
-mediumstr
-  rotate: false
-  xy: 397, 15
-  size: 90, 36
-  orig: 90, 36
-  offset: 0, 0
-  index: -1
-novicestr
-  rotate: false
-  xy: 1453, 90
-  size: 90, 36
-  orig: 90, 36
-  offset: 0, 0
-  index: -1
-buttonup
-  rotate: false
-  xy: 489, 16
-  size: 90, 35
-  orig: 90, 35
-  offset: 0, 0
-  index: -1
-deadlybuttondown
-  rotate: false
-  xy: 1545, 91
-  size: 90, 35
-  orig: 90, 35
-  offset: 0, 0
-  index: -1
-easybuttondown
-  rotate: false
-  xy: 581, 16
-  size: 90, 35
-  orig: 90, 35
-  offset: 0, 0
-  index: -1
-hardbuttondown
-  rotate: false
-  xy: 1637, 91
-  size: 90, 35
-  orig: 90, 35
-  offset: 0, 0
-  index: -1
-mediumbuttondown
-  rotate: false
-  xy: 673, 16
-  size: 90, 35
-  orig: 90, 35
-  offset: 0, 0
-  index: -1
-novicebuttondown
-  rotate: false
-  xy: 1729, 91
-  size: 90, 35
-  orig: 90, 35
-  offset: 0, 0
-  index: -1
-medal_bronze
-  rotate: false
-  xy: 1821, 71
-  size: 55, 55
-  orig: 55, 55
-  offset: 0, 0
-  index: -1
-medal_gold
-  rotate: false
-  xy: 1878, 71
-  size: 55, 55
-  orig: 55, 55
-  offset: 0, 0
-  index: -1
-medal_silver
-  rotate: false
-  xy: 1935, 71
-  size: 55, 55
-  orig: 55, 55
-  offset: 0, 0
-  index: -1
-lock
-  rotate: false
-  xy: 1992, 86
-  size: 40, 40
-  orig: 40, 40
-  offset: 0, 0
-  index: -1
-numbuttondown
-  rotate: false
-  xy: 765, 11
-  size: 40, 40
-  orig: 40, 40
-  offset: 0, 0
-  index: -1
-numbuttonup
-  rotate: false
-  xy: 807, 11
-  size: 40, 40
-  orig: 40, 40
+  xy: 457, 21
+  size: 200, 30
+  orig: 200, 30
   offset: 0, 0
   index: -1
 0
   rotate: false
-  xy: 865, 56
+  xy: 457, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 1
   rotate: false
-  xy: 1269, 76
+  xy: 471, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 2
   rotate: false
-  xy: 1992, 72
+  xy: 485, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 3
   rotate: false
-  xy: 2034, 114
+  xy: 499, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 4
   rotate: false
-  xy: 305, 1
+  xy: 513, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 5
   rotate: false
-  xy: 849, 39
+  xy: 527, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 6
   rotate: false
-  xy: 879, 56
+  xy: 541, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 7
   rotate: false
-  xy: 1283, 76
+  xy: 555, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 8
   rotate: false
-  xy: 2006, 72
+  xy: 569, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 9
   rotate: false
-  xy: 2034, 100
+  xy: 583, 7
   size: 12, 12
   orig: 12, 12
   offset: 0, 0
   index: -1
 deadlyframe
   rotate: false
-  xy: 319, 3
+  xy: 597, 9
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 easyframe
   rotate: false
-  xy: 849, 27
+  xy: 609, 9
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 hardframe
   rotate: false
-  xy: 893, 58
+  xy: 621, 9
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 mediumframe
   rotate: false
-  xy: 1297, 78
+  xy: 633, 9
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
   index: -1
 noviceframe
   rotate: false
-  xy: 2020, 74
+  xy: 645, 9
   size: 10, 10
   orig: 10, 10
+  offset: 0, 0
+  index: -1
+titleleftstr
+  rotate: false
+  xy: 659, 21
+  size: 138, 30
+  orig: 138, 30
+  offset: 0, 0
+  index: -1
+titlerightstr
+  rotate: false
+  xy: 799, 21
+  size: 138, 30
+  orig: 138, 30
+  offset: 0, 0
+  index: -1
+titlestr
+  rotate: false
+  xy: 865, 70
+  size: 250, 56
+  orig: 250, 56
+  offset: 0, 0
+  index: -1
+deadlystr
+  rotate: false
+  xy: 939, 32
+  size: 90, 36
+  orig: 90, 36
+  offset: 0, 0
+  index: -1
+easystr
+  rotate: false
+  xy: 1031, 32
+  size: 90, 36
+  orig: 90, 36
+  offset: 0, 0
+  index: -1
+hardstr
+  rotate: false
+  xy: 1117, 90
+  size: 90, 36
+  orig: 90, 36
+  offset: 0, 0
+  index: -1
+mediumstr
+  rotate: false
+  xy: 1123, 52
+  size: 90, 36
+  orig: 90, 36
+  offset: 0, 0
+  index: -1
+novicestr
+  rotate: false
+  xy: 1209, 90
+  size: 90, 36
+  orig: 90, 36
+  offset: 0, 0
+  index: -1
+buttonup
+  rotate: false
+  xy: 1123, 15
+  size: 90, 35
+  orig: 90, 35
+  offset: 0, 0
+  index: -1
+deadlybuttondown
+  rotate: false
+  xy: 1215, 53
+  size: 90, 35
+  orig: 90, 35
+  offset: 0, 0
+  index: -1
+easybuttondown
+  rotate: false
+  xy: 1301, 91
+  size: 90, 35
+  orig: 90, 35
+  offset: 0, 0
+  index: -1
+hardbuttondown
+  rotate: false
+  xy: 1215, 16
+  size: 90, 35
+  orig: 90, 35
+  offset: 0, 0
+  index: -1
+mediumbuttondown
+  rotate: false
+  xy: 1307, 54
+  size: 90, 35
+  orig: 90, 35
+  offset: 0, 0
+  index: -1
+novicebuttondown
+  rotate: false
+  xy: 1393, 91
+  size: 90, 35
+  orig: 90, 35
+  offset: 0, 0
+  index: -1
+lock
+  rotate: false
+  xy: 1307, 12
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+numbuttondown
+  rotate: false
+  xy: 1349, 12
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+numbuttonup
+  rotate: false
+  xy: 1391, 12
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+medal_bronze
+  rotate: false
+  xy: 1485, 6
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+medal_gold
+  rotate: false
+  xy: 1607, 6
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+medal_none
+  rotate: false
+  xy: 1729, 6
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+medal_silver
+  rotate: false
+  xy: 1851, 6
+  size: 120, 120
+  orig: 120, 120
   offset: 0, 0
   index: -1
