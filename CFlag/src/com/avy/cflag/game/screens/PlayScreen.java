@@ -429,6 +429,7 @@ public class PlayScreen extends BaseScreen {
 		helpBox.addActor(helpArrow_u_l);
 		helpBox.addActor(helpArrow_u_r);
 		helpBox.addActor(helpStr);
+		helpBox.setVisible(false);
 		
 		argbFull.addAction(sequence(fadeOut(1f), visible(false)));
 		
@@ -1469,11 +1470,38 @@ public class PlayScreen extends BaseScreen {
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
 		} else if(row<=7 && col>7) {
-			
+			helpArrow_u_r.setVisible(true);
+			helpArrow_u_r.setPosition(helpObjPos.x-119, helpObjPos.y-7);
+			helpArrow_u_l.setVisible(false);
+			helpArrow_d_l.setVisible(false);
+			helpArrow_d_r.setVisible(false);
+			helpRect.setVisible(true);
+			helpRect.setPosition((game.getSrcWidth()-helpRect.getWidth())/2,helpObjPos.y+173);
+			helpStr.setBounds(helpRect.getX()+25, helpRect.getY()+20, 380, 40);
+			helpStr.setPrintStr(helpText);
+			helpBox.setVisible(true);
 		} else if(row>7 && col<=7) {
-			
+			helpArrow_d_l.setVisible(true);
+			helpArrow_d_l.setPosition(helpObjPos.x-7, helpObjPos.y-180);
+			helpArrow_u_r.setVisible(false);
+			helpArrow_u_l.setVisible(false);
+			helpArrow_d_r.setVisible(false);
+			helpRect.setVisible(true);
+			helpRect.setPosition((game.getSrcWidth()-helpRect.getWidth())/2,helpObjPos.y-173);
+			helpStr.setBounds(helpRect.getX()+25, helpRect.getY()+20, 380, 40);
+			helpStr.setPrintStr(helpText);
+			helpBox.setVisible(true);
 		} else if(row>7 && col>7){
-			
+			helpArrow_d_r.setVisible(true);
+			helpArrow_d_r.setPosition(helpObjPos.x-119, helpObjPos.y-180);
+			helpArrow_u_r.setVisible(false);
+			helpArrow_u_l.setVisible(false);
+			helpArrow_d_l.setVisible(false);
+			helpRect.setVisible(true);
+			helpRect.setPosition((game.getSrcWidth()-helpRect.getWidth())/2,helpObjPos.y-173);
+			helpStr.setBounds(helpRect.getX()+25, helpRect.getY()+20, 380, 40);
+			helpStr.setPrintStr(helpText);
+			helpBox.setVisible(true);
 		} else {
 			helpBox.setVisible(false);
 		}
