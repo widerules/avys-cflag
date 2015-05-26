@@ -39,6 +39,7 @@ import com.avy.cflag.game.elements.Platform;
 import com.avy.cflag.game.graphics.HintMenu;
 import com.avy.cflag.game.graphics.ShortMenu;
 import com.avy.cflag.game.pathfinding.PathFinder;
+import com.avy.cflag.game.utils.GameData;
 import com.avy.cflag.game.utils.HelpMsg;
 import com.avy.cflag.game.utils.SaveGame;
 import com.avy.cflag.game.utils.SaveThumbs;
@@ -619,26 +620,6 @@ public class PlayScreen extends BaseScreen {
 			}
 		});
 
-		// midPanel.addListener(new DragListener() {
-		// Point touchDownPos = new Point();
-		//
-		// @Override
-		// public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
-		// touchDownPos = new Point((int) x, (int) y);
-		// return true;
-		// };
-		//
-		// @Override
-		// public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
-		// final Point touchUpPos = new Point((int) x, (int) y);
-		// if (!autoMoveActive && PlayUtils.isTouchDownUpInSameSquare(touchUpPos, touchDownPos)) {
-		// if (initAutoMove(new Point((int) x, (int) y))) {
-		// autoMoveActive = true;
-		// }
-		// }
-		// }
-		// });
-		
 		midPanel.addListener(new ClickListener(Buttons.LEFT) {
 			@Override
 			public void clicked(final InputEvent event, final float x, final float y) {
@@ -1400,14 +1381,14 @@ public class PlayScreen extends BaseScreen {
 		}
 	}
 
-//	@Override
-//	public void pause() {
-//		pausedMenu.getColor().a = 1f;
-//		hintMenu.setVisible(false);
-//		gameState = GameState.Paused;
-//		pausedMenu.setVisible(true);
-//		saveGame();
-//	}
+	@Override
+	public void pause() {
+		pausedMenu.getColor().a = 1f;
+		hintMenu.setVisible(false);
+		gameState = GameState.Paused;
+		pausedMenu.setVisible(true);
+		saveGame();
+	}
 
 	public void incrementHint(int inHintsUsed) {
 		if (inHintsUsed > hintsUsed) {
@@ -1437,6 +1418,9 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void saveGame() {
+		if(savedGame==null) {
+			savedGame = new GameData();
+		}
 		savedGame.setCurrentDclty(currentDclty);
 		savedGame.setCurrentLevel(currentLevel);
 		savedGame.setGameState(gameState);
@@ -1575,7 +1559,6 @@ public class PlayScreen extends BaseScreen {
 		} else {
 			helpBox.setVisible(false);
 		}
-
 	}
 
 	@Override
