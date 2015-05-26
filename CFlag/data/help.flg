@@ -1,0 +1,54 @@
+{
+Novice2: [
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		col: 1,
+		msg: "this is a test message 1 for novice 1",
+		row: 1
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		col: 12,
+		msg: "this is a test message 2 for novice 1",
+		row: 2
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		col: 1,
+		msg: "this is a test message 3 for novice 1",
+		row: 10
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		col: 15,
+		msg: "this is a test message 4 for novice 1",
+		row: 15
+	}
+],
+Novice1: [
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		col: 1,
+		msg: "this is a test message 1 for novice 1",
+		row: 1
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		col: 12,
+		msg: "this is a test message 2 for novice 1",
+		row: 2
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		col: 1,
+		msg: "this is a test message 3 for novice 1",
+		row: 10
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		col: 15,
+		msg: "this is a test message 4 for novice 1",
+		row: 15
+	}
+]
+}

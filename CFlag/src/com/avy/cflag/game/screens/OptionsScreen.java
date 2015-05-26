@@ -66,6 +66,12 @@ public class OptionsScreen extends BackScreen {
 	private final Image[] trackStr;
 	private Group trackGroup;
 
+	private Image inGameHelpStr;
+	private CheckBox inGameHelp;
+	
+	private Image swipeToPlayStr;
+	private CheckBox swipeToPlay;
+	
 	private Image swipeSensitivityStr;
 	private Slider swipeSensitivity;
 
@@ -176,6 +182,8 @@ public class OptionsScreen extends BackScreen {
 		musicTrackStr = new Image(g.getFlipYTexRegion("musictrack"));
 		trackLeft = new Image(g.getFlipYTexRegion("strokeleft"));
 		trackRight = new Image(g.getFlipYTexRegion("strokeright"));
+		inGameHelpStr = new Image(g.getFlipYTexRegion("ingamehelp"));
+		swipeToPlayStr = new Image(g.getFlipYTexRegion("swipetoplay"));
 		swipeSensitivityStr = new Image(g.getFlipYTexRegion("swipesensitivity"));
 
 		int trackNo = 0;
@@ -212,12 +220,18 @@ public class OptionsScreen extends BackScreen {
 
 		musicVolume = new Slider(0f, 1f, 0.1f, false, g.getSliderStyle());
 		musicVolume.setValue(curUserOPTS.getMusicVolume());
-
+		
+		inGameHelp = new CheckBox("", g.getCheckBoxStyle("salsa", 18));
+		inGameHelp.setChecked(curUserOPTS.isInGameHelp());
+		
+		swipeToPlay = new CheckBox("", g.getCheckBoxStyle("salsa", 18));
+		swipeToPlay.setChecked(curUserOPTS.isSwipeToPlay());
+		
 		swipeSensitivity = new Slider(10f, 110f, 10f, false, g.getSliderStyle());
 		swipeSensitivity.setValue(curUserOPTS.getSwipeSensitivity());
 
 		final int x = 60;
-		int y = 75;
+		int y = 45;
 		final int yw = 60;
 		profileStr.setPosition(x, y = y + yw);
 		profileLeft.setPosition(profileStr.getX() + profileStr.getWidth()-2, y);
@@ -246,6 +260,12 @@ public class OptionsScreen extends BackScreen {
 			trkStr.setPosition(trackLeft.getX()+trackLeft.getWidth()-13, y + 2);
 		}
 		trackRight.setPosition(trackStr[0].getX() + trackStr[0].getWidth()-14, y);
+		
+		inGameHelpStr.setPosition(newButtonUp.getX(), y);
+		inGameHelp.setPosition(musicVolumeStr.getX() + musicVolumeStr.getWidth(), y);
+
+		swipeToPlayStr.setPosition(profileStr.getX(), y = y + yw);
+		swipeToPlay.setPosition(profileLeft.getX(), y);
 		swipeSensitivityStr.setPosition(newButtonUp.getX(), y);
 		swipeSensitivity.setPosition(musicVolumeStr.getX() + musicVolumeStr.getWidth(), y);
 
@@ -287,12 +307,16 @@ public class OptionsScreen extends BackScreen {
 		optionsGroup.addActor(musicStr);
 		optionsGroup.addActor(musicVolumeStr);
 		optionsGroup.addActor(musicTrackStr);
+		optionsGroup.addActor(inGameHelpStr);
+		optionsGroup.addActor(swipeToPlayStr);
 		optionsGroup.addActor(swipeSensitivityStr);
 		optionsGroup.addActor(sound);
 		optionsGroup.addActor(soundVolume);
 		optionsGroup.addActor(music);
 		optionsGroup.addActor(musicVolume);
 		optionsGroup.addActor(trackGroup);
+		optionsGroup.addActor(inGameHelp);
+		optionsGroup.addActor(swipeToPlay);
 		optionsGroup.addActor(swipeSensitivity);
 		optionsGroup.addActor(saveButtonGroup);
 		optionsGroup.addActor(discardButtonGroup);
@@ -331,7 +355,21 @@ public class OptionsScreen extends BackScreen {
 				Musics.setVolume(curUserOPTS.getMusicVolume());
 			}
 		});
+
+		inGameHelp.addListener(new ChangeListener() {
+			@Override
+			public void changed(final ChangeEvent event, final Actor actor) {
+				curUserOPTS.setInGameHelp(((CheckBox) actor).isChecked());
+			}
+		});
 		
+		swipeToPlay.addListener(new ChangeListener() {
+			@Override
+			public void changed(final ChangeEvent event, final Actor actor) {
+				curUserOPTS.setSwipeToPlay(((CheckBox) actor).isChecked());
+			}
+		});
+
 		swipeSensitivity.addListener(new ChangeListener() {
 			@Override
 			public void changed(final ChangeEvent event, final Actor actor) {

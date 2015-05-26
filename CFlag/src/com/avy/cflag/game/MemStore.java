@@ -1,12 +1,16 @@
 package com.avy.cflag.game;
 
+import java.util.HashMap;
+
 import com.avy.cflag.base.AcraMap;
 import com.avy.cflag.base.Point;
 import com.avy.cflag.game.EnumStore.Difficulty;
 import com.avy.cflag.game.utils.GameData;
+import com.avy.cflag.game.utils.HelpMsg;
 import com.avy.cflag.game.utils.UserList;
 import com.avy.cflag.game.utils.UserOptions;
 import com.avy.cflag.game.utils.UserScore;
+import com.badlogic.gdx.utils.Array;
 
 public class MemStore {
 
@@ -27,7 +31,8 @@ public class MemStore {
 	public static UserScore curUserSCORE = null;
 	public static UserOptions curUserOPTS = null;
 	public static GameData savedGame = null;
-
+	public static HashMap<String, Array<HelpMsg>> helpDATA = null;
+	
 	public static Point pltfrmStartPOS = null;
 	public static Point pltfrmLEN = null;
 	public static final Point playImageOrigLEN = new Point(30, 30);

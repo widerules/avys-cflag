@@ -13,6 +13,8 @@ public class UserOptions {
 	private float musicVolume;
 	private float soundVolume;
 	private Musics musicTrack;
+	private boolean inGameHelp;
+	private boolean swipeToPlay;
 	private float swipeSensitivity;
 
 	public UserOptions() {
@@ -25,6 +27,8 @@ public class UserOptions {
 		soundVolume = 0.3f;
 		musicVolume = 0.3f;
 		musicTrack = Musics.track1;
+		inGameHelp = true;
+		swipeToPlay = true;
 		swipeSensitivity = 40f;
 	}
 
@@ -38,6 +42,8 @@ public class UserOptions {
 		soundVolume = 0.3f;
 		musicVolume = 0.3f;
 		musicTrack = Musics.track1;
+		inGameHelp = true;
+		swipeToPlay = true;
 		swipeSensitivity = 40f;
 	}
 
@@ -51,6 +57,8 @@ public class UserOptions {
 		musicVolume = inOpts.musicVolume;
 		soundVolume = inOpts.soundVolume;
 		musicTrack = inOpts.musicTrack;
+		inGameHelp = inOpts.inGameHelp;
+		swipeToPlay = inOpts.swipeToPlay;
 		swipeSensitivity = inOpts.swipeSensitivity;
 	}
 
@@ -127,6 +135,22 @@ public class UserOptions {
 
 	public void setMusicTrack(final Musics musicTrack) {
 		this.musicTrack = musicTrack;
+	}
+
+	public boolean isInGameHelp() {
+		return inGameHelp;
+	}
+
+	public void setInGameHelp(boolean inGameHelp) {
+		this.inGameHelp = inGameHelp;
+	}
+
+	public boolean isSwipeToPlay() {
+		return swipeToPlay;
+	}
+
+	public void setSwipeToPlay(boolean swipeToPlay) {
+		this.swipeToPlay = swipeToPlay;
 	}
 
 	public float getSwipeSensitivity() {

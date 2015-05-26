@@ -3,6 +3,7 @@ package com.avy.cflag.game.screens;
 import static com.avy.cflag.game.MemStore.acraMAP;
 import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.curUserSCORE;
+import static com.avy.cflag.game.MemStore.helpDATA;
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
 import static com.avy.cflag.game.MemStore.savedGame;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
@@ -38,7 +39,7 @@ import com.avy.cflag.game.elements.Platform;
 import com.avy.cflag.game.graphics.HintMenu;
 import com.avy.cflag.game.graphics.ShortMenu;
 import com.avy.cflag.game.pathfinding.PathFinder;
-import com.avy.cflag.game.utils.GameData;
+import com.avy.cflag.game.utils.HelpMsg;
 import com.avy.cflag.game.utils.SaveGame;
 import com.avy.cflag.game.utils.SaveThumbs;
 import com.avy.cflag.game.utils.UnDoData;
@@ -60,6 +61,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 
 public class PlayScreen extends BaseScreen {
 
@@ -97,7 +99,7 @@ public class PlayScreen extends BaseScreen {
 	private ImageString lvlDcltyStr;
 	private ImageString lvlMovesStr;
 	private ImageString lvlShotsStr;
-	
+
 	private Group arrowButton_Left;
 	private Image arrowButton_Left_Up;
 	private Image arrowButton_Left_Down;
@@ -136,8 +138,8 @@ public class PlayScreen extends BaseScreen {
 	private ParticleEffect breakEffect;
 	private ParticleEffect burnEffect;
 	private ParticleEffect splashEffect;
-	private Point effectStrtPos = new Point(0,0);
-	
+	private Point effectStrtPos = new Point(0, 0);
+
 	private Image awardArgb;
 	private Image awardTitle1;
 	private ImageString awardMovesStr;
@@ -154,7 +156,7 @@ public class PlayScreen extends BaseScreen {
 	private Image helpArrow_u_r;
 	private ImageString helpStr;
 	private Group helpBox;
-	
+
 	private boolean updateInProgress = false;
 	private GameButtons pressedButton = GameButtons.None;
 	private GameButtons longPressButton = GameButtons.None;
@@ -165,6 +167,7 @@ public class PlayScreen extends BaseScreen {
 	private float swipeSensitivity = 40f;
 	private boolean undoInProgress = false;
 	private boolean touchEnabled = true;
+
 	private final PathFinder pathFinder = new PathFinder();;
 	private ArrayList<Direction> autoMovePath = new ArrayList<Direction>();;
 	private int autoMoveCounter = 0;
@@ -173,13 +176,16 @@ public class PlayScreen extends BaseScreen {
 	private int shotsCounter = 0;
 	private int hintsCounter = 0;
 
-	private float deltaCounter=0;
-	
+	private Array<HelpMsg> helpMsgList = new Array<HelpMsg>();
+	private int helpMsgCounter = 0;
+
+	private float deltaCounter = 0;
+
 	public PlayScreen(final CFlagGame game) {
 		super(game, true, true, true);
 		initImages();
 		if (savedGame == null) {
-			acraMAP.put("LoadFromSave", "TiredButNotLoaded");
+			acraMAP.put("LoadFromSave", "TriedButNotLoaded");
 			initVariables(curUserOPTS.getLastDifficulty(), curUserSCORE.getMaxPlayedLevel(curUserOPTS.getLastDifficulty()));
 		} else {
 			currentDclty = savedGame.getCurrentDclty();
@@ -191,6 +197,7 @@ public class PlayScreen extends BaseScreen {
 			undoList = savedGame.getUndoList();
 			hintsUsed = savedGame.getHintsUsed();
 			stateChanged = savedGame.isStateChanged();
+			helpMsgCounter = savedGame.getHelpMsgCounter();
 			acraMAP.put("LoadFromSave", "Yes");
 			acraMAP.put("LevelInPlay", currentDclty.name() + " : " + currentLevel);
 		}
@@ -231,7 +238,7 @@ public class PlayScreen extends BaseScreen {
 
 		undoCnt = 0;
 		undoList = new UnDoData[undoCnt + 1];
-		undoList[undoCnt]=new UnDoData();
+		undoList[undoCnt] = new UnDoData();
 		undoList[undoCnt].shrinkData(hero);
 
 		hintsUsed = 0;
@@ -259,7 +266,7 @@ public class PlayScreen extends BaseScreen {
 		wonMenu.getColor().a = 0;
 		hintMenu = new HintMenu(g, this, lvlNmeFont, lVl.getLvlHint(), hintsUsed);
 		hintMenu.setVisible(false);
-		hintMenu.getColor().a = 0; 
+		hintMenu.getColor().a = 0;
 
 		argbFull = new Image(g.getFlipYTexRegion("argbblack"));
 		leftPanel = new Image(g.getFlipYTexRegion("leftpanel"));
@@ -327,21 +334,21 @@ public class PlayScreen extends BaseScreen {
 		midPanel.setSize(480, 480);
 		midPanel.setPosition(leftPanel.getWidth(), 0);
 		rightPanel.setPosition(leftPanel.getWidth() + midPanel.getWidth(), 0);
-		
-		lvlNoStr = new ImageString(""+currentLevel, dfltFont, Color.GREEN);
-		lvlNoStr.setBounds(35, 62,90,20);
+
+		lvlNoStr = new ImageString("" + currentLevel, dfltFont, Color.GREEN);
+		lvlNoStr.setBounds(35, 62, 90, 20);
 
 		lvlNameStr = new ImageString(lVl.getLvlName(), lvlNmeFont, Color.GREEN, PrintFormat.Wrapped_Center);
-		lvlNameStr.setBounds(35, 232,90,30);
+		lvlNameStr.setBounds(35, 232, 90, 30);
 
 		lvlDcltyStr = new ImageString(lVl.getLvlDclty().toString(), lvlNmeFont, Color.GREEN);
-		lvlDcltyStr.setBounds(35, 148,90,20);
-		
-		lvlMovesStr = new ImageString(""+hero.getTankMoves()+"/" + lVl.getLvlMaxMoves(), dfltFont, Color.GREEN);
-		lvlMovesStr.setBounds(678, 62,90,20);
-		
-		lvlShotsStr = new ImageString(""+hero.getTankShots()+"/" + lVl.getLvlMaxShots(), dfltFont, Color.GREEN);
-		lvlShotsStr.setBounds(678, 148,90,20);
+		lvlDcltyStr.setBounds(35, 148, 90, 20);
+
+		lvlMovesStr = new ImageString("" + hero.getTankMoves() + "/" + lVl.getLvlMaxMoves(), dfltFont, Color.GREEN);
+		lvlMovesStr.setBounds(678, 62, 90, 20);
+
+		lvlShotsStr = new ImageString("" + hero.getTankShots() + "/" + lVl.getLvlMaxShots(), dfltFont, Color.GREEN);
+		lvlShotsStr.setBounds(678, 148, 90, 20);
 
 		arrowButton_Up.setPosition(49, 293);
 		arrowButton_Right.setPosition(86, 348);
@@ -370,42 +377,42 @@ public class PlayScreen extends BaseScreen {
 		splashEffect.load(Gdx.files.internal("effects/splash.p"), playAtlas);
 		splashEffect.setPosition(0, 0);
 		splashEffect.start();
-		
+
 		pltFrm = new Platform(midPanel);
 		pltFrm.paintPlatform(hero);
-		
+
 		awardArgb = new Image(g.getFlipYTexRegion("argbblack"));
 		awardArgb.setPosition(0, 0);
 		awardArgb.setSize(game.getSrcWidth(), game.getSrcHeight());
 		awardArgb.getColor().a = 0.8f;
-		
+
 		awardTitle1 = new Image(g.getFlipYTexRegion("1_awardtitle"));
-		awardTitle1.setPosition((game.getSrcWidth()-awardTitle1.getWidth())/2, 30);
-		
-		awardMovesStr = new ImageString("0/" + lVl.getLvlMaxMoves() , dfltFont, Color.GREEN);
+		awardTitle1.setPosition((game.getSrcWidth() - awardTitle1.getWidth()) / 2, 30);
+
+		awardMovesStr = new ImageString("0/" + lVl.getLvlMaxMoves(), dfltFont, Color.GREEN);
 		awardMovesStr.setBounds(218, 160, 65, 20);
 
 		awardShotsStr = new ImageString("0/" + lVl.getLvlMaxShots(), dfltFont, Color.GREEN);
 		awardShotsStr.setBounds(372, 160, 65, 20);
-		
+
 		awardHintsUsedStr = new ImageString("0/4", dfltFont, Color.GREEN);
 		awardHintsUsedStr.setBounds(530, 160, 65, 20);
 
 		awardTitle2 = new Image(g.getFlipYTexRegion("2_awardtitle"));
-		awardTitle2.setPosition((game.getSrcWidth()-awardTitle2.getWidth())/2, 220);
+		awardTitle2.setPosition((game.getSrcWidth() - awardTitle2.getWidth()) / 2, 220);
 		awardTitle2.setVisible(false);
-//		awardTitle2.getColor().a=0f;
-		
+		// awardTitle2.getColor().a=0f;
+
 		awardShield = new Image(g.getFlipYTexRegion("medal_none"));
-		awardShield.setPosition((game.getSrcWidth()-awardShield.getWidth())/2, 270);
+		awardShield.setPosition((game.getSrcWidth() - awardShield.getWidth()) / 2, 270);
 		awardShield.setVisible(false);
-		awardShield.setOrigin(awardShield.getWidth()/2, awardShield.getHeight()/2);
-//		awardShield.getColor().a=0f;
-		
+		awardShield.setOrigin(awardShield.getWidth() / 2, awardShield.getHeight() / 2);
+		// awardShield.getColor().a=0f;
+
 		awardMenu = new Group();
 		awardMenu.setVisible(false);
-		awardMenu.getColor().a=0f;
-		
+		awardMenu.getColor().a = 0f;
+
 		awardMenu.addActor(awardArgb);
 		awardMenu.addActor(awardTitle1);
 		awardMenu.addActor(awardMovesStr);
@@ -413,15 +420,14 @@ public class PlayScreen extends BaseScreen {
 		awardMenu.addActor(awardHintsUsedStr);
 		awardMenu.addActor(awardTitle2);
 		awardMenu.addActor(awardShield);
-		
+
 		helpRect = new Image(g.getFlipYTexRegion("help_rect"));
 		helpArrow_d_l = new Image(g.getFlipYTexRegion("help_arrow"));
 		helpArrow_u_l = new Image(g.getTexRegion("help_arrow"));
 		helpArrow_u_r = new Image(g.getFlipXTexRegion("help_arrow"));
 		helpArrow_d_r = new Image(g.getFlipXYTexRegion("help_arrow"));
-		helpStr = new ImageString("" , lvlNmeFont, Color.RED, PrintFormat.Wrapped_Center);
-		
-		
+		helpStr = new ImageString("", lvlNmeFont, Color.RED, PrintFormat.Wrapped_Center);
+
 		helpBox = new Group();
 		helpBox.addActor(helpRect);
 		helpBox.addActor(helpArrow_d_r);
@@ -430,9 +436,9 @@ public class PlayScreen extends BaseScreen {
 		helpBox.addActor(helpArrow_u_r);
 		helpBox.addActor(helpStr);
 		helpBox.setVisible(false);
-		
+
 		argbFull.addAction(sequence(fadeOut(1f), visible(false)));
-		
+
 		stage.addActor(leftPanel);
 		stage.addActor(midPanel);
 		stage.addActor(rightPanel);
@@ -448,13 +454,13 @@ public class PlayScreen extends BaseScreen {
 		stage.addActor(hintButton);
 		stage.addActor(undoButton);
 		stage.addActor(fireButton);
+		stage.addActor(helpBox);
 		stage.addActor(awardMenu);
 		stage.addActor(pausedMenu);
 		stage.addActor(drownedMenu);
 		stage.addActor(deadMenu);
 		stage.addActor(wonMenu);
 		stage.addActor(hintMenu);
-		stage.addActor(helpBox);
 		stage.addActor(argbFull);
 
 		arrowButton_Up.addListener(new TouchListener() {
@@ -613,7 +619,39 @@ public class PlayScreen extends BaseScreen {
 			}
 		});
 
-		stage.addListener(new ActorGestureListener() {
+		// midPanel.addListener(new DragListener() {
+		// Point touchDownPos = new Point();
+		//
+		// @Override
+		// public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+		// touchDownPos = new Point((int) x, (int) y);
+		// return true;
+		// };
+		//
+		// @Override
+		// public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
+		// final Point touchUpPos = new Point((int) x, (int) y);
+		// if (!autoMoveActive && PlayUtils.isTouchDownUpInSameSquare(touchUpPos, touchDownPos)) {
+		// if (initAutoMove(new Point((int) x, (int) y))) {
+		// autoMoveActive = true;
+		// }
+		// }
+		// }
+		// });
+		
+		midPanel.addListener(new ClickListener(Buttons.LEFT) {
+			@Override
+			public void clicked(final InputEvent event, final float x, final float y) {
+				if (!autoMoveActive) {
+					if (initAutoMove(new Point((int) x, (int) y))) {
+						autoMoveActive = true;
+					}
+				}
+				super.clicked(event, x, y);
+			}
+		});
+
+		ActorGestureListener gestureListener = new ActorGestureListener() {
 			@Override
 			public void fling(final InputEvent event, final float velocityX, final float velocityY, final int button) {
 				if (!undoInProgress) {
@@ -633,32 +671,13 @@ public class PlayScreen extends BaseScreen {
 				}
 				super.fling(event, velocityX, velocityY, button);
 			}
-		});
-
-		midPanel.addListener(new DragListener() {
-			Point touchDownPos = new Point();
-
-			@Override
-			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
-				touchDownPos = new Point((int) x, (int) y);
-				return true;
-			};
-
-			@Override
-			public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
-				final Point touchUpPos = new Point((int) x, (int) y);
-				if (!autoMoveActive && PlayUtils.isTouchDownUpInSameSquare(touchUpPos, touchDownPos)) {
-					if (initAutoMove(new Point((int) x, (int) y))) {
-						autoMoveActive = true;
-					}
-				}
-			}
-		});
+		};
 
 		dragListener = new DragListener() {
 			@Override
 			public boolean touchDown(final InputEvent event, final float x, final float y, final int pointer, final int button) {
-				if (gameState == GameState.Hint && !PlayUtils.inBoundsRect(new Point((int)x,(int)y), (int)hintMenu.getX(), (int)hintMenu.getY(), (int)hintMenu.getWidth(), (int)hintMenu.getHeight())) {
+				if (gameState == GameState.Hint
+						&& !PlayUtils.inBoundsRect(new Point((int) x, (int) y), (int) hintMenu.getX(), (int) hintMenu.getY(), (int) hintMenu.getWidth(), (int) hintMenu.getHeight())) {
 					resumeme();
 				}
 				return super.touchDown(event, x, y, pointer, button);
@@ -667,7 +686,7 @@ public class PlayScreen extends BaseScreen {
 			@Override
 			public boolean keyDown(final InputEvent event, final int keycode) {
 				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {
-					if (gameState == GameState.Running) {
+					if (gameState == GameState.Running || gameState == GameState.HelpMsgRun ) {
 						pauseme();
 					} else if ((gameState == GameState.Paused) || (gameState == GameState.Hint)) {
 						resumeme();
@@ -678,21 +697,23 @@ public class PlayScreen extends BaseScreen {
 
 			@Override
 			public void drag(final InputEvent event, final float x, final float y, final int pointer) {
-				if (touchEnabled && !undoInProgress) {
-					final float velocityX = x - dragStartX;
-					final float velocityY = y - dragStartY;
-					if ((Math.abs(velocityX) > swipeSensitivity) || (Math.abs(velocityY) > swipeSensitivity)) {
-						if (Math.abs(velocityX) > (Math.abs(velocityY) + 10)) {
-							if (velocityX > 0) {
-								longPressButton = GameButtons.ArrowRight;
-							} else {
-								longPressButton = GameButtons.ArrowLeft;
-							}
-						} else if (Math.abs(velocityY) > (Math.abs(velocityX) + 10)) {
-							if (velocityY > 0) {
-								longPressButton = GameButtons.ArrowDown;
-							} else {
-								longPressButton = GameButtons.ArrowUp;
+				if (curUserOPTS.isSwipeToPlay()) {
+					if (touchEnabled && !undoInProgress) {
+						final float velocityX = x - dragStartX;
+						final float velocityY = y - dragStartY;
+						if ((Math.abs(velocityX) > swipeSensitivity) || (Math.abs(velocityY) > swipeSensitivity)) {
+							if (Math.abs(velocityX) > (Math.abs(velocityY) + 10)) {
+								if (velocityX > 0) {
+									longPressButton = GameButtons.ArrowRight;
+								} else {
+									longPressButton = GameButtons.ArrowLeft;
+								}
+							} else if (Math.abs(velocityY) > (Math.abs(velocityX) + 10)) {
+								if (velocityY > 0) {
+									longPressButton = GameButtons.ArrowDown;
+								} else {
+									longPressButton = GameButtons.ArrowUp;
+								}
 							}
 						}
 					}
@@ -719,8 +740,10 @@ public class PlayScreen extends BaseScreen {
 		final ClickListener clickListener = new ClickListener(Buttons.LEFT) {
 			@Override
 			public void clicked(final InputEvent event, final float x, final float y) {
-				if(gameState==GameState.AwardEnd)
-					gameState=GameState.Won;
+				if (gameState == GameState.HelpMsgRun && !pausedMenu.isVisible()) {
+					helpMsgCounter++;
+				} else if (gameState == GameState.AwardEnd)
+					gameState = GameState.Won;
 				else if (inTapSquare(780, 20) && (getTapCount() == 3)) {
 					gameState = GameState.AwardStart;
 				}
@@ -728,7 +751,11 @@ public class PlayScreen extends BaseScreen {
 			}
 		};
 		clickListener.setTapSquareSize(20);
+
 		stage.addListener(clickListener);
+		if (curUserOPTS.isSwipeToPlay()) {
+			stage.addListener(gestureListener);
+		}
 		stage.addListener(dragListener);
 		setTouchEnabled(false);
 	}
@@ -759,8 +786,13 @@ public class PlayScreen extends BaseScreen {
 			case Ready:
 				updateReady();
 				break;
+			case HelpMsgInit:
+				updateHelpMsgInit();
+				break;
+			case HelpMsgRun:
+				updateHelpMsgRun();
+				break;
 			case Running:
-				showHelpBox(1, 1, "This is a test message that needs to be displayed for the right object at the right position as per the input specified");
 				updateRunning();
 				break;
 			case Paused:
@@ -794,9 +826,29 @@ public class PlayScreen extends BaseScreen {
 
 	private void updateReady() {
 		if (pltFrm.heroReady) {
+			gameState = GameState.HelpMsgInit;
+		}
+	}
+
+	private void updateHelpMsgInit() {
+		if (curUserOPTS.isInGameHelp() && helpDATA != null && helpDATA.get(currentDclty.name() + currentLevel) != null) {
+			helpMsgList = helpDATA.get(currentDclty.name() + currentLevel);
+			gameState = GameState.HelpMsgRun;
+		} else {
 			setTouchEnabled(true);
 			gameState = GameState.Running;
 		}
+	}
+
+	private void updateHelpMsgRun() {
+		if (helpMsgCounter < helpMsgList.size) {
+			showHelpBox(helpMsgList.get(helpMsgCounter));
+		} else {
+			helpBox.setVisible(false);
+			setTouchEnabled(true);
+			gameState = GameState.Running;
+		}
+
 	}
 
 	private void updateRunning() {
@@ -929,7 +981,7 @@ public class PlayScreen extends BaseScreen {
 			stateChanged = true;
 			undoCnt++;
 			undoList = (UnDoData[]) PlayUtils.resizeArray(undoList, undoCnt + 1);
-			undoList[undoCnt]=new UnDoData();
+			undoList[undoCnt] = new UnDoData();
 			undoList[undoCnt].shrinkData(hero);
 		}
 	}
@@ -967,65 +1019,65 @@ public class PlayScreen extends BaseScreen {
 			longPressButton = GameButtons.None;
 		}
 	}
-	
-	private void updateAward(final float delta) {
-		if(deltaCounter>0.01) {
-			deltaCounter=0;
-		if(movesCounter==0 && shotsCounter==0) {
-			setTouchEnabled(false);
-			autoMoveActive = false;
-			pltFrm.animateHero();
 
-			if(movesCounter<=hero.getTankMoves())
-				movesCounter++;
-			if(shotsCounter<=hero.getTankShots())
-				shotsCounter++;
-			if(hintsCounter<=hintsUsed)
-				hintsCounter++;
-			
-			awardMovesStr.setPrintStr(movesCounter + "/" + lVl.getLvlMaxMoves());
-			awardShotsStr.setPrintStr(shotsCounter + "/" + lVl.getLvlMaxShots());
-			awardHintsUsedStr.setPrintStr(hintsCounter + "/4");
-			awardMenu.addAction(sequence(visible(true),fadeIn(1f)));
-			
-			deleteSave();
-			saveScores();
-			
-		} else if(movesCounter>=hero.getTankMoves() && shotsCounter>=hero.getTankShots()){
-			deltaCounter=0;
-			gameState=GameState.AwardEnd;
-			awardTitle2.addAction(sequence(visible(true),fadeIn(1f),new Action() {
-				@Override
-				public boolean act(float delta) {
-					awardShield.addAction(sequence(scaleBy(1,1),visible(true),new Action(){
-						@Override
-						public boolean act(float delta) {
-							Sounds.won.play();
-							return true;
-						}
-					},scaleBy(-1, -1,0.1f),new Action() {
-						@Override
-						public boolean act(float delta) {
-							setTouchEnabled(true);
-							return true;
-						}
-					}));
-					return true;
-				}
-			}));
-		} else {
-			if(movesCounter<hero.getTankMoves())
-				movesCounter++;
-			if(shotsCounter<hero.getTankShots())
-				shotsCounter++;
-			if(hintsCounter<hintsUsed)
-				hintsCounter++;
-			
-			awardMovesStr.setPrintStr(movesCounter + "/" + lVl.getLvlMaxMoves());
-			awardShotsStr.setPrintStr(shotsCounter + "/" + lVl.getLvlMaxShots());
-			awardHintsUsedStr.setPrintStr(hintsCounter + "/4");
-		}
-		awardMenu.setVisible(true);
+	private void updateAward(final float delta) {
+		if (deltaCounter > 0.01) {
+			deltaCounter = 0;
+			if (movesCounter == 0 && shotsCounter == 0) {
+				setTouchEnabled(false);
+				autoMoveActive = false;
+				pltFrm.animateHero();
+
+				if (movesCounter <= hero.getTankMoves())
+					movesCounter++;
+				if (shotsCounter <= hero.getTankShots())
+					shotsCounter++;
+				if (hintsCounter <= hintsUsed)
+					hintsCounter++;
+
+				awardMovesStr.setPrintStr(movesCounter + "/" + lVl.getLvlMaxMoves());
+				awardShotsStr.setPrintStr(shotsCounter + "/" + lVl.getLvlMaxShots());
+				awardHintsUsedStr.setPrintStr(hintsCounter + "/4");
+				awardMenu.addAction(sequence(visible(true), fadeIn(1f)));
+
+				deleteSave();
+				saveScores();
+
+			} else if (movesCounter >= hero.getTankMoves() && shotsCounter >= hero.getTankShots()) {
+				deltaCounter = 0;
+				gameState = GameState.AwardEnd;
+				awardTitle2.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+					@Override
+					public boolean act(float delta) {
+						awardShield.addAction(sequence(scaleBy(1, 1), visible(true), new Action() {
+							@Override
+							public boolean act(float delta) {
+								Sounds.won.play();
+								return true;
+							}
+						}, scaleBy(-1, -1, 0.1f), new Action() {
+							@Override
+							public boolean act(float delta) {
+								setTouchEnabled(true);
+								return true;
+							}
+						}));
+						return true;
+					}
+				}));
+			} else {
+				if (movesCounter < hero.getTankMoves())
+					movesCounter++;
+				if (shotsCounter < hero.getTankShots())
+					shotsCounter++;
+				if (hintsCounter < hintsUsed)
+					hintsCounter++;
+
+				awardMovesStr.setPrintStr(movesCounter + "/" + lVl.getLvlMaxMoves());
+				awardShotsStr.setPrintStr(shotsCounter + "/" + lVl.getLvlMaxShots());
+				awardHintsUsedStr.setPrintStr(hintsCounter + "/4");
+			}
+			awardMenu.setVisible(true);
 		} else {
 			deltaCounter = deltaCounter + delta;
 		}
@@ -1043,7 +1095,7 @@ public class PlayScreen extends BaseScreen {
 			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 		}
 	}
-	
+
 	private void updateFadeOut() {
 		if (!fadeOutActive) {
 			switch (gameState) {
@@ -1107,13 +1159,13 @@ public class PlayScreen extends BaseScreen {
 		sr.end();
 	}
 
-	public void drawExplosions(final float delta, Bullet bullet){
-		Image menuBase = ((ShortMenu)drownedMenu).getMenuBase();
+	public void drawExplosions(final float delta, Bullet bullet) {
+		Image menuBase = ((ShortMenu) drownedMenu).getMenuBase();
 		switch (bullet.getExplodeState()) {
 			case BlastOn:
 				blastEffect.reset();
 				effectStrtPos = bullet.getExplodePos();
-				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				blastEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				bullet.setExplodeState(ExplodeState.Blast);
 				break;
 			case Blast:
@@ -1125,36 +1177,36 @@ public class PlayScreen extends BaseScreen {
 			case BlastMoveOn:
 				blastEffect.reset();
 				effectStrtPos = bullet.getExplodePos();
-				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				blastEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				bullet.setExplodeState(PlayUtils.getExplodeStateFromDirection(bullet.getCurBulletDirection()));
 				break;
 			case BlastUp:
-				effectStrtPos = new Point(effectStrtPos.x,effectStrtPos.y-2);
-				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				effectStrtPos = new Point(effectStrtPos.x, effectStrtPos.y - 2);
+				blastEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				blastEffect.draw(batch, delta);
 				if (blastEffect.isComplete()) {
 					bullet.setExplodeState(ExplodeState.Off);
 				}
 				break;
 			case BlastDown:
-				effectStrtPos = new Point(effectStrtPos.x,effectStrtPos.y+2);
-				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				effectStrtPos = new Point(effectStrtPos.x, effectStrtPos.y + 2);
+				blastEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				blastEffect.draw(batch, delta);
 				if (blastEffect.isComplete()) {
 					bullet.setExplodeState(ExplodeState.Off);
 				}
 				break;
 			case BlastLeft:
-				effectStrtPos = new Point(effectStrtPos.x-2,effectStrtPos.y);
-				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				effectStrtPos = new Point(effectStrtPos.x - 2, effectStrtPos.y);
+				blastEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				blastEffect.draw(batch, delta);
 				if (blastEffect.isComplete()) {
 					bullet.setExplodeState(ExplodeState.Off);
 				}
 				break;
 			case BlastRight:
-				effectStrtPos = new Point(effectStrtPos.x+2,effectStrtPos.y);
-				blastEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				effectStrtPos = new Point(effectStrtPos.x + 2, effectStrtPos.y);
+				blastEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				blastEffect.draw(batch, delta);
 				if (blastEffect.isComplete()) {
 					bullet.setExplodeState(ExplodeState.Off);
@@ -1174,11 +1226,11 @@ public class PlayScreen extends BaseScreen {
 			case DieOn:
 				burnEffect.reset();
 				effectStrtPos = bullet.getExplodePos();
-				burnEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				burnEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				burnEffect.getEmitters().get(0).setContinuous(true);
 				burnEffect.getEmitters().get(1).setContinuous(true);
-				if(effectStrtPos.x>menuBase.getX() && effectStrtPos.x<menuBase.getX()+menuBase.getWidth() && 
-						effectStrtPos.y>menuBase.getY() && effectStrtPos.y<menuBase.getY()+menuBase.getHeight())
+				if (effectStrtPos.x > menuBase.getX() && effectStrtPos.x < menuBase.getX() + menuBase.getWidth() && effectStrtPos.y > menuBase.getY()
+						&& effectStrtPos.y < menuBase.getY() + menuBase.getHeight())
 					bullet.setExplodeState(ExplodeState.Off);
 				else
 					bullet.setExplodeState(ExplodeState.Die);
@@ -1192,7 +1244,7 @@ public class PlayScreen extends BaseScreen {
 			case BurnOn:
 				burnEffect.reset();
 				effectStrtPos = bullet.getExplodePos();
-				burnEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				burnEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				burnEffect.getEmitters().get(0).setContinuous(false);
 				burnEffect.getEmitters().get(1).setContinuous(false);
 				bullet.setExplodeState(ExplodeState.Die);
@@ -1206,7 +1258,7 @@ public class PlayScreen extends BaseScreen {
 			case DrownOn:
 				splashEffect.reset();
 				effectStrtPos = bullet.getExplodePos();
-				splashEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				splashEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				splashEffect.getEmitters().get(0).setContinuous(false);
 				bullet.setExplodeState(ExplodeState.Drown);
 				break;
@@ -1220,10 +1272,10 @@ public class PlayScreen extends BaseScreen {
 			case DrownDieOn:
 				splashEffect.reset();
 				effectStrtPos = bullet.getExplodePos();
-				splashEffect.setPosition(effectStrtPos.x,effectStrtPos.y);
+				splashEffect.setPosition(effectStrtPos.x, effectStrtPos.y);
 				splashEffect.getEmitters().get(0).setContinuous(true);
-				if(effectStrtPos.x>menuBase.getX() && effectStrtPos.x<menuBase.getX()+menuBase.getWidth() && 
-						effectStrtPos.y>menuBase.getY() && effectStrtPos.y<menuBase.getY()+menuBase.getHeight())
+				if (effectStrtPos.x > menuBase.getX() && effectStrtPos.x < menuBase.getX() + menuBase.getWidth() && effectStrtPos.y > menuBase.getY()
+						&& effectStrtPos.y < menuBase.getY() + menuBase.getHeight())
 					bullet.setExplodeState(ExplodeState.Off);
 				else
 					bullet.setExplodeState(ExplodeState.DrownDie);
@@ -1242,7 +1294,7 @@ public class PlayScreen extends BaseScreen {
 	public void undo() {
 		setTouchEnabled(true);
 		if (undoCnt > 0) {
-			resetEffects();			
+			resetEffects();
 			undoCnt--;
 			hero = null;
 			hero = undoList[undoCnt].expandData();
@@ -1256,8 +1308,8 @@ public class PlayScreen extends BaseScreen {
 				hero = null;
 				hero = undoList[undoCnt].expandData();
 			}
-			lvlShotsStr.setPrintStr(""+hero.getTankShots() + "/" + lVl.getLvlMaxShots());
-			lvlMovesStr.setPrintStr(""+hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
+			lvlShotsStr.setPrintStr("" + hero.getTankShots() + "/" + lVl.getLvlMaxShots());
+			lvlMovesStr.setPrintStr("" + hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
 		}
 
 		if (gameState == GameState.Dead) {
@@ -1273,7 +1325,7 @@ public class PlayScreen extends BaseScreen {
 
 	public void undoInGame() {
 		if (undoCnt > 0) {
-			resetEffects();			
+			resetEffects();
 			undoCnt--;
 			hero = null;
 			hero = undoList[undoCnt].expandData();
@@ -1287,8 +1339,8 @@ public class PlayScreen extends BaseScreen {
 				hero = null;
 				hero = undoList[undoCnt].expandData();
 			}
-			lvlShotsStr.setPrintStr(""+hero.getTankShots() + "/" + lVl.getLvlMaxShots());
-			lvlMovesStr.setPrintStr(""+hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
+			lvlShotsStr.setPrintStr("" + hero.getTankShots() + "/" + lVl.getLvlMaxShots());
+			lvlMovesStr.setPrintStr("" + hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
 		} else {
 			longPressButton = GameButtons.None;
 		}
@@ -1298,13 +1350,13 @@ public class PlayScreen extends BaseScreen {
 		hero.fireTank();
 		Sounds.shoot.play();
 		hero.incrementTankShots();
-		lvlShotsStr.setPrintStr(""+hero.getTankShots() + "/" + lVl.getLvlMaxShots());
+		lvlShotsStr.setPrintStr("" + hero.getTankShots() + "/" + lVl.getLvlMaxShots());
 	}
 
 	public void moveHero(final Direction drc) {
 		if (hero.moveTank(drc)) {
 			hero.incrementTankMoves();
-			lvlMovesStr.setPrintStr(""+hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
+			lvlMovesStr.setPrintStr("" + hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
 		}
 	}
 
@@ -1325,7 +1377,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void pauseme() {
-		if (gameState == GameState.Running) {
+		if (gameState == GameState.Running || gameState == GameState.HelpMsgRun ) {
 			gameState = GameState.Paused;
 		}
 	}
@@ -1335,7 +1387,11 @@ public class PlayScreen extends BaseScreen {
 			if (pausedMenu.isVisible()) {
 				pausedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			}
-			gameState = GameState.Running;
+			if(helpBox.isVisible()) {
+				gameState = GameState.HelpMsgRun;
+			} else {
+				gameState = GameState.Running;
+			}
 		} else if (gameState == GameState.Hint) {
 			if (hintMenu.isVisible()) {
 				hintMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
@@ -1344,18 +1400,18 @@ public class PlayScreen extends BaseScreen {
 		}
 	}
 
-	@Override
-	public void pause() {
-		pausedMenu.getColor().a = 1f;
-		hintMenu.setVisible(false);
-		gameState = GameState.Paused;
-		pausedMenu.setVisible(true);
-		saveGame();
-	}
-	
-	public void incrementHint(int inHintsUsed){
-		if(inHintsUsed>hintsUsed) {
-			hintsUsed=inHintsUsed;
+//	@Override
+//	public void pause() {
+//		pausedMenu.getColor().a = 1f;
+//		hintMenu.setVisible(false);
+//		gameState = GameState.Paused;
+//		pausedMenu.setVisible(true);
+//		saveGame();
+//	}
+
+	public void incrementHint(int inHintsUsed) {
+		if (inHintsUsed > hintsUsed) {
+			hintsUsed = inHintsUsed;
 			GameUtils.saveUserScores(currentDclty, currentLevel, 0, 0, hintsUsed, Medals.None);
 		}
 	}
@@ -1381,17 +1437,17 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void saveGame() {
-		final GameData gData = new GameData();
-		gData.setCurrentDclty(currentDclty);
-		gData.setCurrentLevel(currentLevel);
-		gData.setGameState(gameState);
-		gData.setHintsUsed(hintsUsed);
-		gData.setLtank(hero);
-		gData.setLvl(lVl);
-		gData.setStateChanged(stateChanged);
-		gData.setUndoCnt(undoCnt);
-		gData.setUndoList(undoList);
-		final SaveGame sg = new SaveGame(gData);
+		savedGame.setCurrentDclty(currentDclty);
+		savedGame.setCurrentLevel(currentLevel);
+		savedGame.setGameState(gameState);
+		savedGame.setHintsUsed(hintsUsed);
+		savedGame.setLtank(hero);
+		savedGame.setLvl(lVl);
+		savedGame.setStateChanged(stateChanged);
+		savedGame.setUndoCnt(undoCnt);
+		savedGame.setUndoList(undoList);
+		savedGame.setHelpMsgCounter(helpMsgCounter);
+		final SaveGame sg = new SaveGame(savedGame);
 		sg.start();
 	}
 
@@ -1401,8 +1457,8 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void saveScores() {
-		Medals medalWon = PlayUtils.calculateAward(hintsUsed,hero.getTankMoves(), hero.getTankShots(), lVl.getLvlMaxMoves(), lVl.getLvlMaxShots());
-		awardShield.setDrawable(new TextureRegionDrawable(g.getFlipYTexRegion("medal_"+medalWon.name().toLowerCase())));
+		Medals medalWon = PlayUtils.calculateAward(hintsUsed, hero.getTankMoves(), hero.getTankShots(), lVl.getLvlMaxMoves(), lVl.getLvlMaxShots());
+		awardShield.setDrawable(new TextureRegionDrawable(g.getFlipYTexRegion("medal_" + medalWon.name().toLowerCase())));
 		GameUtils.saveUserScores(currentDclty, currentLevel, hero.getTankMoves(), hero.getTankShots(), hintsUsed, medalWon);
 		if (currentLevel == curUserSCORE.getMaxPlayedLevel(currentDclty)) {
 			if ((currentLevel + 1) <= lvlCntPerDCLTY[currentDclty.ordinal()]) {
@@ -1421,7 +1477,7 @@ public class PlayScreen extends BaseScreen {
 			}
 		}
 	}
-	
+
 	private void resetEffects() {
 		hero.getaTankCur().getTankBullet().setExplodeState(ExplodeState.Off);
 		hero.getaTankPrev().getTankBullet().setExplodeState(ExplodeState.Off);
@@ -1453,59 +1509,73 @@ public class PlayScreen extends BaseScreen {
 			fireButton.setTouchable(Touchable.disabled);
 		}
 	}
-	
-	public void showHelpBox(int row, int col, String helpText) {
+
+	public void showHelpBox(HelpMsg helpMsg) {
+		int row = helpMsg.getRow();
+		int col = helpMsg.getCol();
+		String helpText = helpMsg.getMsg();
+
 		Point helpObjPos = PlayUtils.getCenterPixPos(new Point(col, row));
 		helpStr.setPrintStr(helpText);
 		
-		if(row<=7 && col<=7) {
+		if(row<0 && col<0) {
+			helpArrow_u_l.setVisible(false);
+			helpArrow_u_r.setVisible(false);
+			helpArrow_d_l.setVisible(false);
+			helpArrow_d_r.setVisible(false);
+			helpRect.setVisible(true);
+			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, (game.getSrcHeight() - helpRect.getHeight()) / 2);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
+			helpStr.setPrintStr(helpText);
+			helpBox.setVisible(true);
+		} else if (row <= 7 && col <= 7) {
 			helpArrow_u_l.setVisible(true);
-			helpArrow_u_l.setPosition(helpObjPos.x-7, helpObjPos.y-7);
+			helpArrow_u_l.setPosition(helpObjPos.x - 7, helpObjPos.y - 7);
 			helpArrow_u_r.setVisible(false);
 			helpArrow_d_l.setVisible(false);
 			helpArrow_d_r.setVisible(false);
 			helpRect.setVisible(true);
-			helpRect.setPosition((game.getSrcWidth()-helpRect.getWidth())/2,helpObjPos.y+173);
-			helpStr.setBounds(helpRect.getX()+25, helpRect.getY()+20, 380, 40);
+			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, helpObjPos.y + 173);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
-		} else if(row<=7 && col>7) {
+		} else if (row <= 7 && col > 7) {
 			helpArrow_u_r.setVisible(true);
-			helpArrow_u_r.setPosition(helpObjPos.x-119, helpObjPos.y-7);
+			helpArrow_u_r.setPosition(helpObjPos.x - 119, helpObjPos.y - 7);
 			helpArrow_u_l.setVisible(false);
 			helpArrow_d_l.setVisible(false);
 			helpArrow_d_r.setVisible(false);
 			helpRect.setVisible(true);
-			helpRect.setPosition((game.getSrcWidth()-helpRect.getWidth())/2,helpObjPos.y+173);
-			helpStr.setBounds(helpRect.getX()+25, helpRect.getY()+20, 380, 40);
+			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, helpObjPos.y + 173);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
-		} else if(row>7 && col<=7) {
+		} else if (row > 7 && col <= 7) {
 			helpArrow_d_l.setVisible(true);
-			helpArrow_d_l.setPosition(helpObjPos.x-7, helpObjPos.y-180);
+			helpArrow_d_l.setPosition(helpObjPos.x - 7, helpObjPos.y - 180);
 			helpArrow_u_r.setVisible(false);
 			helpArrow_u_l.setVisible(false);
 			helpArrow_d_r.setVisible(false);
 			helpRect.setVisible(true);
-			helpRect.setPosition((game.getSrcWidth()-helpRect.getWidth())/2,helpObjPos.y-173);
-			helpStr.setBounds(helpRect.getX()+25, helpRect.getY()+20, 380, 40);
+			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, helpArrow_d_l.getY() - 73);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
-		} else if(row>7 && col>7){
+		} else if (row > 7 && col > 7) {
 			helpArrow_d_r.setVisible(true);
-			helpArrow_d_r.setPosition(helpObjPos.x-119, helpObjPos.y-180);
+			helpArrow_d_r.setPosition(helpObjPos.x - 119, helpObjPos.y - 180);
 			helpArrow_u_r.setVisible(false);
 			helpArrow_u_l.setVisible(false);
 			helpArrow_d_l.setVisible(false);
 			helpRect.setVisible(true);
-			helpRect.setPosition((game.getSrcWidth()-helpRect.getWidth())/2,helpObjPos.y-173);
-			helpStr.setBounds(helpRect.getX()+25, helpRect.getY()+20, 380, 40);
+			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, helpArrow_d_r.getY() - 73);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
 		} else {
 			helpBox.setVisible(false);
 		}
-		
+
 	}
 
 	@Override

@@ -10,6 +10,7 @@ public class Constants {
 
 	public static final String DATA_FLDR = "data";
 	public static final String LVL_FILE_NAME = DATA_FLDR + "/data_debug.flg";
+	public static final String HLP_FILE_NAME = DATA_FLDR + "/help.flg";
 
 	public static final String SCORE_DATA_FILE_NAME = "scores";
 	public static final String SAVE_GAME_FILE_NAME = "savegame";
