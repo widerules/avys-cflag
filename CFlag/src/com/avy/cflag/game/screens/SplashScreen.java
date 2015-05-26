@@ -48,6 +48,7 @@ public class SplashScreen extends BaseScreen {
 				GameUtils.loadAcraMap();
 				GameUtils.loadThumbs();
 				GameUtils.loadGame();
+				GameUtils.loadInGameHelp();
 				return true;
 			}
 		}, new Action() {

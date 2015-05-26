@@ -70,7 +70,7 @@ public class EnumStore {
 	};
 
 	public static enum GameState {
-		FadeIn, FadeOut, Ready, Running, Paused, Dead, Drowned, AwardStart, AwardEnd, Won, Menu, Hint, Restart, NextLevel, Quit
+		FadeIn, FadeOut, Ready, HelpMsgInit, HelpMsgRun, Running, Paused, Dead, Drowned, AwardStart, AwardEnd, Won, Menu, Hint, Restart, NextLevel, Quit
 	}
 
 	public static enum BulletState {

@@ -1,5 +1,6 @@
 package com.avy.cflag.game;
 
+import static com.avy.cflag.game.Constants.HLP_FILE_NAME;
 import static com.avy.cflag.game.Constants.LVL_FILE_NAME;
 import static com.avy.cflag.game.Constants.SAVE_GAME_FILE_NAME;
 import static com.avy.cflag.game.Constants.SAVE_GAME_TAG_NAME;
@@ -12,6 +13,7 @@ import static com.avy.cflag.game.MemStore.certSIGN;
 import static com.avy.cflag.game.MemStore.curUserOPTS;
 import static com.avy.cflag.game.MemStore.curUserSCORE;
 import static com.avy.cflag.game.MemStore.encodedCERT;
+import static com.avy.cflag.game.MemStore.helpDATA;
 import static com.avy.cflag.game.MemStore.lvlAuthorLEN;
 import static com.avy.cflag.game.MemStore.lvlCntPerDCLTY;
 import static com.avy.cflag.game.MemStore.lvlDataPerDCLTY;
@@ -26,6 +28,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -54,7 +57,7 @@ public class GameUtils {
 			fi.read(fileData);
 			fi.close();
 
-			final byte inData[] = decryptDate(fileData);
+			final byte inData[] = decryptData(fileData);
 			// final byte inData[] = fileData;
 
 			final String lvlDataPerDclty[] = new String[Difficulty.length()];
@@ -87,7 +90,7 @@ public class GameUtils {
 		}
 	}
 
-	public static byte[] decryptDate(final byte[] inputData) throws Exception {
+	public static byte[] decryptData(final byte[] inputData) throws Exception {
 		final IvParameterSpec ivSpec = new IvParameterSpec(certSIGN);
 		final SecretKeySpec key = new SecretKeySpec(encodedCERT, "AES");
 		final Cipher deCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -157,6 +160,30 @@ public class GameUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static void loadInGameHelp() {
+		try {
+			if(curUserOPTS.isInGameHelp()) {
+				final InputStream fi = Gdx.files.internal(HLP_FILE_NAME).read();
+				final byte helpData[] = new byte[fi.available()];
+				fi.read(helpData);
+				fi.close();
+				
+				final String jsonStr = new String(helpData);
+				final Json jsn = new Json();
+				if (jsonStr != "") {
+					helpDATA = jsn.fromJson(HashMap.class, jsonStr);
+				} else {
+					helpDATA = null;
+				}
+			} else {
+				helpDATA = null;
+			}
+		} catch (Exception e) {
+			helpDATA = null;
+		}
+	}
+	
 	public static void saveGameOptions() {
 		userLIST.updateUser(curUserOPTS);
 		final Json jsn = new Json();

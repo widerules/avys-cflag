@@ -15,6 +15,7 @@ public class GameData {
 	private int undoCnt;
 	private int hintsUsed;
 	private boolean stateChanged;
+	private int helpMsgCounter;
 
 	public Difficulty getCurrentDclty() {
 		return currentDclty;
@@ -88,4 +89,12 @@ public class GameData {
 		this.stateChanged = stateChanged;
 	}
 
+	public int getHelpMsgCounter() {
+		return helpMsgCounter;
+	}
+
+	public void setHelpMsgCounter(int helpMsgCounter) {
+		this.helpMsgCounter = helpMsgCounter;
+	}
+   
 }
