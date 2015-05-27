@@ -1,6 +1,6 @@
 package com.avy.cflag.game;
 
-import static com.avy.cflag.game.Constants.HLP_FILE_NAME;
+import static com.avy.cflag.game.Constants.*;
 import static com.avy.cflag.game.Constants.LVL_FILE_NAME;
 import static com.avy.cflag.game.Constants.SAVE_GAME_FILE_NAME;
 import static com.avy.cflag.game.Constants.SAVE_GAME_TAG_NAME;
@@ -37,6 +37,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.avy.cflag.base.Musics;
 import com.avy.cflag.base.Sounds;
 import com.avy.cflag.game.EnumStore.Difficulty;
+import com.avy.cflag.game.EnumStore.Direction;
 import com.avy.cflag.game.EnumStore.Medals;
 import com.avy.cflag.game.utils.GameData;
 import com.avy.cflag.game.utils.LevelScore;
@@ -236,5 +237,33 @@ public class GameUtils {
 		Gdx.app.log("com.avy.cflag.game", "Save Game Took : " + timeTaken + "ms");
 		curUserOPTS.setGameSaved(true);
 	}
-
+	
+	public static void saveSolution(String levelId, ArrayList<Integer> solnList){
+		ArrayList<String> solnStrList = new ArrayList<String>();
+		int prevDrc=Direction.Up.ordinal();
+		for (int curSolnData : solnList) {
+			int fireDrc = -1;
+			String dataToAdd = "";
+			if(curSolnData<=3) {
+				dataToAdd=curSolnData==0?"Up":curSolnData==1?"Right":curSolnData==2?"Down":"Left";
+				solnStrList.add(dataToAdd);
+				if(curSolnData!=prevDrc) {
+					solnStrList.add(dataToAdd);
+				}
+				prevDrc=curSolnData;
+			} else {
+				fireDrc = curSolnData-4;
+				dataToAdd="Fire";
+				if(fireDrc!=prevDrc) {
+					solnStrList.add(fireDrc==0?"Up":fireDrc==1?"Right":fireDrc==2?"Down":"Left");
+				}
+				solnStrList.add(dataToAdd);
+			}
+		}
+		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SOLN_FILE_NAME);
+		final Json jsn = new Json();
+		final String jSnStr = jsn.toJson(solnStrList);
+		pr.putString(levelId, jSnStr);
+		pr.flush();
+	}
 }

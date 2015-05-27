@@ -150,6 +150,10 @@ public class PlayScreen extends BaseScreen {
 	private Image awardShield;
 	private Group awardMenu;
 
+	private int movesCounter = 0;
+	private int shotsCounter = 0;
+	private int hintsCounter = 0;
+	
 	private Image helpRect;
 	private Image helpArrow_d_l;
 	private Image helpArrow_d_r;
@@ -157,29 +161,33 @@ public class PlayScreen extends BaseScreen {
 	private Image helpArrow_u_r;
 	private ImageString helpStr;
 	private Group helpBox;
+	
+	private Array<HelpMsg> helpMsgList = new Array<HelpMsg>();
+	private int helpMsgCounter = 0;
+
 
 	private boolean updateInProgress = false;
+	private boolean undoInProgress = false;
+	private boolean touchEnabled = true;
+	
 	private GameButtons pressedButton = GameButtons.None;
 	private GameButtons longPressButton = GameButtons.None;
+	
 	private final int longPressReflexDelay = 2;
 	private int longPressTimer = 0;
+	
 	private float dragStartX = 0, dragStartY = 0;
 	DragListener dragListener = null;
 	private float swipeSensitivity = 40f;
-	private boolean undoInProgress = false;
-	private boolean touchEnabled = true;
-
+	
 	private final PathFinder pathFinder = new PathFinder();;
 	private ArrayList<Direction> autoMovePath = new ArrayList<Direction>();;
 	private int autoMoveCounter = 0;
 	private boolean autoMoveActive = false;
-	private int movesCounter = 0;
-	private int shotsCounter = 0;
-	private int hintsCounter = 0;
-
-	private Array<HelpMsg> helpMsgList = new Array<HelpMsg>();
-	private int helpMsgCounter = 0;
-
+	
+	private ArrayList<Integer> solnList = new ArrayList<Integer>();
+	private int solnListCounter = 0;
+	
 	private float deltaCounter = 0;
 
 	public PlayScreen(final CFlagGame game) {
@@ -964,7 +972,7 @@ public class PlayScreen extends BaseScreen {
 			undoList = (UnDoData[]) PlayUtils.resizeArray(undoList, undoCnt + 1);
 			undoList[undoCnt] = new UnDoData();
 			undoList[undoCnt].shrinkData(hero);
-		}
+		} 
 	}
 
 	private void updatePaused() {
@@ -1276,6 +1284,7 @@ public class PlayScreen extends BaseScreen {
 		setTouchEnabled(true);
 		if (undoCnt > 0) {
 			resetEffects();
+			int prevMovesPlusShots = hero.getTankMoves() + hero.getTankShots();
 			undoCnt--;
 			hero = null;
 			hero = undoList[undoCnt].expandData();
@@ -1291,6 +1300,10 @@ public class PlayScreen extends BaseScreen {
 			}
 			lvlShotsStr.setPrintStr("" + hero.getTankShots() + "/" + lVl.getLvlMaxShots());
 			lvlMovesStr.setPrintStr("" + hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
+			int solnItemsToRemove = prevMovesPlusShots-(hero.getTankMoves() + hero.getTankShots());
+			if(curUserOPTS.getUserName().equalsIgnoreCase("rss")){
+				solnListCounter = solnListCounter - solnItemsToRemove;
+			}
 		}
 
 		if (gameState == GameState.Dead) {
@@ -1307,6 +1320,7 @@ public class PlayScreen extends BaseScreen {
 	public void undoInGame() {
 		if (undoCnt > 0) {
 			resetEffects();
+			int prevMovesPlusShots = hero.getTankMoves() + hero.getTankShots();
 			undoCnt--;
 			hero = null;
 			hero = undoList[undoCnt].expandData();
@@ -1322,6 +1336,10 @@ public class PlayScreen extends BaseScreen {
 			}
 			lvlShotsStr.setPrintStr("" + hero.getTankShots() + "/" + lVl.getLvlMaxShots());
 			lvlMovesStr.setPrintStr("" + hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
+			int solnItemsToRemove = prevMovesPlusShots-(hero.getTankMoves() + hero.getTankShots());
+			if(curUserOPTS.getUserName().equalsIgnoreCase("rss")){
+				solnListCounter = solnListCounter - solnItemsToRemove;
+			}
 		} else {
 			longPressButton = GameButtons.None;
 		}
@@ -1331,12 +1349,18 @@ public class PlayScreen extends BaseScreen {
 		hero.fireTank();
 		Sounds.shoot.play();
 		hero.incrementTankShots();
+		if(curUserOPTS.getUserName().equalsIgnoreCase("rss")){
+			solnList.add(solnListCounter++,4+hero.getCurTankDirection().ordinal());
+		}
 		lvlShotsStr.setPrintStr("" + hero.getTankShots() + "/" + lVl.getLvlMaxShots());
 	}
 
 	public void moveHero(final Direction drc) {
 		if (hero.moveTank(drc)) {
 			hero.incrementTankMoves();
+			if(curUserOPTS.getUserName().equalsIgnoreCase("rss")){
+				solnList.add(solnListCounter++,drc.ordinal());
+			}
 			lvlMovesStr.setPrintStr("" + hero.getTankMoves() + "/" + lVl.getLvlMaxMoves());
 		}
 	}
@@ -1459,6 +1483,9 @@ public class PlayScreen extends BaseScreen {
 					GameUtils.saveGameOptions();
 				}
 			}
+		}
+		if(curUserOPTS.getUserName().equalsIgnoreCase("rss")){
+			GameUtils.saveSolution(currentDclty.name().trim()+Integer.toString(currentLevel).trim(), solnList);
 		}
 	}
 
