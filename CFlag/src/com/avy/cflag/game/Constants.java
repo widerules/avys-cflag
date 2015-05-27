@@ -15,6 +15,7 @@ public class Constants {
 	public static final String SCORE_DATA_FILE_NAME = "scores";
 	public static final String SAVE_GAME_FILE_NAME = "savegame";
 	public static final String USERS_DATA_FILE_NAME = "users";
+	public static final String SOLN_FILE_NAME = "soln";
 
 	public static final String SCORE_DATA_TAG_NAME = "scores_data";
 	public static final String SAVE_GAME_TAG_NAME = "savegame_data";
