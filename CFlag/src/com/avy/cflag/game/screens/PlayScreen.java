@@ -667,7 +667,7 @@ public class PlayScreen extends BaseScreen {
 			@Override
 			public boolean keyDown(final InputEvent event, final int keycode) {
 				if ((keycode == Keys.BACK) || (keycode == Keys.ESCAPE)) {
-					if (gameState == GameState.Running || gameState == GameState.HelpMsgRun ) {
+					if (gameState == GameState.Running || gameState == GameState.HelpMsgRun) {
 						pauseme();
 					} else if ((gameState == GameState.Paused) || (gameState == GameState.Hint)) {
 						resumeme();
@@ -1358,7 +1358,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void pauseme() {
-		if (gameState == GameState.Running || gameState == GameState.HelpMsgRun ) {
+		if (gameState == GameState.Running || gameState == GameState.HelpMsgRun) {
 			gameState = GameState.Paused;
 		}
 	}
@@ -1368,7 +1368,7 @@ public class PlayScreen extends BaseScreen {
 			if (pausedMenu.isVisible()) {
 				pausedMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
 			}
-			if(helpBox.isVisible()) {
+			if (helpBox.isVisible()) {
 				gameState = GameState.HelpMsgRun;
 			} else {
 				gameState = GameState.Running;
@@ -1381,14 +1381,14 @@ public class PlayScreen extends BaseScreen {
 		}
 	}
 
-	@Override
-	public void pause() {
-		pausedMenu.getColor().a = 1f;
-		hintMenu.setVisible(false);
-		gameState = GameState.Paused;
-		pausedMenu.setVisible(true);
-		saveGame();
-	}
+//	@Override
+//	public void pause() {
+//		pausedMenu.getColor().a = 1f;
+//		hintMenu.setVisible(false);
+//		gameState = GameState.Paused;
+//		pausedMenu.setVisible(true);
+//		saveGame();
+//	}
 
 	public void incrementHint(int inHintsUsed) {
 		if (inHintsUsed > hintsUsed) {
@@ -1418,7 +1418,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void saveGame() {
-		if(savedGame==null) {
+		if (savedGame == null) {
 			savedGame = new GameData();
 		}
 		savedGame.setCurrentDclty(currentDclty);
@@ -1495,65 +1495,67 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	public void showHelpBox(HelpMsg helpMsg) {
-		int row = helpMsg.getRow();
-		int col = helpMsg.getCol();
+		int x = helpMsg.getX();
+		int y = helpMsg.getY();
 		String helpText = helpMsg.getMsg();
 
-		Point helpObjPos = PlayUtils.getCenterPixPos(new Point(col, row));
+		int midX = (int) game.getSrcWidth() / 2;
+		int midY = (int) game.getSrcHeight() / 2;
+
 		helpStr.setPrintStr(helpText);
-		
-		if(row<0 && col<0) {
+
+		if (x < 0 && y < 0) {
 			helpArrow_u_l.setVisible(false);
 			helpArrow_u_r.setVisible(false);
 			helpArrow_d_l.setVisible(false);
 			helpArrow_d_r.setVisible(false);
 			helpRect.setVisible(true);
 			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, (game.getSrcHeight() - helpRect.getHeight()) / 2);
-			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, helpRect.getWidth()-(25*2), helpRect.getHeight()-(20*2));
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
-		} else if (row <= 7 && col <= 7) {
+		} else if (x <= midX && y <= midY) {
 			helpArrow_u_l.setVisible(true);
-			helpArrow_u_l.setPosition(helpObjPos.x - 7, helpObjPos.y - 7);
+			helpArrow_u_l.setPosition(x - 7, y - 7);
 			helpArrow_u_r.setVisible(false);
 			helpArrow_d_l.setVisible(false);
 			helpArrow_d_r.setVisible(false);
 			helpRect.setVisible(true);
-			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, helpObjPos.y + 173);
-			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
+			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, y + 173);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, helpRect.getWidth()-(25*2), helpRect.getHeight()-(20*2));
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
-		} else if (row <= 7 && col > 7) {
+		} else if (x > midX && y <= midY) {
 			helpArrow_u_r.setVisible(true);
-			helpArrow_u_r.setPosition(helpObjPos.x - 119, helpObjPos.y - 7);
+			helpArrow_u_r.setPosition(x - 119, y - 7);
 			helpArrow_u_l.setVisible(false);
 			helpArrow_d_l.setVisible(false);
 			helpArrow_d_r.setVisible(false);
 			helpRect.setVisible(true);
-			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, helpObjPos.y + 173);
-			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
+			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, y + 173);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, helpRect.getWidth()-(25*2), helpRect.getHeight()-(20*2));
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
-		} else if (row > 7 && col <= 7) {
+		} else if (x <= midX && y > midY) {
 			helpArrow_d_l.setVisible(true);
-			helpArrow_d_l.setPosition(helpObjPos.x - 7, helpObjPos.y - 180);
+			helpArrow_d_l.setPosition(x - 7, y - 180);
 			helpArrow_u_r.setVisible(false);
 			helpArrow_u_l.setVisible(false);
 			helpArrow_d_r.setVisible(false);
 			helpRect.setVisible(true);
 			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, helpArrow_d_l.getY() - 73);
-			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, helpRect.getWidth()-(25*2), helpRect.getHeight()-(20*2));
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
-		} else if (row > 7 && col > 7) {
+		} else if (x > midX && y > midY) {
 			helpArrow_d_r.setVisible(true);
-			helpArrow_d_r.setPosition(helpObjPos.x - 119, helpObjPos.y - 180);
+			helpArrow_d_r.setPosition(x - 119, y - 180);
 			helpArrow_u_r.setVisible(false);
 			helpArrow_u_l.setVisible(false);
 			helpArrow_d_l.setVisible(false);
 			helpRect.setVisible(true);
 			helpRect.setPosition((game.getSrcWidth() - helpRect.getWidth()) / 2, helpArrow_d_r.getY() - 73);
-			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, 380, 40);
+			helpStr.setBounds(helpRect.getX() + 25, helpRect.getY() + 20, helpRect.getWidth()-(25*2), helpRect.getHeight()-(20*2));
 			helpStr.setPrintStr(helpText);
 			helpBox.setVisible(true);
 		} else {
