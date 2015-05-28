@@ -14,7 +14,7 @@ public class PathFinder {
 	private NavigationGrid navGrid;
 	private final AStarFinder finder;
 	private GridCell[][] cells;
-	private static final List<Direction> path = new ArrayList<Direction>();
+	private static final List<Integer> path = new ArrayList<Integer>();
 
 	public PathFinder() {
 		finderOpts = new GridFinderOptions(false, true, true, 1, 1);
@@ -36,8 +36,8 @@ public class PathFinder {
 		}
 	}
 
-	public ArrayList<Direction> findPath(final PlayImages[][] lvlPlayField, final Direction strtDirection, final Point strtPos, final Point dstPos) {
-		List<Direction> outPut = new ArrayList<Direction>();
+	public ArrayList<Integer> findPath(final PlayImages[][] lvlPlayField, final Direction strtDirection, final Point strtPos, final Point dstPos) {
+		List<Integer> outPut = new ArrayList<Integer>();
 
 		loadGrid(lvlPlayField);
 		navGrid = new NavigationGrid(cells);
@@ -55,10 +55,10 @@ public class PathFinder {
 			throw new RuntimeException("Error in Path Finder");
 		}
 
-		return (ArrayList<Direction>) outPut;
+		return (ArrayList<Integer>) outPut;
 	}
 
-	public static List<Direction> backtrace(final GridCell strtNode, final GridCell endNode, final Direction strtDirection) {
+	public static List<Integer> backtrace(final GridCell strtNode, final GridCell endNode, final Direction strtDirection) {
 		path.clear();
 		GridCell curNode = null;
 		GridCell prevNode = endNode;
@@ -68,14 +68,14 @@ public class PathFinder {
 			curNode = prevNode.getParent();
 			curDrc = PlayUtils.getDirectionFromPoints(new Point(curNode.x, curNode.y), new Point(prevNode.x, prevNode.y));
 			if ((prevDrc != null) && (curDrc != prevDrc)) {
-				path.add(0, prevDrc);
+				path.add(0, prevDrc.ordinal());
 			}
-			path.add(0, curDrc);
+			path.add(0, curDrc.ordinal());
 			prevNode = curNode;
 			prevDrc = curDrc;
 		}
 		if ((prevDrc != null) && (strtDirection != prevDrc)) {
-			path.add(0, prevDrc);
+			path.add(0, prevDrc.ordinal());
 		}
 		return path;
 	}
