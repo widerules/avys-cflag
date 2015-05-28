@@ -232,25 +232,34 @@ public class GameUtils {
 		curUserOPTS.setGameSaved(true);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Integer> getSolution(String levelId) {
+		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SOLN_FILE_NAME);
+		final String jsonStr = pr.getString(levelId+"Soln");
+		final Json jsn = new Json();
+		ArrayList<Integer> solnList = jsn.fromJson(ArrayList.class, jsonStr);
+		return solnList;
+	}
+	
 	public static void saveSolution(int moves, int shots, String levelId, List<Integer> solnList){
-		ArrayList<String> solnStrList = new ArrayList<String>();
+		ArrayList<Integer> solnStrList = new ArrayList<Integer>();
 		int prevDrc=Direction.Up.ordinal();
 		for (int curDrc : solnList) {
-			String curDrcStr = "";
+//			String curDrcStr = "";
 			if(curDrc<=3) {
-				curDrcStr=curDrc==0?"Up":curDrc==1?"Right":curDrc==2?"Down":"Left";
+//				curDrcStr=curDrc==0?"Up":curDrc==1?"Right":curDrc==2?"Down":"Left";
 				if(curDrc!=prevDrc) {
-					solnStrList.add(curDrcStr);
+					solnStrList.add(curDrc);
 				}
-				solnStrList.add(curDrcStr);
+				solnStrList.add(curDrc);
 				prevDrc=curDrc;
 			} else {
 				int fireDrc = curDrc-4;
-				curDrcStr = fireDrc==0?"Up":fireDrc==1?"Right":fireDrc==2?"Down":"Left";
+//				curDrcStr = fireDrc==0?"Up":fireDrc==1?"Right":fireDrc==2?"Down":"Left";
 				if(fireDrc!=prevDrc) {
-					solnStrList.add(curDrcStr);
+					solnStrList.add(fireDrc);
 				}
-				solnStrList.add("Fire");
+				solnStrList.add(5);
 				prevDrc=fireDrc;
 			}
 		}

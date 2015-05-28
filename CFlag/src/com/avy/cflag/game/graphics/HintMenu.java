@@ -5,6 +5,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
+import java.lang.reflect.Method;
+
 import com.avy.cflag.base.Graphics;
 import com.avy.cflag.base.ImageString;
 import com.avy.cflag.base.ImageString.PrintFormat;
@@ -89,6 +91,11 @@ public class HintMenu extends Group {
 					@Override
 					public void touchUp(final InputEvent event, final float x, final float y, final int pointer, final int button) {
 						solnButton_Down.addAction(sequence(fadeIn(0.1f), visible(false)));
+						try {
+							final Method method = PlayScreen.class.getDeclaredMethod("showSolution");
+							method.invoke(pScreen);
+						} catch (final Exception e) {
+						}
 					};
 				});
 				hintsGroup[i].addActor(solnButton);

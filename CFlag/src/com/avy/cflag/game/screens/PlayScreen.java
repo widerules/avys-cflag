@@ -181,9 +181,9 @@ public class PlayScreen extends BaseScreen {
 	private float swipeSensitivity = 40f;
 	
 	private final PathFinder pathFinder = new PathFinder();;
-	private ArrayList<Direction> autoMovePath = new ArrayList<Direction>();;
-	private int autoMoveCounter = 0;
-	private boolean autoMoveActive = false;
+	private ArrayList<Integer> autoPlayPath = new ArrayList<Integer>();;
+	private int autoPlayCounter = 0;
+	private boolean autoPlayActive = false;
 	
 	private ArrayList<Integer> solnList = new ArrayList<Integer>();
 	private int solnListCounter = 0;
@@ -217,6 +217,14 @@ public class PlayScreen extends BaseScreen {
 		acraMAP.put("DirectLoad", "Yes");
 		initImages();
 		initVariables(selectedDclty, selectedLevel);
+	}
+	
+	public PlayScreen(final CFlagGame game, final Difficulty selectedDclty, final int selectedLevel, boolean autoMove) {
+		super(game, true, true, true);
+		acraMAP.put("AutoMoveLoad", "Yes");
+		initImages();
+		initVariables(selectedDclty, selectedLevel);
+		autoPlayActive=true;
 	}
 
 	private void initImages() {
@@ -631,9 +639,9 @@ public class PlayScreen extends BaseScreen {
 		midPanel.addListener(new ClickListener(Buttons.LEFT) {
 			@Override
 			public void clicked(final InputEvent event, final float x, final float y) {
-				if (!autoMoveActive) {
+				if (!autoPlayActive) {
 					if (initAutoMove(new Point((int) x, (int) y))) {
-						autoMoveActive = true;
+						autoPlayActive = true;
 					}
 				}
 				super.clicked(event, x, y);
@@ -782,7 +790,7 @@ public class PlayScreen extends BaseScreen {
 				updateHelpMsgRun();
 				break;
 			case Running:
-				updateRunning();
+				updateRunning(delta);
 				break;
 			case Paused:
 				updatePaused();
@@ -815,7 +823,12 @@ public class PlayScreen extends BaseScreen {
 
 	private void updateReady() {
 		if (pltFrm.heroReady) {
-			gameState = GameState.HelpMsgInit;
+			if(autoPlayActive) {
+				gameState = GameState.Running;
+				initAutoPlay();
+			} else {
+				gameState = GameState.HelpMsgInit;
+			}
 		}
 	}
 
@@ -840,7 +853,7 @@ public class PlayScreen extends BaseScreen {
 
 	}
 
-	private void updateRunning() {
+	private void updateRunning(final float delta) {
 		final int stateChangeCount = hero.getStateChangeCount();
 
 		switch (hero.getCurTankState()) {
@@ -896,13 +909,20 @@ public class PlayScreen extends BaseScreen {
 				break;
 			case Moving:
 			case Blocked:
-				if (autoMoveActive) {
-					final Direction autoMoveDirection = getAutoMoveDirection();
-					if (autoMoveDirection != null) {
-						moveHero(autoMoveDirection);
+				if (autoPlayActive) {
+					if (deltaCounter > 0.05) {
+						deltaCounter = 0;
+					final int autoPlayCmd = getAutoPlayCommand();
+					if (autoPlayCmd>=0 && autoPlayCmd<=3) {
+						moveHero(autoPlayCmd==0?Direction.Up:autoPlayCmd==1?Direction.Right:autoPlayCmd==2?Direction.Down:Direction.Left);
+					} else if (autoPlayCmd==5) {
+						fireHero();
 					} else {
-						autoMoveActive = false;
+						autoPlayActive = false;
 						setTouchEnabled(true);
+					}
+					} else {
+						deltaCounter = deltaCounter + delta;
 					}
 				} else {
 					setTouchEnabled(true);
@@ -976,7 +996,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void updatePaused() {
-		autoMoveActive = false;
+		autoPlayActive = false;
 		if (!pausedMenu.isVisible()) {
 			pausedMenu.addAction(sequence(visible(true), parallel(new Action() {
 				@Override
@@ -990,7 +1010,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void updateDrowned() {
-		autoMoveActive = false;
+		autoPlayActive = false;
 		if (!drownedMenu.isVisible()) {
 			Sounds.drown.play();
 			drownedMenu.addAction(sequence(visible(true), fadeIn(0.1f)));
@@ -1000,7 +1020,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void updateDead() {
-		autoMoveActive = false;
+		autoPlayActive = false;
 		if (!deadMenu.isVisible()) {
 			Sounds.dead.play();
 			deadMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
@@ -1014,7 +1034,7 @@ public class PlayScreen extends BaseScreen {
 			deltaCounter = 0;
 			if (movesCounter == 0 && shotsCounter == 0) {
 				setTouchEnabled(false);
-				autoMoveActive = false;
+				autoPlayActive = false;
 				pltFrm.animateHero();
 
 				if (movesCounter <= hero.getTankMoves())
@@ -1079,7 +1099,7 @@ public class PlayScreen extends BaseScreen {
 	}
 
 	private void updateHint() {
-		autoMoveActive = false;
+		autoPlayActive = false;
 		if (!hintMenu.isVisible()) {
 			hintMenu.addAction(sequence(visible(true), fadeIn(0.2f)));
 		}
@@ -1423,9 +1443,9 @@ public class PlayScreen extends BaseScreen {
 
 	public boolean initAutoMove(final Point clickPos) {
 		final Point dstPoint = PlayUtils.convertPixToPoint(clickPos);
-		autoMovePath = pathFinder.findPath(hero.getLvlPlayField(), hero.getCurTankDirection(), hero.getCurTankPos(), dstPoint);
-		if (autoMovePath.size() > 0) {
-			autoMoveCounter = 0;
+		autoPlayPath = pathFinder.findPath(hero.getLvlPlayField(), hero.getCurTankDirection(), hero.getCurTankPos(), dstPoint);
+		if (autoPlayPath.size() > 0) {
+			autoPlayCounter = 0;
 			setTouchEnabled(false);
 			return true;
 		} else {
@@ -1433,12 +1453,38 @@ public class PlayScreen extends BaseScreen {
 		}
 	}
 
-	public Direction getAutoMoveDirection() {
-		if (autoMoveCounter < autoMovePath.size()) {
-			return autoMovePath.get(autoMoveCounter++);
+	public void initAutoPlay() {
+		autoPlayPath = GameUtils.getSolution(currentDclty.name().trim()+Integer.toString(currentLevel).trim());
+		if (autoPlayPath.size() > 0) {
+			autoPlayCounter = 0;
+			setTouchEnabled(false);
+			if (hintMenu.isVisible()) {
+				hintMenu.addAction(sequence(fadeOut(0.2f), visible(false)));
+			}
+			gameState = GameState.Running;
+			autoPlayActive = true;
 		} else {
-			return null;
+			//TODO display solution not found
 		}
+	}
+	
+	public int getAutoPlayCommand() {
+		if (autoPlayCounter < autoPlayPath.size()) {
+			return autoPlayPath.get(autoPlayCounter++);
+		} else {
+			return -1;
+		}
+	}
+	
+	public void showSolution() {
+		fadeOutActive = true;
+		argbFull.addAction(sequence(visible(true), fadeIn(1f), new Action() {
+			@Override
+			public boolean act(final float delta) {
+				game.setScreen(new PlayScreen(game, currentDclty, currentLevel,true));
+				return false;
+			}
+		}));
 	}
 
 	public void saveGame() {
