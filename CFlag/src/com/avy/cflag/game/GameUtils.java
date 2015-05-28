@@ -1,13 +1,6 @@
 package com.avy.cflag.game;
 
 import static com.avy.cflag.game.Constants.*;
-import static com.avy.cflag.game.Constants.LVL_FILE_NAME;
-import static com.avy.cflag.game.Constants.SAVE_GAME_FILE_NAME;
-import static com.avy.cflag.game.Constants.SAVE_GAME_TAG_NAME;
-import static com.avy.cflag.game.Constants.SCORE_DATA_FILE_NAME;
-import static com.avy.cflag.game.Constants.SCORE_DATA_TAG_NAME;
-import static com.avy.cflag.game.Constants.USERS_DATA_FILE_NAME;
-import static com.avy.cflag.game.Constants.USERS_DATA_TAG_NAME;
 import static com.avy.cflag.game.MemStore.acraMAP;
 import static com.avy.cflag.game.MemStore.certSIGN;
 import static com.avy.cflag.game.MemStore.curUserOPTS;
@@ -29,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -238,32 +232,33 @@ public class GameUtils {
 		curUserOPTS.setGameSaved(true);
 	}
 	
-	public static void saveSolution(String levelId, ArrayList<Integer> solnList){
+	public static void saveSolution(int moves, int shots, String levelId, List<Integer> solnList){
 		ArrayList<String> solnStrList = new ArrayList<String>();
 		int prevDrc=Direction.Up.ordinal();
-		for (int curSolnData : solnList) {
-			int fireDrc = -1;
-			String dataToAdd = "";
-			if(curSolnData<=3) {
-				dataToAdd=curSolnData==0?"Up":curSolnData==1?"Right":curSolnData==2?"Down":"Left";
-				solnStrList.add(dataToAdd);
-				if(curSolnData!=prevDrc) {
-					solnStrList.add(dataToAdd);
+		for (int curDrc : solnList) {
+			String curDrcStr = "";
+			if(curDrc<=3) {
+				curDrcStr=curDrc==0?"Up":curDrc==1?"Right":curDrc==2?"Down":"Left";
+				if(curDrc!=prevDrc) {
+					solnStrList.add(curDrcStr);
 				}
-				prevDrc=curSolnData;
+				solnStrList.add(curDrcStr);
+				prevDrc=curDrc;
 			} else {
-				fireDrc = curSolnData-4;
-				dataToAdd="Fire";
+				int fireDrc = curDrc-4;
+				curDrcStr = fireDrc==0?"Up":fireDrc==1?"Right":fireDrc==2?"Down":"Left";
 				if(fireDrc!=prevDrc) {
-					solnStrList.add(fireDrc==0?"Up":fireDrc==1?"Right":fireDrc==2?"Down":"Left");
+					solnStrList.add(curDrcStr);
 				}
-				solnStrList.add(dataToAdd);
+				solnStrList.add("Fire");
+				prevDrc=fireDrc;
 			}
 		}
 		final Preferences pr = Gdx.app.getPreferences(curUserOPTS.getUserName() + "\\" + SOLN_FILE_NAME);
 		final Json jsn = new Json();
 		final String jSnStr = jsn.toJson(solnStrList);
-		pr.putString(levelId, jSnStr);
+		pr.putString(levelId+"Soln", jSnStr);
+		pr.putString(levelId+"Score", "Moves: " + moves +  " | Shots: " + shots);
 		pr.flush();
 	}
 }
