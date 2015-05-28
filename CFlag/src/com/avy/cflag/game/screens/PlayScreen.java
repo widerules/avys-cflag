@@ -1485,7 +1485,7 @@ public class PlayScreen extends BaseScreen {
 			}
 		}
 		if(curUserOPTS.getUserName().equalsIgnoreCase("rss")){
-			GameUtils.saveSolution(currentDclty.name().trim()+Integer.toString(currentLevel).trim(), solnList);
+			GameUtils.saveSolution(hero.getTankMoves(), hero.getTankShots(), currentDclty.name().trim()+Integer.toString(currentLevel).trim(), solnList.subList(0, solnListCounter));
 		}
 	}
 
