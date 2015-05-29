@@ -3,9 +3,9 @@ package com.avy.cflag.base;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Align;
 
 public class ImageString extends Actor{
 	public static enum PrintFormat {
@@ -15,12 +15,14 @@ public class ImageString extends Actor{
 	private String printStr;
 	private BitmapFont printFont;
 	private PrintFormat printFormat;
+	private GlyphLayout layout;
 	
 	public ImageString(String inStr, BitmapFont inFont, Color inColor) {
 		printStr=inStr;
 		printFont=inFont;
 		printFormat = PrintFormat.Normal_Center;
 		setColor(inColor);
+		layout = new GlyphLayout();
 	}
 	
 	public ImageString(String inStr, BitmapFont inFont, Color inColor, PrintFormat inFormat) {
@@ -28,6 +30,7 @@ public class ImageString extends Actor{
 		printFont=inFont;
 		printFormat = inFormat;
 		setColor(inColor);
+		layout = new GlyphLayout();
 	}
 
 	public void setBounds(float x, float y, float width, float height) {
@@ -47,22 +50,22 @@ public class ImageString extends Actor{
 		float y = getY();
 		float width = getWidth();
 		float height = getHeight();
-		TextBounds tb = printFont.getWrappedBounds(printStr, width);
 		switch (printFormat) {
 			case Normal_Left:
-				printFont.draw(batch, printStr, x, y);
+				layout.setText(printFont, printStr);
+				printFont.draw(batch, layout, x, y);
 				break;
 			case Normal_Center:
-				tb = printFont.getBounds(printStr);
-				printFont.draw(batch, printStr, x + (width - tb.width) / 2, y + (height - tb.height) / 2);
+				layout.setText(printFont, printStr,color,width,Align.center,false);
+				printFont.draw(batch, layout, x, y);
 				break;
 			case Wrapped_Left:
-				y = y+(height-tb.height)/2;
-				printFont.drawWrapped(batch, printStr, x, y, width, HAlignment.LEFT);
+				layout.setText(printFont, printStr,color,width,Align.center,false);
+				printFont.draw(batch, layout, x, y);
 				break;
 			case Wrapped_Center:
 				y = y+(height-tb.height)/2;
-				printFont.drawWrapped(batch, printStr, x, y, width, HAlignment.CENTER);
+				printFont.drawWrapped(batch, printStr, x, y, width, Align.center);
 				break;
 			case MultiLine:
 				final String lines[] = printStr.split("\n");
@@ -103,6 +106,7 @@ public class ImageString extends Actor{
 	}
 
 	public void setPrintStr(String printStr) {
+		layout.setText(printFont, printStr);
 		this.printStr = printStr;
 	}
 }
