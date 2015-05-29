@@ -1,0 +1,104 @@
+{
+Novice1: [
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "Welcome to 'Capture the Flag' Game."
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "You are about to see a series of dialogues before starting to play the game, this is to familiarize you to the basics of the game"
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "If you already know the game and would like to crack on, then you can go back to the options and disable in-game help"
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "Let's start…."
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "Level No is displayed here",
+		x: 124,
+		y: 62
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "Difficulty of the current Level is displayed here",
+		x: 124,
+		y: 162
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "Name of the current Level is displayed here",
+		x: 124,
+		y: 262
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "This shows the No. of moves played so far against the optimal level of moves required to solve this level. The medal awarded is dependent on this score",
+		x: 680,
+		y: 62
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "This shows the No. of shots used so far against the optimal level of shots required to solve this level. The medal awarded is dependent on this score as well",
+		x: 680,
+		y: 162
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "You can use these arrows keys to move the Hero",
+		x: 99,
+		y: 314
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "You have to use this button to shoot the objects/villians",
+		x: 705,
+		y: 411
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "You can use this button to undo your moves all the way back to the start of the level",
+		x: 705,
+		y: 316
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "You can use this to view the hints associated for this level and also to know the answer for this level. Beware use of hints will reduce your entitlements to the award.",
+		x: 705,
+		y: 230
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "This our Hero. Help him fullfill his destiny",
+		x: 235,
+		y: 75
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "This is our Hero's destiny. Help his reach this place by solving the riddles in his journey towards destiny",
+		x: 595,
+		y: 255
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "This is a wooden block, our hero can shoot at this block from any direction to move one position. ",
+		x: 235,
+		y: 105
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "You can move this wooden block only on sand, escalator, ice and thin ice. If you move this onto the water, it will become a bridge",
+		x: 235,
+		y: 105
+	},
+	{
+		class: com.avy.cflag.game.utils.HelpMsg,
+		msg: "This is water, our hero will drown if he moves over to this position. Likewise, hero can shoot at the villians, mirrors to make it drown.",
+		x: 265,
+		y: 165
+	}
+]
+}
