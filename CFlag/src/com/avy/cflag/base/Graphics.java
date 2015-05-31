@@ -37,7 +37,7 @@ public class Graphics {
 	@SuppressWarnings("deprecation")
 	public BitmapFont createFont(final String fontName, final int fontSize, final boolean flipped) {
 		final FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/" + fontName + ".ttf"));
-		final BitmapFont fnt = generator.generateFont(fontSize, FreeTypeFontGenerator.DEFAULT_CHARS, flipped ? true : false);
+		final BitmapFont fnt = generator.generateFont(fontSize, FreeTypeFontGenerator.DEFAULT_CHARS, flipped);
 		if (!flipped) {
 			fnt.getData().setScale(1, -1);
 		}

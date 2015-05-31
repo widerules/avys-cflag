@@ -23,6 +23,7 @@ public class ImageString extends Actor{
 		printFormat = PrintFormat.Normal_Center;
 		setColor(inColor);
 		layout = new GlyphLayout();
+		printFont.getData().markupEnabled=true;
 	}
 	
 	public ImageString(String inStr, BitmapFont inFont, Color inColor, PrintFormat inFormat) {
@@ -43,8 +44,8 @@ public class ImageString extends Actor{
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		
-		Color color = getColor();
-		printFont.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+		Color actorColor = getColor();
+		Color fontColor = new Color(actorColor.r, actorColor.g, actorColor.b, actorColor.a * parentAlpha);
 
 		float x = getX();
 		float y = getY();
@@ -52,33 +53,24 @@ public class ImageString extends Actor{
 		float height = getHeight();
 		switch (printFormat) {
 			case Normal_Left:
-				layout.setText(printFont, printStr);
+				layout.setText(printFont, printStr, fontColor,width,Align.left,false);
 				printFont.draw(batch, layout, x, y);
 				break;
 			case Normal_Center:
-				layout.setText(printFont, printStr,color,width,Align.center,false);
+				layout.setText(printFont, printStr,fontColor,width,Align.center,false);
 				printFont.draw(batch, layout, x, y);
 				break;
 			case Wrapped_Left:
-				layout.setText(printFont, printStr,color,width,Align.center,false);
-				printFont.draw(batch, layout, x, y);
+				layout.setText(printFont, printStr,fontColor,width,Align.left,true);
+				printFont.draw(batch, layout, x, y+(height-layout.height)/2);
 				break;
 			case Wrapped_Center:
-				y = y+(height-tb.height)/2;
-				printFont.drawWrapped(batch, printStr, x, y, width, Align.center);
+				layout.setText(printFont, printStr,fontColor,width,Align.center,true);
+				printFont.draw(batch, layout, x, y+(height-layout.height)/2);
 				break;
 			case MultiLine:
-				final String lines[] = printStr.split("\n");
-				tb.width = 0;
-				tb.height = 0;
-				for (final String lineStr : lines) {
-					final TextBounds tmp = printFont.getBounds(lineStr);
-					if (tmp.width > tb.width) {
-						tb.width = tmp.width;
-					}
-					tb.height = tb.height + tmp.height;
-				}
-				printFont.drawMultiLine(batch, printStr, x - (tb.width / 2), y - (tb.height / 2));
+				layout.setText(printFont, printStr,fontColor,width,Align.center,true);
+				printFont.draw(batch, layout, x, y+(height-layout.height)/2);
 				break;
 			default:
 				break;
